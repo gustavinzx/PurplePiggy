@@ -14,6 +14,8 @@ import {
   Zap,
   HelpCircle,
   ThumbsUp,
+  Award,
+  BookOpen,
 } from 'lucide-react'
 import { toast } from 'sonner'
 import confetti from 'canvas-confetti'
@@ -27,15 +29,17 @@ export const LessonPage: React.FC = () => {
   const { user } = useAuth()
 
   const [lesson, setLesson] = useState<EducationalContent | null>(null)
-  const [allLessonsInTrack, setAllLessonsInTrack] = useState<EducationalContent[]>([])
+  const [trackLessons, setTrackLessons] = useState<EducationalContent[]>([])
+  const [allTracks, setAllTracks] = useState<{ track_slug: string; track_order: number; track_title: string }[]>([])
   const [isCompleted, setIsCompleted] = useState(false)
   const [loading, setLoading] = useState(true)
   const [saving, setSaving] = useState(false)
 
-  // Duolingo Quiz State
+  // Desafio Piggy State
   const [selectedOption, setSelectedOption] = useState<number | null>(null)
   const [isAnswerChecked, setIsAnswerChecked] = useState(false)
   const [isCorrect, setIsCorrect] = useState(false)
+  const [hasFiredConfetti, setHasFiredConfetti] = useState(false)
 
   useEffect(() => {
     if (user && lessonSlug) {
@@ -49,6 +53,7 @@ export const LessonPage: React.FC = () => {
     setSelectedOption(null)
     setIsAnswerChecked(false)
     setIsCorrect(false)
+    setHasFiredConfetti(false)
 
     try {
       // 1. Carregar lição atual
@@ -66,24 +71,53 @@ export const LessonPage: React.FC = () => {
 
       setLesson(currentLesson)
 
-      // 2. Verificar se já concluiu
+      // 2. Verificar se a usuária já concluiu esta lição no Supabase
       const { data: progress } = await supabase
         .from('educational_progress')
         .select('id')
         .eq('user_id', user.id)
         .eq('content_id', currentLesson.id)
-        .single()
+        .maybeSingle()
 
-      setIsCompleted(Boolean(progress))
+      const alreadyDone = Boolean(progress)
+      setIsCompleted(alreadyDone)
 
-      // 3. Carregar lições da mesma trilha
-      const { data: trackLessons } = await supabase
+      // Se já estava concluída, marca o quiz como acertado
+      if (alreadyDone) {
+        setIsAnswerChecked(true)
+        setIsCorrect(true)
+        const q = LESSON_QUIZZES[lessonSlug!]
+        if (q) setSelectedOption(q.correctIndex)
+      }
+
+      // 3. Carregar TODAS as lições da mesma trilha (ordenadas por lesson_order)
+      const { data: sameTrackLessons } = await supabase
         .from('educational_contents')
         .select('*')
         .eq('track_slug', currentLesson.track_slug)
         .order('lesson_order', { ascending: true })
 
-      setAllLessonsInTrack(trackLessons || [])
+      setTrackLessons(sameTrackLessons || [])
+
+      // 4. Carregar lista de trilhas para permitir transição entre trilhas
+      const { data: allContents } = await supabase
+        .from('educational_contents')
+        .select('track_slug, track_order, track_title')
+        .order('track_order', { ascending: true })
+
+      if (allContents) {
+        const uniqueTracks: Record<string, { track_slug: string; track_order: number; track_title: string }> = {}
+        allContents.forEach((c) => {
+          if (!uniqueTracks[c.track_slug]) {
+            uniqueTracks[c.track_slug] = {
+              track_slug: c.track_slug,
+              track_order: c.track_order,
+              track_title: c.track_title,
+            }
+          }
+        })
+        setAllTracks(Object.values(uniqueTracks).sort((a, b) => a.track_order - b.track_order))
+      }
     } finally {
       setLoading(false)
     }
@@ -92,76 +126,104 @@ export const LessonPage: React.FC = () => {
   const quiz = lessonSlug ? LESSON_QUIZZES[lessonSlug] : null
 
   const handleSelectOption = (idx: number) => {
-    if (isAnswerChecked && isCorrect) return
+    if (isCompleted) return
     setSelectedOption(idx)
     setIsAnswerChecked(false)
   }
 
-  const handleCheckAnswer = () => {
-    if (selectedOption === null || !quiz) return
+  // Verifica a resposta e grava o progresso se acertou
+  const handleCheckAnswer = async () => {
+    if (selectedOption === null || !quiz || !user || !lesson) return
+
     const correct = selectedOption === quiz.correctIndex
     setIsAnswerChecked(true)
     setIsCorrect(correct)
 
     if (correct) {
-      confetti({ particleCount: 50, spread: 60, origin: { y: 0.6 } })
-      toast.success('Mandou super bem! Resposta correta! 🎉 (+10 XP)')
+      if (!hasFiredConfetti && !isCompleted) {
+        setHasFiredConfetti(true)
+        confetti({
+          particleCount: 35,
+          spread: 45,
+          origin: { y: 0.65 },
+          colors: ['#B037F8', '#FF79A8', '#FEDA70'],
+        })
+      }
+
+      // Salvar progresso no Supabase
+      setSaving(true)
+      try {
+        await supabase
+          .from('educational_progress')
+          .upsert(
+            {
+              user_id: user.id,
+              content_id: lesson.id,
+            },
+            { onConflict: 'user_id,content_id' }
+          )
+
+        setIsCompleted(true)
+
+        // Atualizar streak diário e PiggyXP
+        const today = new Date().toISOString().split('T')[0]
+        const stored = localStorage.getItem('purplepiggy_streak')
+        let streak = 1
+        if (stored) {
+          try {
+            const parsed = JSON.parse(stored)
+            if (parsed.lastDate !== today) {
+              streak = (parsed.count || 0) + 1
+            } else {
+              streak = parsed.count || 1
+            }
+          } catch (_) {}
+        }
+        localStorage.setItem('purplepiggy_streak', JSON.stringify({ count: streak, lastDate: today }))
+        toast.success('Resposta certa! Lição concluída e +10 PiggyXP! 💜')
+      } catch (err) {
+        console.error('Erro ao salvar progresso:', err)
+      } finally {
+        setSaving(false)
+      }
     } else {
       toast.info('Quase lá! Veja a explicação e tente novamente com calma.')
     }
   }
 
-  const handleCompleteLesson = async () => {
-    if (!user || !lesson) return
-    setSaving(true)
+  // Navegação estrita e coerente para a próxima lição dentro da trilha
+  const currentIndex = trackLessons.findIndex((l) => l.id === lesson?.id)
+  const nextLessonInSameTrack =
+    currentIndex >= 0 && currentIndex < trackLessons.length - 1
+      ? trackLessons[currentIndex + 1]
+      : null
 
-    try {
-      const { error } = await supabase
-        .from('educational_progress')
-        .upsert(
-          {
-            user_id: user.id,
-            content_id: lesson.id,
-          },
-          { onConflict: 'user_id,content_id' }
-        )
+  // Encontrar a próxima trilha caso esta seja a última lição da trilha atual
+  const currentTrackOrder = lesson?.track_order ?? 1
+  const nextTrack = allTracks.find((t) => t.track_order === currentTrackOrder + 1)
 
-      if (error) throw error
+  const handleNextStep = async () => {
+    if (nextLessonInSameTrack) {
+      // Avança para a próxima lição DA MESMA TRILHA
+      navigate(`/aprender/${lesson!.track_slug}/${nextLessonInSameTrack.lesson_slug}`)
+    } else if (nextTrack) {
+      // Busca a primeira lição da próxima trilha
+      const { data: firstLessonOfNextTrack } = await supabase
+        .from('educational_contents')
+        .select('lesson_slug')
+        .eq('track_slug', nextTrack.track_slug)
+        .order('lesson_order', { ascending: true })
+        .limit(1)
+        .single()
 
-      setIsCompleted(true)
-      confetti({ particleCount: 90, spread: 70, origin: { y: 0.6 } })
-      toast.success('Parabéns! Lição concluída e XP acumulado! 🏆💜')
-
-      // Atualizar streak local
-      const today = new Date().toISOString().split('T')[0]
-      const stored = localStorage.getItem('purplepiggy_streak')
-      let streak = 1
-      if (stored) {
-        try {
-          const parsed = JSON.parse(stored)
-          if (parsed.lastDate !== today) {
-            streak = (parsed.count || 0) + 1
-          } else {
-            streak = parsed.count || 1
-          }
-        } catch (_) {}
+      if (firstLessonOfNextTrack) {
+        toast.success(`Trilha concluída! Iniciando: ${nextTrack.track_title} 🎓`)
+        navigate(`/aprender/${nextTrack.track_slug}/${firstLessonOfNextTrack.lesson_slug}`)
+      } else {
+        navigate('/aprender')
       }
-      localStorage.setItem('purplepiggy_streak', JSON.stringify({ count: streak, lastDate: today }))
-    } catch (err) {
-      toast.error('Não conseguimos registrar seu progresso agora.')
-    } finally {
-      setSaving(false)
-    }
-  }
-
-  const handleNextLesson = () => {
-    if (!lesson) return
-    const currentIndex = allLessonsInTrack.findIndex((l) => l.id === lesson.id)
-    if (currentIndex >= 0 && currentIndex < allLessonsInTrack.length - 1) {
-      const next = allLessonsInTrack[currentIndex + 1]
-      navigate(`/aprender/${next.track_slug}/${next.lesson_slug}`)
     } else {
-      toast.success('Você concluiu todas as lições desta trilha! Parabéns! 🏆')
+      toast.success('Você concluiu todas as trilhas disponíveis do PurplePiggy! Parabéns! 🏆')
       navigate('/aprender')
     }
   }
@@ -174,14 +236,11 @@ export const LessonPage: React.FC = () => {
     )
   }
 
-  const currentIndex = allLessonsInTrack.findIndex((l) => l.id === lesson.id)
-  const hasNext = currentIndex >= 0 && currentIndex < allLessonsInTrack.length - 1
-
   return (
     <AppShell showNav={false} className="px-5 py-6 flex flex-col justify-between bg-white relative">
       <div>
-        {/* Header com botão voltar */}
-        <div className="flex items-center justify-between mb-4">
+        {/* Header com botão voltar e badge da trilha (Fiel ao Layout) */}
+        <div className="flex items-center justify-between mb-3">
           <button
             onClick={() => navigate('/aprender')}
             className="p-2 -ml-2 rounded-full hover:bg-lilac/10 text-deep transition-colors"
@@ -190,36 +249,41 @@ export const LessonPage: React.FC = () => {
             <ArrowLeft className="w-6 h-6" />
           </button>
 
-          <span className="text-[11px] font-extrabold text-primary bg-primary/10 px-3 py-1 rounded-full uppercase tracking-wider">
-            EDUCAÇÃO FINANCEIRA · {lesson.minutes} MIN
-          </span>
+          <div className="flex items-center gap-2">
+            <span className="text-[10px] font-extrabold text-textSec bg-bg px-2.5 py-1 rounded-full uppercase tracking-wider">
+              {lesson.track_title} · {currentIndex + 1}/{trackLessons.length}
+            </span>
+            <span className="text-[10px] font-extrabold text-primary bg-primary/10 px-2.5 py-1 rounded-full uppercase tracking-wider">
+              {lesson.minutes} MIN
+            </span>
+          </div>
         </div>
 
-        {/* Título e Subtítulo (fiel ao layout oficial) */}
+        {/* Título e Subtítulo (Fiel ao Layout Oficial) */}
         <div className="mb-4">
           <h1 className="text-2xl font-extrabold text-deep font-sans leading-tight mb-1">
             {lesson.lesson_title}
           </h1>
-          <p className="text-xs font-semibold text-textSec">
+          <p className="text-xs font-semibold text-textSec leading-relaxed">
             {lesson.summary}
           </p>
         </div>
 
-        {/* Ilustração da mascote com lâmpada compositada ao redor */}
-        <div className="flex justify-center my-4">
+        {/* Mascote Oficial com a lâmpada amarela de ideias */}
+        <div className="flex justify-center my-3">
           <Mascot size="lg" accessory="idea" />
         </div>
 
-        {/* Card de Conteúdo Principal (Layout oficial) */}
-        <div className="bg-bg rounded-[22px] p-5 border border-lilac/15 text-xs text-deep/90 font-medium leading-relaxed flex flex-col gap-3 mb-4">
+        {/* Card de Conteúdo Principal (Layout do App) */}
+        <div className="bg-bg rounded-[22px] p-5 border border-lilac/15 text-xs text-deep/90 font-medium leading-relaxed flex flex-col gap-3 mb-4 shadow-xs">
           {lesson.body_md.split('\n\n').map((paragraph, idx) => (
             <p key={idx}>{paragraph}</p>
           ))}
         </div>
 
-        {/* Exemplo Prático Numérico */}
+        {/* Exemplo Prático */}
         {lesson.example_md && (
-          <div className="bg-baby/50 rounded-[20px] p-4 border border-blue-100 mb-4 text-xs">
+          <div className="bg-baby/50 rounded-[20px] p-4 border border-blue-100 mb-4 text-xs shadow-xs">
             <span className="font-extrabold text-deep block mb-1">💡 Exemplo prático:</span>
             <p className="font-semibold text-deep/80 leading-relaxed">
               {lesson.example_md}
@@ -227,9 +291,9 @@ export const LessonPage: React.FC = () => {
           </div>
         )}
 
-        {/* Dica da Mascote */}
+        {/* Dica Amiga da Mascote */}
         {lesson.tip && (
-          <div className="bg-gold/20 rounded-[20px] p-4 border border-gold/40 mb-4 text-xs">
+          <div className="bg-gold/20 rounded-[20px] p-4 border border-gold/40 mb-5 text-xs shadow-xs">
             <span className="font-extrabold text-deep block mb-1">✨ Dica amiga:</span>
             <p className="font-semibold text-deep/90 leading-relaxed">
               {lesson.tip}
@@ -237,16 +301,16 @@ export const LessonPage: React.FC = () => {
           </div>
         )}
 
-        {/* ATIVIDADE ESTILO DUOLINGO: Desafio da Lição */}
+        {/* SEÇÃO INTERATIVA: Desafio Piggy (Completamente gamificado e sem bugs) */}
         {quiz && (
-          <div className="bg-white rounded-[22px] p-5 border-2 border-primary/25 shadow-card mb-4 animate-fadeIn">
+          <div className="bg-white rounded-[22px] p-5 border-2 border-primary/20 shadow-card mb-5 animate-fadeIn">
             <div className="flex items-center justify-between mb-3">
               <span className="text-xs font-extrabold text-primary flex items-center gap-1.5 uppercase tracking-wide">
                 <Zap className="w-4 h-4 text-gold fill-gold" />
-                Desafio Duolingo · Teste rápido
+                Desafio Piggy · Teste rápido
               </span>
-              <span className="text-[11px] font-bold text-textSec bg-bg px-2.5 py-0.5 rounded-full">
-                +10 XP
+              <span className="text-[11px] font-bold text-deep/70 bg-bg px-2.5 py-0.5 rounded-full border border-lilac/15">
+                +10 PiggyXP
               </span>
             </div>
 
@@ -262,9 +326,9 @@ export const LessonPage: React.FC = () => {
 
                 if (isAnswerChecked) {
                   if (idx === quiz.correctIndex) {
-                    btnStyle = 'border-success bg-success/15 text-success font-extrabold'
+                    btnStyle = 'border-success bg-success/15 text-emerald-800 font-extrabold'
                   } else if (isSelected) {
-                    btnStyle = 'border-danger bg-danger/10 text-danger'
+                    btnStyle = 'border-danger/60 bg-danger/10 text-danger'
                   }
                 } else if (isSelected) {
                   btnStyle = 'border-primary bg-primary/10 text-primary font-bold shadow-xs'
@@ -275,9 +339,9 @@ export const LessonPage: React.FC = () => {
                     key={idx}
                     type="button"
                     onClick={() => handleSelectOption(idx)}
-                    className={`w-full text-left p-3.5 rounded-2xl border-2 text-xs font-semibold transition-all flex items-center justify-between ${btnStyle}`}
+                    className={`w-full text-left p-3.5 rounded-2xl border-2 text-xs font-semibold transition-all flex items-center justify-between active:scale-[0.99] ${btnStyle}`}
                   >
-                    <span className="flex-1 pr-2">{opt}</span>
+                    <span className="flex-1 pr-2 leading-relaxed">{opt}</span>
                     <div
                       className={`w-5 h-5 rounded-full border-2 flex items-center justify-center shrink-0 ${
                         isSelected ? 'border-primary bg-primary text-white' : 'border-lilac/40'
@@ -290,36 +354,46 @@ export const LessonPage: React.FC = () => {
               })}
             </div>
 
-            {/* Botão de checar ou Feedback */}
+            {/* Ações e Feedback da Resposta */}
             {!isAnswerChecked ? (
               <Button
                 size="md"
                 fullWidth
-                variant="primary"
                 disabled={selectedOption === null}
                 onClick={handleCheckAnswer}
+                loading={saving}
               >
-                Verificar resposta
+                Confirmar resposta
               </Button>
             ) : (
               <div
-                className={`p-3 rounded-xl text-xs font-semibold ${
+                className={`p-3.5 rounded-2xl text-xs font-semibold flex flex-col gap-1.5 ${
                   isCorrect
-                    ? 'bg-success/15 text-emerald-800 border border-success/30'
-                    : 'bg-gold/25 text-amber-900 border border-gold/50'
+                    ? 'bg-success/15 text-emerald-900 border border-success/30'
+                    : 'bg-gold/25 text-amber-950 border border-gold/50'
                 }`}
               >
-                <div className="font-extrabold mb-1">
-                  {isCorrect ? '🎉 Parabéns! Você acertou!' : '💡 Dica da PurplePiggy:'}
+                <div className="font-extrabold flex items-center gap-1.5">
+                  {isCorrect ? (
+                    <>
+                      <CheckCircle2 className="w-4 h-4 text-success" />
+                      <span>Parabéns! Você dominou o conceito!</span>
+                    </>
+                  ) : (
+                    <>
+                      <HelpCircle className="w-4 h-4 text-amber-600" />
+                      <span>Dica da PurplePiggy:</span>
+                    </>
+                  )}
                 </div>
-                <p>{quiz.explanation}</p>
+                <p className="leading-relaxed text-deep/80">{quiz.explanation}</p>
                 {!isCorrect && (
                   <button
                     onClick={() => {
                       setIsAnswerChecked(false)
                       setSelectedOption(null)
                     }}
-                    className="text-xs font-bold text-primary underline mt-2 block"
+                    className="text-xs font-bold text-primary underline mt-1 self-start"
                   >
                     Tentar responder novamente
                   </button>
@@ -330,39 +404,44 @@ export const LessonPage: React.FC = () => {
         )}
       </div>
 
-      {/* Ações inferiores (Layout oficial) */}
-      <div className="flex flex-col gap-3 pt-2 pb-4">
-        <Button
-          size="lg"
-          fullWidth
-          variant={isCompleted ? 'secondary' : 'primary'}
-          loading={saving}
-          onClick={handleCompleteLesson}
-          icon={isCompleted ? <CheckCircle2 className="w-5 h-5" /> : undefined}
-        >
-          {isCompleted ? 'Lição concluída ✓' : 'Concluir lição ✓'}
-        </Button>
-
-        {hasNext ? (
+      {/* Ações Inferiores (Fiel ao Layout Oficial) */}
+      <div className="flex flex-col gap-2.5 pt-2 pb-4">
+        {/* Botão de Concluir ou Avançar */}
+        {isCompleted ? (
           <Button
             size="lg"
-            variant="outline"
             fullWidth
-            onClick={handleNextLesson}
+            onClick={handleNextStep}
             icon={<ArrowRight className="w-5 h-5" />}
           >
-            Próxima lição →
+            {nextLessonInSameTrack
+              ? 'Próxima lição da trilha →'
+              : nextTrack
+              ? `Concluir trilha e ir para ${nextTrack.track_title} →`
+              : 'Concluir trilha 🏆'}
           </Button>
         ) : (
           <Button
             size="lg"
-            variant="ghost"
             fullWidth
-            onClick={() => navigate('/aprender')}
+            loading={saving}
+            disabled={!isCorrect}
+            onClick={handleCheckAnswer}
+            icon={<CheckCircle2 className="w-5 h-5" />}
           >
-            Voltar para as trilhas
+            {isCorrect ? 'Concluir lição ✓' : 'Acerte o desafio para concluir'}
           </Button>
         )}
+
+        {/* Botão de Navegação secundária */}
+        <Button
+          size="md"
+          variant="outline"
+          fullWidth
+          onClick={() => navigate('/aprender')}
+        >
+          Voltar para as trilhas
+        </Button>
       </div>
     </AppShell>
   )

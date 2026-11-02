@@ -17,6 +17,7 @@ import {
   Zap,
   X,
   Award,
+  HelpCircle,
 } from 'lucide-react'
 import { toast } from 'sonner'
 import confetti from 'canvas-confetti'
@@ -32,6 +33,7 @@ interface TrackGroup {
   lessons: EducationalContent[]
   completedCount: number
   progressPct: number
+  completedIds: Set<string>
 }
 
 export const LearnPage: React.FC = () => {
@@ -40,7 +42,7 @@ export const LearnPage: React.FC = () => {
   const [tracks, setTracks] = useState<TrackGroup[]>([])
   const [loading, setLoading] = useState(true)
 
-  // Duolingo Daily Streak and Challenge State
+  // Ofensiva Piggy & Desafio do Dia
   const [streakDays, setStreakDays] = useState(1)
   const [isDailyChallengeOpen, setIsDailyChallengeOpen] = useState(false)
   const [dailyCompleted, setDailyCompleted] = useState(false)
@@ -53,7 +55,6 @@ export const LearnPage: React.FC = () => {
   const todayChallenge = DAILY_CHALLENGES[dayIndex]
 
   useEffect(() => {
-    // Carregar streak do localStorage
     const today = new Date().toISOString().split('T')[0]
     const stored = localStorage.getItem('purplepiggy_streak')
     if (stored) {
@@ -77,20 +78,20 @@ export const LearnPage: React.FC = () => {
     if (!user) return
     setLoading(true)
     try {
-      // 1. Todas as lições
+      // 1. Todas as lições ordenadas por trilha e ordem da lição
       const { data: contents } = await supabase
         .from('educational_contents')
         .select('*')
         .order('track_order', { ascending: true })
         .order('lesson_order', { ascending: true })
 
-      // 2. Progresso do usuário
+      // 2. Progresso do usuário autenticado no Supabase
       const { data: progress } = await supabase
         .from('educational_progress')
         .select('content_id')
         .eq('user_id', user.id)
 
-      const completedIds = new Set(progress?.map((p) => p.content_id) || [])
+      const userCompletedIds = new Set(progress?.map((p) => p.content_id) || [])
 
       // Agrupar por trilha
       const trackMap: Record<string, TrackGroup> = {}
@@ -105,10 +106,11 @@ export const LearnPage: React.FC = () => {
             lessons: [],
             completedCount: 0,
             progressPct: 0,
+            completedIds: userCompletedIds,
           }
         }
         trackMap[lesson.track_slug].lessons.push(lesson)
-        if (completedIds.has(lesson.id)) {
+        if (userCompletedIds.has(lesson.id)) {
           trackMap[lesson.track_slug].completedCount++
         }
       })
@@ -126,10 +128,15 @@ export const LearnPage: React.FC = () => {
     }
   }
 
-  const openFirstIncompleteLesson = (track: TrackGroup) => {
-    const firstIncomplete = track.lessons.find((l) => track.progressPct < 100) || track.lessons[0]
-    if (firstIncomplete) {
-      navigate(`/aprender/${track.track_slug}/${firstIncomplete.lesson_slug}`)
+  // Navegar estritamente para a primeira lição NÃO concluída da trilha
+  const openTrack = (track: TrackGroup) => {
+    // Procura a primeira lição cujo ID não está nas concluídas
+    const nextIncompleteLesson = track.lessons.find((l) => !track.completedIds.has(l.id))
+    // Se todas estiverem concluídas, abre a primeira para revisar
+    const targetLesson = nextIncompleteLesson || track.lessons[0]
+
+    if (targetLesson) {
+      navigate(`/aprender/${track.track_slug}/${targetLesson.lesson_slug}`)
     }
   }
 
@@ -140,13 +147,18 @@ export const LearnPage: React.FC = () => {
     setDailyCorrect(correct)
 
     if (correct) {
-      confetti({ particleCount: 70, spread: 60, origin: { y: 0.6 } })
+      confetti({
+        particleCount: 35,
+        spread: 50,
+        origin: { y: 0.65 },
+        colors: ['#B037F8', '#FF79A8', '#FEDA70'],
+      })
       const today = new Date().toISOString().split('T')[0]
       const newStreak = streakDays + (dailyCompleted ? 0 : 1)
       setStreakDays(newStreak)
       setDailyCompleted(true)
       localStorage.setItem('purplepiggy_streak', JSON.stringify({ count: newStreak, lastDate: today }))
-      toast.success('Desafio do dia concluído! 🔥 Ofensiva mantida!')
+      toast.success('Desafio do dia concluído! 🔥 Ofensiva mantida com sucesso!')
     }
   }
 
@@ -167,7 +179,7 @@ export const LearnPage: React.FC = () => {
         </div>
       </div>
 
-      {/* Banner Estilo Duolingo: Ofensiva e Desafio do Dia */}
+      {/* Banner da Ofensiva Piggy e Desafio do Dia */}
       <div className="bg-gradient-to-r from-primary/10 via-lilac/15 to-gold/20 border border-primary/20 rounded-2xl p-3.5 flex items-center justify-between shadow-xs">
         <div className="flex items-center gap-3">
           <div className="w-10 h-10 rounded-2xl bg-white shadow-xs flex items-center justify-center text-amber-500">
@@ -175,13 +187,10 @@ export const LearnPage: React.FC = () => {
           </div>
           <div>
             <div className="text-xs font-extrabold text-deep flex items-center gap-1.5">
-              <span>{streakDays} {streakDays === 1 ? 'dia' : 'dias'} de ofensiva</span>
-              <span className="text-[10px] bg-gold/50 text-amber-900 px-1.5 py-0.2 rounded-full font-bold">
-                Duolingo
-              </span>
+              <span>{streakDays} {streakDays === 1 ? 'dia' : 'dias'} de Ofensiva Piggy</span>
             </div>
             <div className="text-[11px] font-semibold text-textSec">
-              {dailyCompleted ? 'Desafio de hoje concluído ✓' : 'Atividade diária disponível'}
+              {dailyCompleted ? 'Desafio de hoje concluído ✓' : 'Desafio Piggy do dia disponível'}
             </div>
           </div>
         </div>
@@ -243,7 +252,7 @@ export const LearnPage: React.FC = () => {
                   size="md"
                   fullWidth
                   variant={isStarted ? 'primary' : 'outline'}
-                  onClick={() => openFirstIncompleteLesson(track)}
+                  onClick={() => openTrack(track)}
                 >
                   {isFinished
                     ? 'Revisar trilha'
@@ -257,14 +266,14 @@ export const LearnPage: React.FC = () => {
         })}
       </div>
 
-      {/* Modal Interativo: Desafio Diário Estilo Duolingo */}
+      {/* Modal Interativo: Desafio Piggy do Dia */}
       {isDailyChallengeOpen && (
         <div className="fixed inset-0 z-50 bg-deep/60 backdrop-blur-xs flex items-end sm:items-center justify-center p-3 sm:p-4 animate-fadeIn">
           <div className="bg-white rounded-[26px] p-6 w-full max-w-sm shadow-2xl flex flex-col relative max-h-[90vh] overflow-y-auto">
             <div className="flex items-center justify-between pb-3 border-b border-lilac/15 mb-3">
               <div className="flex items-center gap-2 text-primary font-extrabold text-sm">
                 <Zap className="w-4 h-4 text-gold fill-gold" />
-                <span>Desafio Financeiro do Dia</span>
+                <span>Desafio Piggy do Dia</span>
               </div>
               <button
                 onClick={() => setIsDailyChallengeOpen(false)}
@@ -289,9 +298,9 @@ export const LearnPage: React.FC = () => {
 
                 if (dailyChecked) {
                   if (idx === todayChallenge.correctIndex) {
-                    btnStyle = 'border-success bg-success/15 text-success font-extrabold'
+                    btnStyle = 'border-success bg-success/15 text-emerald-800 font-extrabold'
                   } else if (isSelected) {
-                    btnStyle = 'border-danger bg-danger/10 text-danger'
+                    btnStyle = 'border-danger/60 bg-danger/10 text-danger'
                   }
                 } else if (isSelected) {
                   btnStyle = 'border-primary bg-primary/10 text-primary font-bold shadow-xs'
@@ -307,9 +316,9 @@ export const LearnPage: React.FC = () => {
                         setDailyChecked(false)
                       }
                     }}
-                    className={`w-full text-left p-3.5 rounded-2xl border-2 text-xs font-semibold transition-all flex items-center justify-between ${btnStyle}`}
+                    className={`w-full text-left p-3.5 rounded-2xl border-2 text-xs font-semibold transition-all flex items-center justify-between active:scale-[0.99] ${btnStyle}`}
                   >
-                    <span className="flex-1 pr-2">{opt}</span>
+                    <span className="flex-1 pr-2 leading-relaxed">{opt}</span>
                     <div
                       className={`w-5 h-5 rounded-full border-2 flex items-center justify-center shrink-0 ${
                         isSelected ? 'border-primary bg-primary text-white' : 'border-lilac/40'
@@ -329,20 +338,30 @@ export const LearnPage: React.FC = () => {
                 disabled={selectedDailyOption === null}
                 onClick={handleCheckDaily}
               >
-                Verificar resposta
+                Confirmar resposta
               </Button>
             ) : (
               <div
-                className={`p-3.5 rounded-xl text-xs font-semibold flex flex-col gap-2 ${
+                className={`p-3.5 rounded-2xl text-xs font-semibold flex flex-col gap-2 ${
                   dailyCorrect
-                    ? 'bg-success/15 text-emerald-800 border border-success/30'
-                    : 'bg-gold/25 text-amber-900 border border-gold/50'
+                    ? 'bg-success/15 text-emerald-900 border border-success/30'
+                    : 'bg-gold/25 text-amber-950 border border-gold/50'
                 }`}
               >
-                <div className="font-extrabold">
-                  {dailyCorrect ? '🎉 Resposta certa! Ofensiva mantida!' : '💡 Dica da PurplePiggy:'}
+                <div className="font-extrabold flex items-center gap-1.5">
+                  {dailyCorrect ? (
+                    <>
+                      <CheckCircle2 className="w-4 h-4 text-success" />
+                      <span>Parabéns! Ofensiva mantida com sucesso!</span>
+                    </>
+                  ) : (
+                    <>
+                      <HelpCircle className="w-4 h-4 text-amber-600" />
+                      <span>Dica da PurplePiggy:</span>
+                    </>
+                  )}
                 </div>
-                <p>{todayChallenge.explanation}</p>
+                <p className="leading-relaxed text-deep/80">{todayChallenge.explanation}</p>
                 <Button
                   size="sm"
                   fullWidth
