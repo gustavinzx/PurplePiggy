@@ -337,14 +337,14 @@ export const GoalsPage: React.FC = () => {
                       className="py-2.5 px-3 bg-primary text-white rounded-xl text-xs font-bold flex items-center justify-center gap-1 shadow-sm hover:brightness-105"
                     >
                       <ArrowUpRight className="w-4 h-4" />
-                      Adicionar $
+                      Adicionar dinheiro
                     </button>
                     <button
                       onClick={() => setIsWithdrawModalOpen(true)}
                       className="py-2.5 px-3 bg-bg border border-lilac/30 text-deep rounded-xl text-xs font-bold flex items-center justify-center gap-1 hover:bg-lilac/10"
                     >
                       <ArrowDownLeft className="w-4 h-4" />
-                      Retirar $
+                      Retirar dinheiro
                     </button>
                   </div>
 
