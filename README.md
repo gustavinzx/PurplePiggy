@@ -172,3 +172,4 @@ O mascote oficial da **PurplePiggy** simboliza acolhimento, proteção e prosper
 
 Projeto acadêmico desenvolvido com dedicação para empoderamento financeiro feminino.  
 Design e identidade visual baseados no Brandbook oficial da PurplePiggy.
+# PurplePiggy
