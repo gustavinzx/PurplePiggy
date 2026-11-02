@@ -5,6 +5,7 @@ import { useAuth } from '../context/AuthContext'
 import { AppShell } from '../components/AppShell'
 import { Mascot } from '../components/Mascot'
 import { Button } from '../components/Button'
+import { DAILY_CHALLENGES } from '../lib/quizData'
 import {
   BookOpen,
   CheckCircle2,
@@ -12,7 +13,13 @@ import {
   Sparkles,
   ChevronRight,
   GraduationCap,
+  Flame,
+  Zap,
+  X,
+  Award,
 } from 'lucide-react'
+import { toast } from 'sonner'
+import confetti from 'canvas-confetti'
 import type { Database } from '../types/database.types'
 
 type EducationalContent = Database['public']['Tables']['educational_contents']['Row']
@@ -32,6 +39,33 @@ export const LearnPage: React.FC = () => {
   const { user } = useAuth()
   const [tracks, setTracks] = useState<TrackGroup[]>([])
   const [loading, setLoading] = useState(true)
+
+  // Duolingo Daily Streak and Challenge State
+  const [streakDays, setStreakDays] = useState(1)
+  const [isDailyChallengeOpen, setIsDailyChallengeOpen] = useState(false)
+  const [dailyCompleted, setDailyCompleted] = useState(false)
+  const [selectedDailyOption, setSelectedDailyOption] = useState<number | null>(null)
+  const [dailyChecked, setDailyChecked] = useState(false)
+  const [dailyCorrect, setDailyCorrect] = useState(false)
+
+  // Desafio do dia baseado no dia da semana
+  const dayIndex = new Date().getDay() % DAILY_CHALLENGES.length
+  const todayChallenge = DAILY_CHALLENGES[dayIndex]
+
+  useEffect(() => {
+    // Carregar streak do localStorage
+    const today = new Date().toISOString().split('T')[0]
+    const stored = localStorage.getItem('purplepiggy_streak')
+    if (stored) {
+      try {
+        const parsed = JSON.parse(stored)
+        setStreakDays(parsed.count || 1)
+        if (parsed.lastDate === today) {
+          setDailyCompleted(true)
+        }
+      } catch (_) {}
+    }
+  }, [])
 
   useEffect(() => {
     if (user) {
@@ -99,9 +133,26 @@ export const LearnPage: React.FC = () => {
     }
   }
 
+  const handleCheckDaily = () => {
+    if (selectedDailyOption === null) return
+    const correct = selectedDailyOption === todayChallenge.correctIndex
+    setDailyChecked(true)
+    setDailyCorrect(correct)
+
+    if (correct) {
+      confetti({ particleCount: 70, spread: 60, origin: { y: 0.6 } })
+      const today = new Date().toISOString().split('T')[0]
+      const newStreak = streakDays + (dailyCompleted ? 0 : 1)
+      setStreakDays(newStreak)
+      setDailyCompleted(true)
+      localStorage.setItem('purplepiggy_streak', JSON.stringify({ count: newStreak, lastDate: today }))
+      toast.success('Desafio do dia concluído! 🔥 Ofensiva mantida!')
+    }
+  }
+
   return (
     <AppShell showNav={true} className="px-5 py-6 flex flex-col gap-4">
-      {/* Header com mascote de capelo */}
+      {/* Header com mascote de capelo (Fiel ao layout oficial) */}
       <div className="flex items-center justify-between">
         <div>
           <h1 className="text-xl font-extrabold text-deep font-sans mb-1">
@@ -114,6 +165,37 @@ export const LearnPage: React.FC = () => {
         <div className="shrink-0 -mr-1">
           <Mascot size="sm" accessory="graduate" />
         </div>
+      </div>
+
+      {/* Banner Estilo Duolingo: Ofensiva e Desafio do Dia */}
+      <div className="bg-gradient-to-r from-primary/10 via-lilac/15 to-gold/20 border border-primary/20 rounded-2xl p-3.5 flex items-center justify-between shadow-xs">
+        <div className="flex items-center gap-3">
+          <div className="w-10 h-10 rounded-2xl bg-white shadow-xs flex items-center justify-center text-amber-500">
+            <Flame className="w-6 h-6 fill-amber-500 text-amber-500 animate-bounce" />
+          </div>
+          <div>
+            <div className="text-xs font-extrabold text-deep flex items-center gap-1.5">
+              <span>{streakDays} {streakDays === 1 ? 'dia' : 'dias'} de ofensiva</span>
+              <span className="text-[10px] bg-gold/50 text-amber-900 px-1.5 py-0.2 rounded-full font-bold">
+                Duolingo
+              </span>
+            </div>
+            <div className="text-[11px] font-semibold text-textSec">
+              {dailyCompleted ? 'Desafio de hoje concluído ✓' : 'Atividade diária disponível'}
+            </div>
+          </div>
+        </div>
+
+        <button
+          onClick={() => setIsDailyChallengeOpen(true)}
+          className={`text-xs font-extrabold px-3 py-1.5 rounded-full shadow-xs transition-all ${
+            dailyCompleted
+              ? 'bg-success/20 text-emerald-800'
+              : 'bg-primary text-white hover:brightness-105 active:scale-95'
+          }`}
+        >
+          {dailyCompleted ? 'Revisar' : 'Fazer desafio'}
+        </button>
       </div>
 
       {/* Lista de Trilhas do Layout Oficial */}
@@ -174,6 +256,106 @@ export const LearnPage: React.FC = () => {
           )
         })}
       </div>
+
+      {/* Modal Interativo: Desafio Diário Estilo Duolingo */}
+      {isDailyChallengeOpen && (
+        <div className="fixed inset-0 z-50 bg-deep/60 backdrop-blur-xs flex items-end sm:items-center justify-center p-3 sm:p-4 animate-fadeIn">
+          <div className="bg-white rounded-[26px] p-6 w-full max-w-sm shadow-2xl flex flex-col relative max-h-[90vh] overflow-y-auto">
+            <div className="flex items-center justify-between pb-3 border-b border-lilac/15 mb-3">
+              <div className="flex items-center gap-2 text-primary font-extrabold text-sm">
+                <Zap className="w-4 h-4 text-gold fill-gold" />
+                <span>Desafio Financeiro do Dia</span>
+              </div>
+              <button
+                onClick={() => setIsDailyChallengeOpen(false)}
+                className="p-1 rounded-full text-textSec hover:text-deep"
+              >
+                <X className="w-5 h-5" />
+              </button>
+            </div>
+
+            <div className="text-[11px] font-bold text-textSec uppercase tracking-wider mb-1">
+              {todayChallenge.day}
+            </div>
+
+            <h3 className="text-sm font-extrabold text-deep mb-4 leading-snug">
+              {todayChallenge.question}
+            </h3>
+
+            <div className="flex flex-col gap-2.5 mb-4">
+              {todayChallenge.options.map((opt, idx) => {
+                const isSelected = selectedDailyOption === idx
+                let btnStyle = 'border-lilac/30 bg-bg text-deep hover:border-primary/50'
+
+                if (dailyChecked) {
+                  if (idx === todayChallenge.correctIndex) {
+                    btnStyle = 'border-success bg-success/15 text-success font-extrabold'
+                  } else if (isSelected) {
+                    btnStyle = 'border-danger bg-danger/10 text-danger'
+                  }
+                } else if (isSelected) {
+                  btnStyle = 'border-primary bg-primary/10 text-primary font-bold shadow-xs'
+                }
+
+                return (
+                  <button
+                    key={idx}
+                    type="button"
+                    onClick={() => {
+                      if (!dailyChecked || !dailyCorrect) {
+                        setSelectedDailyOption(idx)
+                        setDailyChecked(false)
+                      }
+                    }}
+                    className={`w-full text-left p-3.5 rounded-2xl border-2 text-xs font-semibold transition-all flex items-center justify-between ${btnStyle}`}
+                  >
+                    <span className="flex-1 pr-2">{opt}</span>
+                    <div
+                      className={`w-5 h-5 rounded-full border-2 flex items-center justify-center shrink-0 ${
+                        isSelected ? 'border-primary bg-primary text-white' : 'border-lilac/40'
+                      }`}
+                    >
+                      {isSelected && <div className="w-2 h-2 rounded-full bg-white" />}
+                    </div>
+                  </button>
+                )
+              })}
+            </div>
+
+            {!dailyChecked ? (
+              <Button
+                size="md"
+                fullWidth
+                disabled={selectedDailyOption === null}
+                onClick={handleCheckDaily}
+              >
+                Verificar resposta
+              </Button>
+            ) : (
+              <div
+                className={`p-3.5 rounded-xl text-xs font-semibold flex flex-col gap-2 ${
+                  dailyCorrect
+                    ? 'bg-success/15 text-emerald-800 border border-success/30'
+                    : 'bg-gold/25 text-amber-900 border border-gold/50'
+                }`}
+              >
+                <div className="font-extrabold">
+                  {dailyCorrect ? '🎉 Resposta certa! Ofensiva mantida!' : '💡 Dica da PurplePiggy:'}
+                </div>
+                <p>{todayChallenge.explanation}</p>
+                <Button
+                  size="sm"
+                  fullWidth
+                  variant={dailyCorrect ? 'primary' : 'outline'}
+                  onClick={() => setIsDailyChallengeOpen(false)}
+                >
+                  Continuar
+                </Button>
+              </div>
+            )}
+          </div>
+        </div>
+      )}
     </AppShell>
   )
 }
