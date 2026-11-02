@@ -256,6 +256,7 @@ export const GoalsPage: React.FC = () => {
       {/* Botão "+ Criar nova meta" */}
       <div className="pt-2">
         <Button
+          variant="outline"
           size="lg"
           fullWidth
           icon={<Plus className="w-5 h-5" />}

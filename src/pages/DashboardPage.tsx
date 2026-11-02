@@ -206,13 +206,18 @@ export const DashboardPage: React.FC = () => {
 
         <div className="flex items-center justify-between text-[11px] font-bold text-white/85">
           {monthlySummary.variationPct !== null ? (
-            <span className="bg-white/20 backdrop-blur-xs px-2.5 py-1 rounded-full flex items-center gap-1">
-              {monthlySummary.variationPct >= 0 ? '▲' : '▼'}{' '}
-              {monthlySummary.variationPct >= 0 ? '+' : ''}
+            <span
+              className={`px-2.5 py-0.5 rounded-full flex items-center gap-1 ${
+                monthlySummary.variationPct >= 0
+                  ? 'bg-emerald-400/30 text-emerald-100 font-extrabold'
+                  : 'bg-rose-400/30 text-rose-100 font-extrabold'
+              }`}
+            >
+              {monthlySummary.variationPct >= 0 ? '▲ +' : '▼ '}
               {monthlySummary.variationPct}%
             </span>
           ) : (
-            <span className="bg-white/20 px-2.5 py-1 rounded-full">Saldo estável</span>
+            <span className="bg-white/20 px-2.5 py-0.5 rounded-full text-white/90">Saldo estável</span>
           )}
           <span className="text-white/70">Atualizado hoje</span>
         </div>

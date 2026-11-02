@@ -8,6 +8,7 @@ import { formatCurrency, formatPercent } from '../lib/format'
 import {
   Sparkles,
   Sliders,
+  Plus,
   Home,
   ShoppingCart,
   Bus,
@@ -364,12 +365,13 @@ export const BudgetPage: React.FC = () => {
         </div>
       </div>
 
-      {/* Botão "+ Ajustar orçamento" do layout */}
+      {/* Botão "+ Ajustar orçamento" do layout oficial */}
       <div className="pt-2">
         <Button
+          variant="outline"
           size="lg"
           fullWidth
-          icon={<Sliders className="w-5 h-5" />}
+          icon={<Plus className="w-4 h-4" />}
           onClick={() => setIsAdjustModalOpen(true)}
         >
           Ajustar orçamento

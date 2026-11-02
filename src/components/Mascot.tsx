@@ -50,9 +50,8 @@ export const Mascot: React.FC<MascotProps> = ({
         src="/assets/pig-oficial-512.png"
         alt={alt}
         className={`${dimension} object-contain transition-transform duration-300 ${
-          accessory === 'floating' ? 'animate-bounce' : ''
+          accessory === 'floating' ? 'animate-float' : ''
         }`}
-        style={{ animationDuration: '3s' }}
       />
     </div>
   )

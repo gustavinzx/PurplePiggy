@@ -36,6 +36,13 @@ export const WelcomePage: React.FC = () => {
 
   const current = slides[slide]
 
+  React.useEffect(() => {
+    const timer = setInterval(() => {
+      setSlide((prev) => (prev + 1) % slides.length)
+    }, 4500)
+    return () => clearInterval(timer)
+  }, [slides.length])
+
   const handleDemoLogin = async () => {
     setIsDemoLoading(true)
     const { error } = await signInDemo()
