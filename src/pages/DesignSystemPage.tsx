@@ -1,5 +1,6 @@
 import React, { useState } from 'react'
 import { Link } from 'react-router-dom'
+import { Sparkles } from 'lucide-react'
 import { Button } from '../components/Button'
 import { Input } from '../components/Input'
 import { Select } from '../components/Select'
@@ -66,6 +67,13 @@ export const DesignSystemPage: React.FC = () => {
             className="text-xs font-bold text-primary bg-primary/10 hover:bg-primary/20 px-3 py-1.5 rounded-full inline-flex items-center gap-1.5 transition-colors"
           >
             <span>🐷 Mascotes Oficiais (Prompt 07)</span>
+          </Link>
+          <Link
+            to="/design-system/learn"
+            className="text-xs font-bold text-white bg-gradient-to-r from-[#7D2BD6] to-[#8E2DE2] hover:brightness-105 px-3 py-1.5 rounded-full inline-flex items-center gap-1.5 shadow-sm transition-all"
+          >
+            <Sparkles className="w-3.5 h-3.5" />
+            Desafio Piggy (Chunky)
           </Link>
         </div>
       </header>

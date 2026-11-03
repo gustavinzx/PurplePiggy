@@ -23,6 +23,7 @@ import { OpenFinancePage } from './pages/OpenFinancePage'
 import { DesignSystemPage } from './pages/DesignSystemPage'
 import { DesignSystemMascotPage } from './pages/DesignSystemMascotPage'
 import { DesignSystemAtmospherePage } from './pages/DesignSystemAtmospherePage'
+import { DesignSystemLearnPage } from './pages/DesignSystemLearnPage'
 
 export const App: React.FC = () => {
   return (
@@ -52,6 +53,14 @@ export const App: React.FC = () => {
             element={
               <AuthGate mode="neutral">
                 <DesignSystemAtmospherePage />
+              </AuthGate>
+            }
+          />
+          <Route
+            path="/design-system/learn"
+            element={
+              <AuthGate mode="neutral">
+                <DesignSystemLearnPage />
               </AuthGate>
             }
           />
