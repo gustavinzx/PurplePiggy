@@ -475,6 +475,171 @@ export type Database = {
           },
         ]
       }
+      learn_user_stats: {
+        Row: {
+          active_track_slug: string
+          created_at: string
+          hearts: number
+          last_activity_date: string | null
+          longest_streak: number
+          piggy_coins: number
+          streak_count: number
+          streak_shields: number
+          updated_at: string
+          user_id: string
+          xp_points: number
+        }
+        Insert: {
+          active_track_slug?: string
+          created_at?: string
+          hearts?: number
+          last_activity_date?: string | null
+          longest_streak?: number
+          piggy_coins?: number
+          streak_count?: number
+          streak_shields?: number
+          updated_at?: string
+          user_id: string
+          xp_points?: number
+        }
+        Update: {
+          active_track_slug?: string
+          created_at?: string
+          hearts?: number
+          last_activity_date?: string | null
+          longest_streak?: number
+          piggy_coins?: number
+          streak_count?: number
+          streak_shields?: number
+          updated_at?: string
+          user_id?: string
+          xp_points?: number
+        }
+        Relationships: []
+      }
+      learn_chest_claims: {
+        Row: {
+          chest_index: number
+          claimed_at: string
+          id: string
+          track_slug: string
+          user_id: string
+        }
+        Insert: {
+          chest_index: number
+          claimed_at?: string
+          id?: string
+          track_slug: string
+          user_id: string
+        }
+        Update: {
+          chest_index?: number
+          claimed_at?: string
+          id?: string
+          track_slug?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
+      learn_daily_challenges: {
+        Row: {
+          challenge_date: string
+          created_at: string
+          id: string
+          question_id: string
+          reward_coins: number
+          reward_xp: number
+          title: string
+        }
+        Insert: {
+          challenge_date: string
+          created_at?: string
+          id?: string
+          question_id: string
+          reward_coins?: number
+          reward_xp?: number
+          title: string
+        }
+        Update: {
+          challenge_date?: string
+          created_at?: string
+          id?: string
+          question_id?: string
+          reward_coins?: number
+          reward_xp?: number
+          title?: string
+        }
+        Relationships: []
+      }
+      learn_daily_completions: {
+        Row: {
+          challenge_date: string
+          completed_at: string
+          id: string
+          user_id: string
+        }
+        Insert: {
+          challenge_date: string
+          completed_at?: string
+          id?: string
+          user_id: string
+        }
+        Update: {
+          challenge_date?: string
+          completed_at?: string
+          id?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
+      learn_questions: {
+        Row: {
+          context_text: string | null
+          correct_answer: Json
+          created_at: string
+          explanation: string
+          id: string
+          lesson_slug: string
+          lote_number: number
+          options: Json
+          order_index: number
+          prompt: string
+          tip: string | null
+          track_slug: string
+          typology: string
+        }
+        Insert: {
+          context_text?: string | null
+          correct_answer: Json
+          created_at?: string
+          explanation: string
+          id?: string
+          lesson_slug: string
+          lote_number: number
+          options: Json
+          order_index?: number
+          prompt: string
+          tip?: string | null
+          track_slug: string
+          typology: string
+        }
+        Update: {
+          context_text?: string | null
+          correct_answer?: Json
+          created_at?: string
+          explanation?: string
+          id?: string
+          lesson_slug?: string
+          lote_number?: number
+          options?: Json
+          order_index?: number
+          prompt?: string
+          tip?: string | null
+          track_slug?: string
+          typology?: string
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
@@ -482,6 +647,11 @@ export type Database = {
     Functions: {
       reset_demo_data: { Args: Record<string, never>; Returns: void }
       seed_demo_data: { Args: Record<string, never>; Returns: void }
+      get_learn_user_stats: { Args: Record<string, never>; Returns: Json }
+      complete_learn_lesson: { Args: { p_lesson_slug: string }; Returns: Json }
+      claim_learn_chest: { Args: { p_track_slug: string; p_chest_index: number }; Returns: Json }
+      complete_daily_learn_challenge: { Args: { p_challenge_date?: string }; Returns: Json }
+      buy_streak_shield: { Args: Record<string, never>; Returns: Json }
     }
   }
 }
