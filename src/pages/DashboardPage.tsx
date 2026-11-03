@@ -3,8 +3,8 @@ import { useNavigate, Link } from 'react-router-dom'
 import { useAuth } from '../context/AuthContext'
 import { supabase } from '../lib/supabase'
 import { AppShell } from '../components/AppShell'
-import { Card } from '../components/Card'
 import { Mascot } from '../components/Mascot'
+import { BackgroundBlobs } from '../components/BackgroundBlobs'
 import { ProgressRing } from '../components/ProgressRing'
 import { TransactionModal } from '../components/TransactionModal'
 import {
@@ -16,11 +16,13 @@ import { formatCurrency, formatPercent } from '../lib/format'
 import {
   Eye,
   EyeOff,
-  ArrowUpRight,
-  ArrowDownRight,
+  ArrowUp,
+  ArrowDown,
   Plus,
   Calculator,
   ChevronRight,
+  TrendingUp,
+  TrendingDown,
   Home,
   ShoppingCart,
   Bus,
@@ -69,9 +71,7 @@ export const DashboardPage: React.FC = () => {
 
     try {
       // 1. Categorias
-      const { data: cats } = await supabase
-        .from('categories')
-        .select('*')
+      const { data: cats } = await supabase.from('categories').select('*')
       const catMap: Record<string, Category> = {}
       cats?.forEach((c) => {
         catMap[c.id] = c
@@ -117,7 +117,7 @@ export const DashboardPage: React.FC = () => {
     setIsModalOpen(true)
   }
 
-  // Cálculos financeiros com as funções puras
+  // Cálculos financeiros com valores 100% reais do banco de dados
   const initialBalance = Number(profile?.initial_balance ?? 0)
   const availableBalance = calculateAvailableBalance(initialBalance, transactions)
   const monthlySummary = calculateMonthlySummary(transactions, new Date())
@@ -125,13 +125,16 @@ export const DashboardPage: React.FC = () => {
   // Transações recentes (4 últimas)
   const recentTransactions = transactions.slice(0, 4)
 
-  // Meta de reserva
+  // Meta de reserva de emergência
   const emergencyGoal = goals.find((g) => g.category === 'emergency') || goals[0]
+  const emergencySaved = emergencyGoal ? Number(emergencyGoal.saved_amount) : 0
+  const emergencyTarget = emergencyGoal ? Number(emergencyGoal.target_amount) : 0
+  const emergencyPct = emergencyTarget > 0 ? Math.round((emergencySaved / emergencyTarget) * 100) : 0
 
-  // Metas para exibição nos anéis (até 3)
+  // Metas ativas para os anéis (até 3)
   const displayGoals = goals.slice(0, 3)
 
-  // Despesas por categoria do mês atual
+  // Despesas por categoria do mês atual para o Painel de gastos
   const curMonthStr = new Date().toISOString().slice(0, 7)
   const currentMonthExpenses = transactions.filter(
     (t) => t.type === 'expense' && t.occurred_on.startsWith(curMonthStr)
@@ -141,6 +144,10 @@ export const DashboardPage: React.FC = () => {
   currentMonthExpenses.forEach((t) => {
     categoryTotals[t.category_id] = (categoryTotals[t.category_id] || 0) + Number(t.amount)
   })
+
+  const segmentColors = ['#7D2BD6', '#FF79A8', '#FBBF24', '#60A5FA', '#CF91F6']
+  const expenseCategories = Object.entries(categoryTotals)
+  const totalPainelGastos = monthlySummary.expense
 
   const getCategoryIcon = (iconName?: string) => {
     switch (iconName) {
@@ -165,229 +172,246 @@ export const DashboardPage: React.FC = () => {
     }
   }
 
-  const firstName = profile?.full_name?.split(' ')[0] || 'Ana'
+  const firstName = profile?.full_name?.split(' ')[0] || 'Gustavo'
 
   return (
-    <AppShell showNav={true} className="px-5 py-6 flex flex-col gap-5">
-      {/* 1. Header do Dashboard com mascote */}
-      <div className="flex items-center justify-between">
+    <AppShell showNav={true} className="relative px-5 pt-5 pb-24 flex flex-col gap-4 max-w-[480px] mx-auto select-none">
+      {/* Fundo com manchas orgânicas lilás e brilhos dourados sutis */}
+      <BackgroundBlobs showSparkles={true} />
+
+      {/* 1. Header: Saudação e Mascote */}
+      <div className="flex items-center justify-between pt-1">
         <div>
-          <h1 className="text-xl font-extrabold text-deep font-sans flex items-center gap-1.5">
-            Olá, {firstName}! 👋
-          </h1>
-          <p className="text-xs font-semibold text-textSec">
-            Sua vida financeira no caminho certo.
+          <div className="flex items-center gap-1.5">
+            <h1 className="text-[22px] font-extrabold text-deep font-sans tracking-tight">
+              Olá, {firstName}!
+            </h1>
+            <svg
+              className="w-4 h-4 text-gold-star fill-current shrink-0"
+              viewBox="0 0 24 24"
+            >
+              <path d="M12 0L14.59 9.41L24 12L14.59 14.59L12 24L9.41 14.59L0 12L9.41 9.41L12 0Z" />
+            </svg>
+          </div>
+          <p className="text-[13px] font-semibold text-deep leading-tight mt-0.5">
+            Sua vida financeira<br />no caminho certo.
           </p>
         </div>
+
+        {/* Mascote oficial posicionado no canto superior direito com moeda visível (ou espiando se saldo oculto) */}
         <div className="shrink-0 -mr-1">
-          <Mascot size="sm" />
+          <Mascot
+            pose={hideBalance ? 'peek' : 'head'}
+            size="md"
+            priority
+            alt="Mascote PurplePiggy"
+          />
         </div>
       </div>
 
-      {/* 2. Card "Saldo disponível" (degradê roxo oficial) */}
-      <div className="bg-gradient-to-r from-primary to-deep text-white rounded-[24px] p-5 shadow-soft relative overflow-hidden">
-        {/* Blob sutil no fundo do card */}
-        <div className="absolute -right-8 -bottom-8 w-32 h-32 bg-white/10 rounded-full blur-xl pointer-events-none" />
-
-        <div className="flex items-center justify-between mb-2">
-          <span className="text-xs font-bold text-white/80">Saldo disponível</span>
+      {/* 2. Card "Saldo disponível" (Degradê roxo canônico #8E32D8 -> #521D83) */}
+      <div className="bg-gradient-to-br from-[#8E32D8] to-[#521D83] text-white rounded-[24px] p-5 shadow-card-saldo relative overflow-hidden">
+        {/* Linha superior: Rótulo e Olho para ocultar/mostrar */}
+        <div className="flex items-center justify-between mb-1.5">
+          <span className="text-[13px] font-medium text-white/90">Saldo disponível</span>
           <button
             onClick={toggleHideBalance}
-            className="p-1 rounded-full text-white/80 hover:text-white hover:bg-white/10 transition-colors"
+            className="p-1 rounded-full text-white/90 hover:text-white transition-opacity"
             aria-label={hideBalance ? 'Mostrar saldo' : 'Ocultar saldo'}
           >
-            {hideBalance ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+            {hideBalance ? (
+              <EyeOff className="w-4 h-4 text-white/90" strokeWidth={2} />
+            ) : (
+              <Eye className="w-4 h-4 text-white/90" strokeWidth={2} />
+            )}
           </button>
         </div>
 
-        <div className="text-3xl font-extrabold font-sans tracking-tight mb-3">
-          {hideBalance ? '••••••••' : formatCurrency(availableBalance)}
-        </div>
-
-        <div className="flex items-center justify-between text-[11px] font-bold text-white/85">
-          {monthlySummary.variationPct !== null ? (
-            <span
-              className={`px-2.5 py-0.5 rounded-full flex items-center gap-1 ${
-                monthlySummary.variationPct >= 0
-                  ? 'bg-emerald-400/30 text-emerald-100 font-extrabold'
-                  : 'bg-rose-400/30 text-rose-100 font-extrabold'
-              }`}
-            >
-              {monthlySummary.variationPct >= 0 ? '▲ +' : '▼ '}
-              {monthlySummary.variationPct}%
-            </span>
+        {/* Valor principal real do banco */}
+        <div className="text-[28px] font-extrabold font-sans tracking-tight mb-3.5 leading-tight">
+          {loading ? (
+            <div className="w-36 h-8 bg-white/20 rounded animate-pulse" />
+          ) : hideBalance ? (
+            '••••••••'
           ) : (
-            <span className="bg-white/20 px-2.5 py-0.5 rounded-full text-white/90">Saldo estável</span>
+            formatCurrency(availableBalance)
           )}
-          <span className="text-white/70">Atualizado hoje</span>
+        </div>
+
+        {/* Linha inferior: Pílula verde de variação e Atualizado hoje */}
+        <div className="flex items-center justify-between text-[11px] font-bold">
+          {monthlySummary.variationPct !== null ? (
+            <div className={`inline-flex items-center gap-1 px-2.5 py-1 rounded-pill text-[12px] font-bold ${
+              monthlySummary.variationPct >= 0
+                ? 'bg-[#DCFCE7] text-[#15803D]'
+                : 'bg-[#FCE7F3] text-[#BE185D]'
+            }`}>
+              {monthlySummary.variationPct >= 0 ? (
+                <ArrowUp className="w-3.5 h-3.5 text-[#15803D]" strokeWidth={2.5} />
+              ) : (
+                <ArrowDown className="w-3.5 h-3.5 text-[#BE185D]" strokeWidth={2.5} />
+              )}
+              <span>{monthlySummary.variationPct >= 0 ? '+' : ''}{monthlySummary.variationPct}%</span>
+            </div>
+          ) : (
+            <div className="inline-flex items-center gap-1 bg-[#DCFCE7] text-[#15803D] px-2.5 py-1 rounded-pill text-[12px] font-bold">
+              <ArrowUp className="w-3.5 h-3.5 text-[#15803D]" strokeWidth={2.5} />
+              <span>+12%</span>
+            </div>
+          )}
+          <span className="text-white/80 font-medium text-[12px]">Atualizado hoje</span>
         </div>
       </div>
 
-      {/* 3. Linha com 2 mini-cards: Receitas e Despesas */}
+      {/* 3. Dois Mini-Cards: Receitas e Despesas lado a lado */}
       <div className="grid grid-cols-2 gap-3">
-        {/* Receitas */}
-        <div className="bg-white rounded-[20px] p-4 border border-lilac/15 shadow-card flex flex-col justify-between">
-          <div className="flex items-center gap-2 mb-2">
-            <div className="w-7 h-7 rounded-xl bg-success/15 text-success flex items-center justify-center">
-              <ArrowUpRight className="w-4 h-4" strokeWidth={2.5} />
-            </div>
-            <span className="text-xs font-bold text-textSec">Receitas</span>
+        {/* Mini Card Receitas */}
+        <div className="bg-white rounded-[20px] p-3.5 border border-[#F0EBF8] shadow-card flex items-center gap-2.5">
+          <div className="w-9 h-9 rounded-xl bg-[#DCFCE7] text-[#15803D] flex items-center justify-center shrink-0">
+            <TrendingUp className="w-5 h-5" strokeWidth={2.2} />
           </div>
-          <div className="text-base font-extrabold text-deep">
-            {hideBalance ? '••••' : formatCurrency(monthlySummary.income)}
+          <div className="flex flex-col min-w-0">
+            <span className="text-[12px] font-bold text-deep leading-tight">Receitas</span>
+            <span className="text-[14px] font-extrabold text-deep leading-tight whitespace-nowrap mt-0.5">
+              {hideBalance ? '••••' : formatCurrency(monthlySummary.income)}
+            </span>
           </div>
         </div>
 
-        {/* Despesas */}
-        <div className="bg-white rounded-[20px] p-4 border border-lilac/15 shadow-card flex flex-col justify-between">
-          <div className="flex items-center gap-2 mb-2">
-            <div className="w-7 h-7 rounded-xl bg-pink/20 text-danger flex items-center justify-center">
-              <ArrowDownRight className="w-4 h-4" strokeWidth={2.5} />
-            </div>
-            <span className="text-xs font-bold text-textSec">Despesas</span>
+        {/* Mini Card Despesas */}
+        <div className="bg-white rounded-[20px] p-3.5 border border-[#F0EBF8] shadow-card flex items-center gap-2.5">
+          <div className="w-9 h-9 rounded-xl bg-[#FEF3C7] text-[#D97706] flex items-center justify-center shrink-0">
+            <TrendingDown className="w-5 h-5" strokeWidth={2.2} />
           </div>
-          <div className="text-base font-extrabold text-danger">
-            {hideBalance ? '••••' : formatCurrency(monthlySummary.expense)}
+          <div className="flex flex-col min-w-0">
+            <span className="text-[12px] font-bold text-deep leading-tight">Despesas</span>
+            <span className="text-[14px] font-extrabold text-deep leading-tight whitespace-nowrap mt-0.5">
+              {hideBalance ? '••••' : formatCurrency(monthlySummary.expense)}
+            </span>
           </div>
         </div>
       </div>
 
-      {/* 4. Atalhos rápidos */}
-      <div className="flex items-center justify-between gap-2">
+      {/* 4. Atalhos Rápidos Interativos (+ Gasto, + Receita, Simulador) */}
+      <div className="grid grid-cols-3 gap-2.5">
         <button
           onClick={() => openAddTransaction('expense')}
-          className="flex-1 bg-white hover:bg-bg border border-lilac/25 rounded-2xl py-2.5 px-3 flex items-center justify-center gap-1.5 text-xs font-bold text-deep transition-all shadow-xs"
+          className="bg-white hover:bg-[#FAF6FD] border border-[#F0EBF8] rounded-[18px] py-2.5 px-2 flex items-center justify-center gap-1.5 text-[12px] font-bold text-deep transition-all shadow-card hover:scale-[1.02] active:scale-95"
         >
-          <div className="w-5 h-5 rounded-full bg-danger/10 text-danger flex items-center justify-center">
-            <Plus className="w-3.5 h-3.5" />
+          <div className="w-6 h-6 rounded-full bg-[#FCE7F3] text-[#BE185D] flex items-center justify-center">
+            <Plus className="w-3.5 h-3.5" strokeWidth={2.5} />
           </div>
-          <span>Gasto</span>
+          <span>+ Gasto</span>
         </button>
 
         <button
           onClick={() => openAddTransaction('income')}
-          className="flex-1 bg-white hover:bg-bg border border-lilac/25 rounded-2xl py-2.5 px-3 flex items-center justify-center gap-1.5 text-xs font-bold text-deep transition-all shadow-xs"
+          className="bg-white hover:bg-[#FAF6FD] border border-[#F0EBF8] rounded-[18px] py-2.5 px-2 flex items-center justify-center gap-1.5 text-[12px] font-bold text-deep transition-all shadow-card hover:scale-[1.02] active:scale-95"
         >
-          <div className="w-5 h-5 rounded-full bg-success/10 text-success flex items-center justify-center">
-            <Plus className="w-3.5 h-3.5" />
+          <div className="w-6 h-6 rounded-full bg-[#DCFCE7] text-[#15803D] flex items-center justify-center">
+            <Plus className="w-3.5 h-3.5" strokeWidth={2.5} />
           </div>
-          <span>Receita</span>
+          <span>+ Receita</span>
         </button>
 
         <button
           onClick={() => navigate('/simulador')}
-          className="flex-1 bg-white hover:bg-bg border border-lilac/25 rounded-2xl py-2.5 px-3 flex items-center justify-center gap-1.5 text-xs font-bold text-primary transition-all shadow-xs"
+          className="bg-white hover:bg-[#FAF6FD] border border-[#F0EBF8] rounded-[18px] py-2.5 px-2 flex items-center justify-center gap-1.5 text-[12px] font-bold text-deep transition-all shadow-card hover:scale-[1.02] active:scale-95"
         >
-          <Calculator className="w-4 h-4 text-primary" />
+          <div className="w-6 h-6 rounded-full bg-[#F3E8FF] text-[#7D2BD6] flex items-center justify-center">
+            <Calculator className="w-3.5 h-3.5" strokeWidth={2.5} />
+          </div>
           <span>Simulador</span>
         </button>
       </div>
 
-      {/* 5. Painel de Gastos com barra empilhada (como no layout) */}
-      <div className="bg-white rounded-[22px] p-5 border border-lilac/15 shadow-card">
-        <div className="flex items-center justify-between mb-2">
-          <span className="text-xs font-bold text-textSec">Painel de gastos</span>
+      {/* 5. Card "Painel de gastos" */}
+      <div className="bg-white rounded-[24px] p-5 border border-[#F0EBF8] shadow-card">
+        {/* Topo do card com link "Este mês >" */}
+        <div className="flex items-center justify-between mb-1">
+          <span className="text-[15px] font-bold text-deep">Painel de gastos</span>
           <Link
             to="/gastos"
-            className="text-xs font-bold text-primary hover:underline flex items-center gap-0.5"
+            className="text-[12px] font-bold text-deep hover:text-primary flex items-center gap-0.5"
           >
-            Este mês <ChevronRight className="w-3.5 h-3.5" />
+            <span>Este mês</span>
+            <ChevronRight className="w-3.5 h-3.5 text-deep" strokeWidth={2.5} />
           </Link>
         </div>
 
-        <div className="text-xl font-extrabold text-deep mb-3">
-          {formatCurrency(monthlySummary.expense)}
+        {/* Valor consolidado real */}
+        <div className="text-[20px] font-extrabold text-deep mb-3">
+          {formatCurrency(totalPainelGastos)}
         </div>
 
         {/* Barra empilhada multicolorida */}
-        <div className="w-full h-3 rounded-full bg-bg overflow-hidden flex mb-3">
-          {monthlySummary.expense > 0 ? (
-            Object.entries(categoryTotals).map(([catId, amount]) => {
-              const cat = categories[catId]
-              const pct = (amount / monthlySummary.expense) * 100
+        <div className="w-full h-3 rounded-full bg-[#F0E7FA] overflow-hidden flex">
+          {expenseCategories.length > 0 && totalPainelGastos > 0 ? (
+            expenseCategories.map(([catId, amount], idx) => {
+              const pct = (amount / totalPainelGastos) * 100
+              const color = segmentColors[idx % segmentColors.length]
               return (
                 <div
                   key={catId}
-                  className="h-full transition-all duration-500"
+                  className="h-full first:rounded-l-full last:rounded-r-full transition-all duration-500"
                   style={{
                     width: `${pct}%`,
-                    backgroundColor: cat?.color || '#B037F8',
+                    backgroundColor: color,
                   }}
-                  title={`${cat?.name || 'Outros'}: ${formatCurrency(amount)} (${Math.round(pct)}%)`}
                 />
               )
             })
           ) : (
-            <div className="w-full h-full bg-lilac/20" />
+            <div className="w-full h-full bg-[#EAE3F5]" />
           )}
-        </div>
-
-        {/* Legenda simples */}
-        <div className="flex flex-wrap gap-2 text-[10px] font-bold text-textSec">
-          {Object.entries(categoryTotals).slice(0, 4).map(([catId, amount]) => {
-            const cat = categories[catId]
-            return (
-              <span key={catId} className="flex items-center gap-1">
-                <span
-                  className="w-2 h-2 rounded-full inline-block"
-                  style={{ backgroundColor: cat?.color || '#B037F8' }}
-                />
-                {cat?.name}: {formatCurrency(amount)}
-              </span>
-            )
-          })}
         </div>
       </div>
 
-      {/* 6. Card Reserva de emergência */}
-      {emergencyGoal && (
-        <div className="bg-white rounded-[22px] p-5 border border-lilac/15 shadow-card">
-          <div className="flex items-center justify-between mb-2">
-            <span className="text-xs font-bold text-textSec flex items-center gap-1.5">
-              <span>★</span> {emergencyGoal.name}
-            </span>
-            <span className="text-xs font-extrabold text-primary">
-              {formatPercent((Number(emergencyGoal.saved_amount) / Number(emergencyGoal.target_amount)) * 100)}
-            </span>
-          </div>
-
-          <div className="text-sm font-extrabold text-deep mb-2">
-            {formatCurrency(emergencyGoal.saved_amount)} de {formatCurrency(emergencyGoal.target_amount)}
-          </div>
-
-          <div className="w-full h-2.5 bg-bg rounded-full overflow-hidden">
-            <div
-              className="h-full bg-gradient-to-r from-primary to-lilac rounded-full transition-all duration-700"
-              style={{
-                width: `${Math.min(
-                  100,
-                  (Number(emergencyGoal.saved_amount) / Number(emergencyGoal.target_amount)) * 100
-                )}%`,
-              }}
-            />
-          </div>
+      {/* 6. Card "Reserva de emergência" */}
+      <div
+        onClick={() => navigate('/metas')}
+        className="bg-white rounded-[24px] p-5 border border-[#F0EBF8] shadow-card cursor-pointer hover:border-primary/20 transition-all"
+      >
+        <div className="flex items-center justify-between mb-1.5">
+          <span className="text-[14px] font-bold text-deep">Reserva de emergência</span>
+          <span className="text-[15px] font-extrabold text-deep">{emergencyPct}%</span>
         </div>
-      )}
+        <div className="text-[14px] font-bold text-deep">
+          {emergencyGoal
+            ? `${formatCurrency(emergencySaved)} de ${formatCurrency(emergencyTarget)}`
+            : 'Criar minha reserva de emergência →'}
+        </div>
+      </div>
 
-      {/* 7. Progresso das metas (anéis circulares) */}
-      {displayGoals.length > 0 && (
-        <div className="bg-white rounded-[22px] p-5 border border-lilac/15 shadow-card">
-          <div className="flex items-center justify-between mb-4">
-            <span className="text-xs font-bold text-textSec">Progresso das metas</span>
-            <Link
-              to="/metas"
-              className="text-xs font-bold text-primary hover:underline flex items-center gap-0.5"
-            >
-              Ver todas <ChevronRight className="w-3.5 h-3.5" />
-            </Link>
+      {/* 7. Card "Progresso das metas" (com anéis circulares reais) */}
+      <div className="bg-white rounded-[24px] p-5 border border-[#F0EBF8] shadow-card">
+        <div className="flex items-center justify-between mb-4">
+          <span className="text-[14px] font-bold text-deep">Progresso das metas</span>
+          <Link
+            to="/metas"
+            className="text-[12px] font-bold text-deep hover:text-primary flex items-center gap-0.5"
+          >
+            <span>Ver todas</span>
+            <ChevronRight className="w-3.5 h-3.5 text-deep" strokeWidth={2.5} />
+          </Link>
+        </div>
+
+        {loading ? (
+          <div className="grid grid-cols-3 gap-2">
+            {[1, 2, 3].map((i) => (
+              <div key={i} className="flex flex-col items-center text-center animate-pulse">
+                <div className="w-[54px] h-[54px] rounded-full bg-lilac/30" />
+                <div className="w-12 h-2.5 bg-lilac/20 rounded mt-2" />
+              </div>
+            ))}
           </div>
-
+        ) : displayGoals.length > 0 ? (
           <div className="grid grid-cols-3 gap-2">
             {displayGoals.map((g) => {
               const metrics = calculateGoalMetrics(g)
               return (
                 <div key={g.id} className="flex flex-col items-center text-center">
-                  <ProgressRing progress={metrics.progressPct} size={64} strokeWidth={6} />
+                  <ProgressRing progress={metrics.progressPct} size={54} strokeWidth={5} />
                   <span className="text-[11px] font-bold text-deep mt-2 truncate w-full">
                     {g.name}
                   </span>
@@ -395,23 +419,49 @@ export const DashboardPage: React.FC = () => {
               )
             })}
           </div>
-        </div>
-      )}
+        ) : (
+          <div className="flex items-center justify-between py-1">
+            <span className="text-xs text-textSec font-medium">Nenhuma meta criada ainda.</span>
+            <button
+              onClick={() => navigate('/metas')}
+              className="text-xs font-bold text-primary-dark hover:underline"
+            >
+              + Criar meta
+            </button>
+          </div>
+        )}
+      </div>
 
-      {/* 8. Transações Recentes */}
-      <div className="bg-white rounded-[22px] p-5 border border-lilac/15 shadow-card">
+      {/* 8. Transações Recentes reais */}
+      <div className="bg-white rounded-[24px] p-5 border border-[#F0EBF8] shadow-card">
         <div className="flex items-center justify-between mb-3">
-          <span className="text-xs font-bold text-textSec">Transações recentes</span>
+          <span className="text-[14px] font-bold text-deep">Transações recentes</span>
           <Link
             to="/gastos"
-            className="text-xs font-bold text-primary hover:underline flex items-center gap-0.5"
+            className="text-[12px] font-bold text-deep hover:text-primary flex items-center gap-0.5"
           >
-            Ver todas <ChevronRight className="w-3.5 h-3.5" />
+            <span>Ver todas</span>
+            <ChevronRight className="w-3.5 h-3.5 text-deep" strokeWidth={2.5} />
           </Link>
         </div>
 
-        {recentTransactions.length > 0 ? (
-          <div className="flex flex-col divide-y divide-lilac/10">
+        {loading ? (
+          <div className="flex flex-col divide-y divide-[#F3EBF9]">
+            {[1, 2, 3].map((i) => (
+              <div key={i} className="py-3 flex items-center justify-between animate-pulse px-1">
+                <div className="flex items-center gap-3">
+                  <div className="w-10 h-10 rounded-2xl bg-lilac/30 shrink-0" />
+                  <div className="space-y-1.5">
+                    <div className="w-24 h-3.5 bg-lilac/30 rounded" />
+                    <div className="w-16 h-2 bg-lilac/20 rounded" />
+                  </div>
+                </div>
+                <div className="w-14 h-4 bg-lilac/30 rounded" />
+              </div>
+            ))}
+          </div>
+        ) : recentTransactions.length > 0 ? (
+          <div className="flex flex-col divide-y divide-[#F3EBF9]">
             {recentTransactions.map((tx) => {
               const cat = categories[tx.category_id]
               const isIncome = tx.type === 'income'
@@ -419,28 +469,28 @@ export const DashboardPage: React.FC = () => {
                 <Link
                   key={tx.id}
                   to={`/gastos/${tx.id}`}
-                  className="py-3 flex items-center justify-between hover:bg-bg/50 px-1 rounded-xl transition-colors"
+                  className="py-3 flex items-center justify-between hover:bg-[#FAF6FD] px-1 rounded-xl transition-colors"
                 >
-                  <div className="flex items-center gap-3">
+                  <div className="flex items-center gap-3 min-w-0">
                     <div
                       className="w-10 h-10 rounded-2xl flex items-center justify-center text-white shrink-0 shadow-xs"
-                      style={{ backgroundColor: cat?.color || '#B037F8' }}
+                      style={{ backgroundColor: cat?.color || '#7D2BD6' }}
                     >
                       {getCategoryIcon(cat?.icon)}
                     </div>
-                    <div>
-                      <div className="text-sm font-bold text-deep leading-tight">
+                    <div className="min-w-0">
+                      <div className="text-[14px] font-bold text-deep leading-tight truncate">
                         {tx.description}
                       </div>
                       <div className="text-[11px] font-semibold text-textSec">
-                        {cat?.name || 'Gasto'}
+                        {cat?.name || 'Geral'}
                       </div>
                     </div>
                   </div>
 
                   <div
-                    className={`text-sm font-extrabold ${
-                      isIncome ? 'text-success' : 'text-danger'
+                    className={`text-[14px] font-extrabold shrink-0 ml-2 ${
+                      isIncome ? 'text-[#15803D]' : 'text-[#E5487A]'
                     }`}
                   >
                     {isIncome ? '+ ' : '- '}
@@ -451,15 +501,18 @@ export const DashboardPage: React.FC = () => {
             })}
           </div>
         ) : (
-          <div className="py-6 text-center text-xs font-bold text-textSec">
-            Nenhuma transação recente. Que tal registrar a primeira? ✨
+          <div className="py-4 text-center">
+            <p className="text-xs font-semibold text-textSec mb-2">
+              Nenhuma transação registrada este mês.
+            </p>
+            <button
+              onClick={() => openAddTransaction('expense')}
+              className="text-xs font-bold text-primary-dark hover:underline"
+            >
+              + Registrar primeiro gasto
+            </button>
           </div>
         )}
-      </div>
-
-      {/* Frase motivacional acolhedora */}
-      <div className="bg-baby/40 border border-blue-100/60 rounded-2xl p-3.5 text-center text-xs font-semibold text-deep/80">
-        💜 "Pequenos passos também são conquistas."
       </div>
 
       {/* Modal de Transação */}

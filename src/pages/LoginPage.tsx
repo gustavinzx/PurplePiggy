@@ -70,7 +70,7 @@ export const LoginPage: React.FC = () => {
             <ArrowLeft className="w-6 h-6" />
           </button>
           <div className="-mr-2 -mt-2">
-            <Mascot size="sm" />
+            <Mascot size="sm" pose="welcome" />
           </div>
         </div>
 

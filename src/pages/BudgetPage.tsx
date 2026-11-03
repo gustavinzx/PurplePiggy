@@ -3,6 +3,7 @@ import { supabase } from '../lib/supabase'
 import { useAuth } from '../context/AuthContext'
 import { AppShell } from '../components/AppShell'
 import { Button } from '../components/Button'
+import { Mascot } from '../components/Mascot'
 import { getBudgetAlertStatus, suggestCategoryLimits } from '../lib/finance'
 import { formatCurrency, formatPercent } from '../lib/format'
 import {
@@ -306,7 +307,26 @@ export const BudgetPage: React.FC = () => {
         </div>
 
         <div className="flex flex-col gap-4">
-          {categories.map((cat) => {
+          {loading ? (
+            [1, 2, 3, 4].map((i) => (
+              <div key={i} className="flex flex-col gap-2 animate-pulse">
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center gap-2.5">
+                    <div className="w-7 h-7 rounded-xl bg-lilac/30 shrink-0" />
+                    <div className="space-y-1">
+                      <div className="w-20 h-3 bg-lilac/30 rounded" />
+                      <div className="w-28 h-2 bg-lilac/20 rounded" />
+                    </div>
+                  </div>
+                  <div className="w-8 h-3 bg-lilac/30 rounded" />
+                </div>
+                <div className="w-full h-2 bg-bg rounded-full overflow-hidden">
+                  <div className="w-1/3 h-full bg-lilac/20 rounded-full" />
+                </div>
+              </div>
+            ))
+          ) : (
+            categories.map((cat) => {
             const spent = spentByCategory[cat.id] || 0
             const limit = budgets[cat.id] || 0
             const alert = getBudgetAlertStatus(spent, limit)
@@ -361,7 +381,8 @@ export const BudgetPage: React.FC = () => {
                 </div>
               </div>
             )
-          })}
+          })
+          )}
         </div>
       </div>
 
@@ -446,8 +467,9 @@ export const BudgetPage: React.FC = () => {
       {/* Modal: Sugestão Inteligente (Regra 8.4) */}
       {isSuggestModalOpen && (
         <div className="fixed inset-0 z-50 bg-deep/60 backdrop-blur-xs flex items-center justify-center p-4 animate-fadeIn">
-          <div className="bg-white rounded-[26px] p-6 w-full max-w-sm shadow-2xl flex flex-col border border-lilac/20">
-            <div className="flex items-center gap-2 mb-3">
+          <div className="bg-white rounded-[26px] p-6 w-full max-w-sm shadow-2xl flex flex-col border border-lilac/20 text-center">
+            <Mascot size="md" pose="idea" floating={true} className="mx-auto mb-2" />
+            <div className="flex items-center justify-center gap-2 mb-2">
               <Sparkles className="w-5 h-5 text-gold" />
               <h3 className="text-base font-extrabold text-deep font-sans">
                 Sugestão baseada nos seus dados

@@ -175,7 +175,7 @@ export const LearnPage: React.FC = () => {
           </p>
         </div>
         <div className="shrink-0 -mr-1">
-          <Mascot size="sm" accessory="graduate" />
+          <Mascot size="sm" pose="graduate" />
         </div>
       </div>
 
@@ -342,13 +342,14 @@ export const LearnPage: React.FC = () => {
               </Button>
             ) : (
               <div
-                className={`p-3.5 rounded-2xl text-xs font-semibold flex flex-col gap-2 ${
+                className={`p-3.5 rounded-2xl text-xs font-semibold flex flex-col gap-2.5 items-center text-center ${
                   dailyCorrect
                     ? 'bg-success/15 text-emerald-900 border border-success/30'
                     : 'bg-gold/25 text-amber-950 border border-gold/50'
                 }`}
               >
-                <div className="font-extrabold flex items-center gap-1.5">
+                <Mascot size="md" pose={dailyCorrect ? 'medal' : 'retry'} floating={true} />
+                <div className="font-extrabold flex items-center justify-center gap-1.5">
                   {dailyCorrect ? (
                     <>
                       <CheckCircle2 className="w-4 h-4 text-success" />

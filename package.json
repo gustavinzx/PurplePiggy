@@ -5,9 +5,10 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
-    "build": "tsc && vite build",
+    "build": "node scripts/verify_mascots.cjs && tsc && vite build",
     "preview": "vite preview",
-    "test": "vitest run"
+    "test": "vitest run",
+    "test:mascots": "node scripts/verify_mascots.cjs"
   },
   "dependencies": {
     "@fontsource/nunito": "^5.2.5",

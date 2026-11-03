@@ -47,15 +47,23 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   }
 
   useEffect(() => {
-    // 1. Obter sessão inicial
-    supabase.auth.getSession().then(({ data: { session } }) => {
-      setSession(session)
-      setUser(session?.user ?? null)
-      if (session?.user) {
-        fetchProfile(session.user.id)
+    // 1. Obter sessão e perfil inicial atomicamente
+    const initAuth = async () => {
+      try {
+        const { data: { session } } = await supabase.auth.getSession()
+        setSession(session)
+        setUser(session?.user ?? null)
+        if (session?.user) {
+          await fetchProfile(session.user.id)
+        }
+      } catch (err) {
+        console.error('Erro na inicialização de autenticação:', err)
+      } finally {
+        setIsLoading(false)
       }
-      setIsLoading(false)
-    })
+    }
+
+    initAuth()
 
     // 2. Ouvir mudanças de auth
     const { data: { subscription } } = supabase.auth.onAuthStateChange(

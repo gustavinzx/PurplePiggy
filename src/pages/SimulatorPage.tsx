@@ -4,6 +4,7 @@ import { supabase } from '../lib/supabase'
 import { useAuth } from '../context/AuthContext'
 import { AppShell } from '../components/AppShell'
 import { Button } from '../components/Button'
+import { Mascot } from '../components/Mascot'
 import { TransactionModal } from '../components/TransactionModal'
 import {
   simulatePurchase,
@@ -117,14 +118,19 @@ export const SimulatorPage: React.FC = () => {
 
   return (
     <AppShell showNav={true} className="px-5 py-6 flex flex-col gap-4">
-      {/* Título da tela */}
-      <div>
-        <h1 className="text-xl font-extrabold text-deep font-sans mb-1">
-          Simulador de compras
-        </h1>
-        <p className="text-xs font-semibold text-textSec leading-relaxed">
-          Antes de comprar, veja como essa escolha pode impactar seu planejamento.
-        </p>
+      {/* Título da tela com mascote ideia */}
+      <div className="flex items-center justify-between">
+        <div>
+          <h1 className="text-xl font-extrabold text-deep font-sans mb-1">
+            Simulador de compras
+          </h1>
+          <p className="text-xs font-semibold text-textSec leading-relaxed">
+            Antes de comprar, veja como essa escolha pode impactar seu planejamento.
+          </p>
+        </div>
+        <div className="shrink-0 -mr-1">
+          <Mascot size="sm" pose="idea" />
+        </div>
       </div>
 
       {/* Card Roxo com Slider (fiel ao layout oficial) */}

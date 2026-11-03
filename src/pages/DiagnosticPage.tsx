@@ -377,7 +377,7 @@ export const DiagnosticPage: React.FC = () => {
         <div className="fixed inset-0 z-50 bg-deep/60 backdrop-blur-sm flex items-end sm:items-center justify-center p-4 animate-fadeIn">
           <div className="bg-white rounded-[26px] p-6 w-full max-w-sm shadow-2xl flex flex-col items-center text-center relative border border-lilac/20">
             <div className="-mt-14 mb-2">
-              <Mascot size="lg" accessory="floating" />
+              <Mascot size="lg" pose="diploma" floating={true} />
             </div>
 
             <h2 className="text-xl font-extrabold text-deep font-sans mb-1">
