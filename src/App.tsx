@@ -2,7 +2,7 @@ import React from 'react'
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom'
 import { Toaster } from 'sonner'
 import { AuthProvider } from './context/AuthContext'
-import { ProtectedRoute, PublicOnlyRoute } from './components/RouteGuards'
+import { AuthGate } from './components/AuthGate'
 
 import { SplashPage } from './pages/SplashPage'
 import { WelcomePage } from './pages/WelcomePage'
@@ -20,6 +20,9 @@ import { LessonPage } from './pages/LessonPage'
 import { SimulatorPage } from './pages/SimulatorPage'
 import { ProfilePage } from './pages/ProfilePage'
 import { OpenFinancePage } from './pages/OpenFinancePage'
+import { DesignSystemPage } from './pages/DesignSystemPage'
+import { DesignSystemMascotPage } from './pages/DesignSystemMascotPage'
+import { DesignSystemAtmospherePage } from './pages/DesignSystemAtmospherePage'
 
 export const App: React.FC = () => {
   return (
@@ -27,121 +30,165 @@ export const App: React.FC = () => {
       <AuthProvider>
         <Toaster position="top-center" richColors />
         <Routes>
+          {/* Páginas do Design System */}
+          <Route
+            path="/design-system"
+            element={
+              <AuthGate mode="neutral">
+                <DesignSystemPage />
+              </AuthGate>
+            }
+          />
+          <Route
+            path="/design-system/mascot"
+            element={
+              <AuthGate mode="neutral">
+                <DesignSystemMascotPage />
+              </AuthGate>
+            }
+          />
+          <Route
+            path="/design-system/atmosphere"
+            element={
+              <AuthGate mode="neutral">
+                <DesignSystemAtmospherePage />
+              </AuthGate>
+            }
+          />
+
+          {/* Rota Raiz (Splash) */}
+          <Route
+            path="/"
+            element={
+              <AuthGate mode="splash">
+                <SplashPage />
+              </AuthGate>
+            }
+          />
+
           {/* Rotas Públicas */}
-          <Route path="/" element={<SplashPage />} />
           <Route
             path="/boas-vindas"
             element={
-              <PublicOnlyRoute>
+              <AuthGate mode="publicOnly">
                 <WelcomePage />
-              </PublicOnlyRoute>
+              </AuthGate>
             }
           />
           <Route
             path="/cadastrar"
             element={
-              <PublicOnlyRoute>
+              <AuthGate mode="publicOnly">
                 <RegisterPage />
-              </PublicOnlyRoute>
+              </AuthGate>
             }
           />
           <Route
             path="/entrar"
             element={
-              <PublicOnlyRoute>
+              <AuthGate mode="publicOnly">
                 <LoginPage />
-              </PublicOnlyRoute>
+              </AuthGate>
             }
           />
-          <Route path="/redefinir-senha" element={<ResetPasswordPage />} />
+          <Route
+            path="/redefinir-senha"
+            element={
+              <AuthGate mode="neutral">
+                <ResetPasswordPage />
+              </AuthGate>
+            }
+          />
 
-          {/* Rotas Protegidas */}
+          {/* Rota de Diagnóstico */}
           <Route
             path="/diagnostico"
             element={
-              <ProtectedRoute>
+              <AuthGate mode="diagnostic">
                 <DiagnosticPage />
-              </ProtectedRoute>
+              </AuthGate>
             }
           />
+
+          {/* Rotas Protegidas */}
           <Route
             path="/inicio"
             element={
-              <ProtectedRoute>
+              <AuthGate mode="protected">
                 <DashboardPage />
-              </ProtectedRoute>
+              </AuthGate>
             }
           />
           <Route
             path="/gastos"
             element={
-              <ProtectedRoute>
+              <AuthGate mode="protected">
                 <TransactionsPage />
-              </ProtectedRoute>
+              </AuthGate>
             }
           />
           <Route
             path="/gastos/:id"
             element={
-              <ProtectedRoute>
+              <AuthGate mode="protected">
                 <TransactionDetailPage />
-              </ProtectedRoute>
+              </AuthGate>
             }
           />
           <Route
             path="/orcamento"
             element={
-              <ProtectedRoute>
+              <AuthGate mode="protected">
                 <BudgetPage />
-              </ProtectedRoute>
+              </AuthGate>
             }
           />
           <Route
             path="/metas"
             element={
-              <ProtectedRoute>
+              <AuthGate mode="protected">
                 <GoalsPage />
-              </ProtectedRoute>
+              </AuthGate>
             }
           />
           <Route
             path="/aprender"
             element={
-              <ProtectedRoute>
+              <AuthGate mode="protected">
                 <LearnPage />
-              </ProtectedRoute>
+              </AuthGate>
             }
           />
           <Route
             path="/aprender/:trackSlug/:lessonSlug"
             element={
-              <ProtectedRoute>
+              <AuthGate mode="protected">
                 <LessonPage />
-              </ProtectedRoute>
+              </AuthGate>
             }
           />
           <Route
             path="/simulador"
             element={
-              <ProtectedRoute>
+              <AuthGate mode="protected">
                 <SimulatorPage />
-              </ProtectedRoute>
+              </AuthGate>
             }
           />
           <Route
             path="/perfil"
             element={
-              <ProtectedRoute>
+              <AuthGate mode="protected">
                 <ProfilePage />
-              </ProtectedRoute>
+              </AuthGate>
             }
           />
           <Route
             path="/open-finance"
             element={
-              <ProtectedRoute>
+              <AuthGate mode="protected">
                 <OpenFinancePage />
-              </ProtectedRoute>
+              </AuthGate>
             }
           />
 

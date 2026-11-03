@@ -1,0 +1,88 @@
+{
+  "description": "Manifesto de poses oficiais aprovadas do mascote PurplePiggy",
+  "version": "1.0.0",
+  "poses": [
+    {
+      "id": "head",
+      "file": "/assets/mascot/pig-head.png",
+      "description": "Cabeça oficial com moeda no topo. Uso: Header / Início, Avatar default"
+    },
+    {
+      "id": "welcome",
+      "file": "/assets/mascot/pig-welcome.png",
+      "description": "Mascote acenando alegremente. Uso: Onboarding (Slide 1), Login, Cadastro"
+    },
+    {
+      "id": "peek",
+      "file": "/assets/mascot/pig-peek.png",
+      "description": "Mascote espiando curioso. Uso: Saldo oculto no Dashboard, Detalhes de Gastos",
+      "anchor_y": 0.796,
+      "overlap": true
+    },
+    {
+      "id": "graduate",
+      "file": "/assets/mascot/pig-graduate.png",
+      "description": "Mascote com capelo de formatura. Uso: Header da Trilha / Aprender, Onboarding (Slide 3)"
+    },
+    {
+      "id": "diploma",
+      "file": "/assets/mascot/pig-diploma.png",
+      "description": "Mascote comemorando com diploma. Uso: Lição concluída com sucesso, Diagnóstico finalizado"
+    },
+    {
+      "id": "idea",
+      "file": "/assets/mascot/pig-idea.png",
+      "description": "Mascote com lâmpada acesa. Uso: Dica amiga na lição, Simulador de compras, Sugestões de orçamento"
+    },
+    {
+      "id": "empty",
+      "file": "/assets/mascot/pig-empty.png",
+      "description": "Mascote olhando cofrinho vazio. Uso: Estados vazios em Gastos e Metas"
+    },
+    {
+      "id": "medal",
+      "file": "/assets/mascot/pig-medal.png",
+      "description": "Mascote com medalha de ouro no peito. Uso: Conquistas no Perfil, Ofensiva e desafios diários"
+    },
+    {
+      "id": "trophy",
+      "file": "/assets/mascot/pig-trophy.png",
+      "description": "Mascote erguendo troféu dourado. Uso: Meta 100% batida, Módulo educativo concluído"
+    },
+    {
+      "id": "deposit",
+      "file": "/assets/mascot/pig-deposit.png",
+      "description": "Mascote depositando moeda no cofrinho. Uso: Guardar dinheiro, Adicionar transação, Onboarding (Slide 2)"
+    },
+    {
+      "id": "retry",
+      "file": "/assets/mascot/pig-retry.png",
+      "description": "Mascote encorajador. Uso: Resposta incorreta no Quiz (tente de novo), Recuperação de senha"
+    },
+    {
+      "id": "shield",
+      "file": "/assets/mascot/pig-shield.png",
+      "description": "Mascote com escudo de segurança. Uso: Open Finance, Proteção da Reserva de Emergência"
+    },
+    {
+      "id": "connect",
+      "file": "/assets/mascot/pig-connect.png",
+      "description": "Mascote unindo cabos com faísca em coração. Uso: Conexão Open Finance, Integração bancária"
+    },
+    {
+      "id": "loading",
+      "file": "/assets/mascot/pig-loading.png",
+      "description": "Mascote olhando moeda girar. Uso: Telas de carregamento, Sincronização de dados"
+    },
+    {
+      "id": "success",
+      "file": "/assets/mascot/pig-success.png",
+      "description": "Mascote carimbando recibo com check de coração. Uso: Transação confirmada, Sucesso de operação"
+    },
+    {
+      "id": "search",
+      "file": "/assets/mascot/pig-search.png",
+      "description": "Mascote com lupa no olho. Uso: Busca de transações, Auditoria e filtros"
+    }
+  ]
+}

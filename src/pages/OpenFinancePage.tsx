@@ -4,6 +4,7 @@ import { supabase } from '../lib/supabase'
 import { useAuth } from '../context/AuthContext'
 import { AppShell } from '../components/AppShell'
 import { Button } from '../components/Button'
+import { Mascot } from '../components/Mascot'
 import {
   ArrowLeft,
   Building2,
@@ -123,22 +124,27 @@ export const OpenFinancePage: React.FC = () => {
   return (
     <AppShell showNav={true} className="px-5 py-6 flex flex-col justify-between">
       <div className="flex flex-col gap-4">
-        {/* Header com botão voltar */}
-        <div className="flex items-center gap-3">
-          <button
-            onClick={() => navigate('/perfil')}
-            className="p-2 -ml-2 rounded-full hover:bg-lilac/10 text-deep transition-colors"
-            aria-label="Voltar"
-          >
-            <ArrowLeft className="w-6 h-6" />
-          </button>
-          <div>
-            <h1 className="text-xl font-extrabold text-deep font-sans">
-              Open Finance
-            </h1>
-            <p className="text-xs font-semibold text-textSec">
-              Suas contas em um só lugar, com transparência e controle.
-            </p>
+        {/* Header com botão voltar e mascote escudo de segurança */}
+        <div className="flex items-center justify-between">
+          <div className="flex items-center gap-3">
+            <button
+              onClick={() => navigate('/perfil')}
+              className="p-2 -ml-2 rounded-full hover:bg-lilac/10 text-deep transition-colors"
+              aria-label="Voltar"
+            >
+              <ArrowLeft className="w-6 h-6" />
+            </button>
+            <div>
+              <h1 className="text-xl font-extrabold text-deep font-sans">
+                Open Finance
+              </h1>
+              <p className="text-xs font-semibold text-textSec">
+                Suas contas em um só lugar, com transparência e controle.
+              </p>
+            </div>
+          </div>
+          <div className="shrink-0 -mr-1">
+            <Mascot size="sm" pose="shield" />
           </div>
         </div>
 

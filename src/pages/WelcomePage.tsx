@@ -19,18 +19,21 @@ export const WelcomePage: React.FC = () => {
       subtitle: 'Aqui você aprende, organiza e conquista seus objetivos financeiros com leveza.',
       icon: <Heart className="w-5 h-5 text-primary inline ml-1 fill-primary/20" />,
       highlight: 'organizar gastos sem culpa e com clareza.',
+      pose: 'welcome' as const,
     },
     {
       title: 'Metas no seu ritmo',
       subtitle: 'Construa sua reserva de emergência e realize sonhos passo a passo.',
       icon: <Target className="w-5 h-5 text-primary inline ml-1" />,
       highlight: 'primeiros passos gentis a partir de R$ 20.',
+      pose: 'deposit' as const,
     },
     {
       title: 'Educação para a vida real',
       subtitle: 'Entenda juros, cartão e planejamento financeiro em lições rápidas de 5 minutos.',
       icon: <BookOpen className="w-5 h-5 text-primary inline ml-1" />,
       highlight: 'conhecimento prático para mais autonomia.',
+      pose: 'graduate' as const,
     },
   ]
 
@@ -72,10 +75,10 @@ export const WelcomePage: React.FC = () => {
         </p>
       </div>
 
-      {/* Mascote central com saco de moedas/adereço */}
+      {/* Mascote central que reage ao slide */}
       <div className="flex flex-col items-center justify-center my-auto py-6 z-10">
         <div className="relative">
-          <Mascot size="hero" accessory="floating" />
+          <Mascot size="hero" pose={current.pose} floating={true} />
           <div className="absolute -bottom-2 -right-2 bg-gold/90 text-deep p-2 rounded-full shadow-md border-2 border-white">
             <Sparkles className="w-5 h-5" />
           </div>

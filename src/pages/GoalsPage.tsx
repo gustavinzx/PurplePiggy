@@ -3,6 +3,7 @@ import { supabase } from '../lib/supabase'
 import { useAuth } from '../context/AuthContext'
 import { AppShell } from '../components/AppShell'
 import { Button } from '../components/Button'
+import { Mascot } from '../components/Mascot'
 import { ProgressRing } from '../components/ProgressRing'
 import { calculateGoalMetrics } from '../lib/finance'
 import { formatCurrency, formatDate } from '../lib/format'
@@ -206,46 +207,62 @@ export const GoalsPage: React.FC = () => {
 
       {/* Lista de Metas (fiel ao layout oficial) */}
       <div className="flex flex-col gap-3.5">
-        {goals.map((g) => {
-          const goalContribs = contributions[g.id] || []
-          const metrics = calculateGoalMetrics(g, goalContribs)
-
-          return (
+        {loading ? (
+          [1, 2, 3].map((i) => (
             <div
-              key={g.id}
-              onClick={() => setSelectedGoal(g)}
-              className="bg-white rounded-[22px] p-5 border border-lilac/15 shadow-card hover:border-primary/40 cursor-pointer transition-all flex items-center justify-between"
+              key={i}
+              className="bg-white rounded-[22px] p-5 border border-lilac/15 shadow-card flex items-center justify-between animate-pulse"
             >
-              <div className="flex flex-col gap-1 pr-3">
-                <div className="flex items-center gap-1.5 text-xs font-extrabold text-deep">
-                  <Star className="w-4 h-4 text-gold fill-gold" />
-                  <span>{g.name}</span>
-                </div>
-
-                <div className="text-sm font-extrabold text-deep">
-                  {formatCurrency(metrics.saved)}{' '}
-                  <span className="text-xs font-semibold text-textSec">
-                    de {formatCurrency(metrics.target)}
-                  </span>
-                </div>
-
-                {metrics.monthlyRequired && metrics.monthlyRequired > 0 && !metrics.isCompleted && (
-                  <div className="text-[10px] font-bold text-primary mt-1">
-                    Aporte sugerido: {formatCurrency(metrics.monthlyRequired)}/mês
-                  </div>
-                )}
+              <div className="flex flex-col gap-2">
+                <div className="w-32 h-4 bg-lilac/30 rounded" />
+                <div className="w-24 h-3 bg-lilac/20 rounded" />
               </div>
-
-              {/* Anel de progresso SVG do layout oficial */}
-              <div className="shrink-0">
-                <ProgressRing progress={metrics.progressPct} size={64} strokeWidth={6} />
-              </div>
+              <div className="w-16 h-16 rounded-full bg-lilac/20" />
             </div>
-          )
-        })}
+          ))
+        ) : (
+          goals.map((g) => {
+            const goalContribs = contributions[g.id] || []
+            const metrics = calculateGoalMetrics(g, goalContribs)
+
+            return (
+              <div
+                key={g.id}
+                onClick={() => setSelectedGoal(g)}
+                className="bg-white rounded-[22px] p-5 border border-lilac/15 shadow-card hover:border-primary/40 cursor-pointer transition-all flex items-center justify-between"
+              >
+                <div className="flex flex-col gap-1 pr-3">
+                  <div className="flex items-center gap-1.5 text-xs font-extrabold text-deep">
+                    <Star className="w-4 h-4 text-gold fill-gold" />
+                    <span>{g.name}</span>
+                  </div>
+
+                  <div className="text-sm font-extrabold text-deep">
+                    {formatCurrency(metrics.saved)}{' '}
+                    <span className="text-xs font-semibold text-textSec">
+                      de {formatCurrency(metrics.target)}
+                    </span>
+                  </div>
+
+                  {metrics.monthlyRequired && metrics.monthlyRequired > 0 && !metrics.isCompleted && (
+                    <div className="text-[10px] font-bold text-primary mt-1">
+                      Aporte sugerido: {formatCurrency(metrics.monthlyRequired)}/mês
+                    </div>
+                  )}
+                </div>
+
+                {/* Anel de progresso SVG do layout oficial */}
+                <div className="shrink-0">
+                  <ProgressRing progress={metrics.progressPct} size={64} strokeWidth={6} />
+                </div>
+              </div>
+            )
+          })
+        )}
 
         {goals.length === 0 && !loading && (
-          <div className="bg-white rounded-[22px] p-8 text-center border border-lilac/15 shadow-card">
+          <div className="bg-white rounded-[22px] p-8 text-center border border-lilac/15 shadow-card flex flex-col items-center">
+            <Mascot size="lg" pose="empty" floating={true} className="mb-3" />
             <p className="text-xs font-bold text-textSec mb-3">
               Você ainda não tem metas cadastradas. Que tal criar a primeira agora?
             </p>
@@ -325,8 +342,9 @@ export const GoalsPage: React.FC = () => {
                   )}
 
                   {metrics.isCompleted && (
-                    <div className="bg-gold/20 p-3 rounded-xl border border-gold/40 text-xs font-extrabold text-deep text-center">
-                      🏆 Meta 100% concluída! Orgulho da sua jornada!
+                    <div className="bg-gold/20 p-4 rounded-xl border border-gold/40 text-xs font-extrabold text-deep text-center flex flex-col items-center gap-2">
+                      <Mascot size="md" pose="trophy" floating={true} />
+                      <span>🏆 Meta 100% concluída! Orgulho da sua jornada!</span>
                     </div>
                   )}
 
@@ -368,7 +386,8 @@ export const GoalsPage: React.FC = () => {
       {/* Modal: Aporte de Dinheiro */}
       {isDepositModalOpen && selectedGoal && (
         <div className="fixed inset-0 z-50 bg-deep/60 backdrop-blur-xs flex items-center justify-center p-4 animate-fadeIn">
-          <div className="bg-white rounded-[24px] p-6 w-full max-w-sm shadow-2xl border border-lilac/20">
+          <div className="bg-white rounded-[24px] p-6 w-full max-w-sm shadow-2xl border border-lilac/20 text-center">
+            <Mascot size="md" pose="deposit" floating={true} className="mx-auto mb-2" />
             <h3 className="text-base font-extrabold text-deep font-sans mb-1">
               Guardar dinheiro na meta
             </h3>

@@ -271,7 +271,7 @@ export const LessonPage: React.FC = () => {
 
         {/* Mascote Oficial com a lâmpada amarela de ideias */}
         <div className="flex justify-center my-3">
-          <Mascot size="lg" accessory="idea" />
+          <Mascot size="lg" pose="idea" floating={true} />
         </div>
 
         {/* Card de Conteúdo Principal (Layout do App) */}
@@ -367,13 +367,14 @@ export const LessonPage: React.FC = () => {
               </Button>
             ) : (
               <div
-                className={`p-3.5 rounded-2xl text-xs font-semibold flex flex-col gap-1.5 ${
+                className={`p-4 rounded-2xl text-xs font-semibold flex flex-col gap-2.5 items-center text-center ${
                   isCorrect
                     ? 'bg-success/15 text-emerald-900 border border-success/30'
                     : 'bg-gold/25 text-amber-950 border border-gold/50'
                 }`}
               >
-                <div className="font-extrabold flex items-center gap-1.5">
+                <Mascot size="md" pose={isCorrect ? 'diploma' : 'retry'} floating={true} />
+                <div className="font-extrabold flex items-center justify-center gap-1.5">
                   {isCorrect ? (
                     <>
                       <CheckCircle2 className="w-4 h-4 text-success" />

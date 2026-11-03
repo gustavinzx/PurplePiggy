@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react'
 import { supabase } from '../lib/supabase'
 import { useAuth } from '../context/AuthContext'
 import { Button } from './Button'
+import { Mascot } from './Mascot'
 import { X, Calendar, DollarSign, Tag, CreditCard, FileText } from 'lucide-react'
 import { toast } from 'sonner'
 import { getBudgetAlertStatus } from '../lib/finance'
@@ -146,11 +147,14 @@ export const TransactionModal: React.FC<TransactionModalProps> = ({
   return (
     <div className="fixed inset-0 z-50 bg-deep/60 backdrop-blur-xs flex items-end sm:items-center justify-center p-3 sm:p-4 animate-fadeIn">
       <div className="bg-white rounded-[26px] p-6 w-full max-w-sm shadow-2xl flex flex-col relative max-h-[90vh] overflow-y-auto">
-        {/* Header do Modal */}
+        {/* Header do Modal com mascote contextual */}
         <div className="flex items-center justify-between pb-3 border-b border-lilac/15">
-          <h2 className="text-lg font-extrabold text-deep font-sans">
-            {type === 'expense' ? 'Adicionar gasto' : 'Adicionar receita'}
-          </h2>
+          <div className="flex items-center gap-2">
+            <Mascot size="xs" pose={type === 'income' ? 'deposit' : 'peek'} />
+            <h2 className="text-lg font-extrabold text-deep font-sans">
+              {type === 'expense' ? 'Adicionar gasto' : 'Adicionar receita'}
+            </h2>
+          </div>
           <button
             onClick={onClose}
             className="p-1 rounded-full text-textSec hover:text-deep hover:bg-lilac/10"

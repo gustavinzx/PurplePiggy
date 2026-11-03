@@ -1,0 +1,263 @@
+{
+  "sem_sessao": [
+    {
+      "route": "/",
+      "finalPath": "/",
+      "hasPrivateLeak": false,
+      "ok": true
+    },
+    {
+      "route": "/boas-vindas",
+      "finalPath": "/boas-vindas",
+      "hasPrivateLeak": false,
+      "ok": true
+    },
+    {
+      "route": "/cadastrar",
+      "finalPath": "/cadastrar",
+      "hasPrivateLeak": false,
+      "ok": true
+    },
+    {
+      "route": "/entrar",
+      "finalPath": "/entrar",
+      "hasPrivateLeak": false,
+      "ok": true
+    },
+    {
+      "route": "/diagnostico",
+      "finalPath": "/entrar",
+      "hasPrivateLeak": false,
+      "ok": true
+    },
+    {
+      "route": "/inicio",
+      "finalPath": "/entrar",
+      "hasPrivateLeak": false,
+      "ok": true
+    },
+    {
+      "route": "/gastos",
+      "finalPath": "/entrar",
+      "hasPrivateLeak": false,
+      "ok": true
+    },
+    {
+      "route": "/gastos/1",
+      "finalPath": "/entrar",
+      "hasPrivateLeak": false,
+      "ok": true
+    },
+    {
+      "route": "/orcamento",
+      "finalPath": "/entrar",
+      "hasPrivateLeak": false,
+      "ok": true
+    },
+    {
+      "route": "/metas",
+      "finalPath": "/entrar",
+      "hasPrivateLeak": false,
+      "ok": true
+    },
+    {
+      "route": "/aprender",
+      "finalPath": "/entrar",
+      "hasPrivateLeak": false,
+      "ok": true
+    },
+    {
+      "route": "/aprender/basico/o-que-e-reserva",
+      "finalPath": "/entrar",
+      "hasPrivateLeak": false,
+      "ok": true
+    },
+    {
+      "route": "/simulador",
+      "finalPath": "/entrar",
+      "hasPrivateLeak": false,
+      "ok": true
+    },
+    {
+      "route": "/perfil",
+      "finalPath": "/entrar",
+      "hasPrivateLeak": false,
+      "ok": true
+    },
+    {
+      "route": "/open-finance",
+      "finalPath": "/entrar",
+      "hasPrivateLeak": false,
+      "ok": true
+    }
+  ],
+  "com_sessao": [
+    {
+      "route": "/",
+      "finalPath": "/inicio",
+      "flashedPublicScreen": false,
+      "ok": true
+    },
+    {
+      "route": "/boas-vindas",
+      "finalPath": "/inicio",
+      "flashedPublicScreen": false,
+      "ok": true
+    },
+    {
+      "route": "/cadastrar",
+      "finalPath": "/inicio",
+      "flashedPublicScreen": false,
+      "ok": true
+    },
+    {
+      "route": "/entrar",
+      "finalPath": "/inicio",
+      "flashedPublicScreen": false,
+      "ok": true
+    },
+    {
+      "route": "/diagnostico",
+      "finalPath": "/inicio",
+      "flashedPublicScreen": false,
+      "ok": true
+    },
+    {
+      "route": "/inicio",
+      "finalPath": "/inicio",
+      "flashedPublicScreen": false,
+      "ok": true
+    },
+    {
+      "route": "/gastos",
+      "finalPath": "/gastos",
+      "flashedPublicScreen": false,
+      "ok": true
+    },
+    {
+      "route": "/gastos/1",
+      "finalPath": "/gastos",
+      "flashedPublicScreen": false,
+      "ok": true
+    },
+    {
+      "route": "/orcamento",
+      "finalPath": "/orcamento",
+      "flashedPublicScreen": false,
+      "ok": true
+    },
+    {
+      "route": "/metas",
+      "finalPath": "/metas",
+      "flashedPublicScreen": false,
+      "ok": true
+    },
+    {
+      "route": "/aprender",
+      "finalPath": "/aprender",
+      "flashedPublicScreen": false,
+      "ok": true
+    },
+    {
+      "route": "/aprender/basico/o-que-e-reserva",
+      "finalPath": "/aprender",
+      "flashedPublicScreen": false,
+      "ok": true
+    },
+    {
+      "route": "/simulador",
+      "finalPath": "/simulador",
+      "flashedPublicScreen": false,
+      "ok": true
+    },
+    {
+      "route": "/perfil",
+      "finalPath": "/perfil",
+      "flashedPublicScreen": false,
+      "ok": true
+    },
+    {
+      "route": "/open-finance",
+      "finalPath": "/open-finance",
+      "flashedPublicScreen": false,
+      "ok": true
+    }
+  ],
+  "diagnostico_incompleto": [
+    {
+      "route": "/",
+      "finalPath": "/diagnostico",
+      "ok": true
+    },
+    {
+      "route": "/boas-vindas",
+      "finalPath": "/diagnostico",
+      "ok": true
+    },
+    {
+      "route": "/cadastrar",
+      "finalPath": "/diagnostico",
+      "ok": true
+    },
+    {
+      "route": "/entrar",
+      "finalPath": "/diagnostico",
+      "ok": true
+    },
+    {
+      "route": "/diagnostico",
+      "finalPath": "/diagnostico",
+      "ok": true
+    },
+    {
+      "route": "/inicio",
+      "finalPath": "/diagnostico",
+      "ok": true
+    },
+    {
+      "route": "/gastos",
+      "finalPath": "/diagnostico",
+      "ok": true
+    },
+    {
+      "route": "/gastos/1",
+      "finalPath": "/diagnostico",
+      "ok": true
+    },
+    {
+      "route": "/orcamento",
+      "finalPath": "/diagnostico",
+      "ok": true
+    },
+    {
+      "route": "/metas",
+      "finalPath": "/diagnostico",
+      "ok": true
+    },
+    {
+      "route": "/aprender",
+      "finalPath": "/diagnostico",
+      "ok": true
+    },
+    {
+      "route": "/aprender/basico/o-que-e-reserva",
+      "finalPath": "/diagnostico",
+      "ok": true
+    },
+    {
+      "route": "/simulador",
+      "finalPath": "/diagnostico",
+      "ok": true
+    },
+    {
+      "route": "/perfil",
+      "finalPath": "/diagnostico",
+      "ok": true
+    },
+    {
+      "route": "/open-finance",
+      "finalPath": "/diagnostico",
+      "ok": true
+    }
+  ]
+}

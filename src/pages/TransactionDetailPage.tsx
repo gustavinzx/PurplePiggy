@@ -4,6 +4,7 @@ import { supabase } from '../lib/supabase'
 import { useAuth } from '../context/AuthContext'
 import { AppShell } from '../components/AppShell'
 import { Button } from '../components/Button'
+import { Mascot } from '../components/Mascot'
 import { formatCurrency } from '../lib/format'
 import {
   ArrowLeft,
@@ -179,18 +180,23 @@ export const TransactionDetailPage: React.FC = () => {
   return (
     <AppShell showNav={false} className="px-5 py-6 flex flex-col justify-between bg-white relative">
       <div>
-        {/* Header com botão voltar */}
-        <div className="flex items-center gap-3 mb-4">
-          <button
-            onClick={() => navigate('/gastos')}
-            className="p-2 -ml-2 rounded-full hover:bg-lilac/10 text-deep transition-colors"
-            aria-label="Voltar"
-          >
-            <ArrowLeft className="w-6 h-6" />
-          </button>
-          <h1 className="text-lg font-extrabold text-deep font-sans">
-            Detalhes da transação
-          </h1>
+        {/* Header com botão voltar e mascote espiando */}
+        <div className="flex items-center justify-between mb-4">
+          <div className="flex items-center gap-3">
+            <button
+              onClick={() => navigate('/gastos')}
+              className="p-2 -ml-2 rounded-full hover:bg-lilac/10 text-deep transition-colors"
+              aria-label="Voltar"
+            >
+              <ArrowLeft className="w-6 h-6" />
+            </button>
+            <h1 className="text-lg font-extrabold text-deep font-sans">
+              Detalhes da transação
+            </h1>
+          </div>
+          <div className="-mr-1">
+            <Mascot size="sm" pose="peek" />
+          </div>
         </div>
 
         {/* Card Destaque (reproduzindo exatamente o layout) */}

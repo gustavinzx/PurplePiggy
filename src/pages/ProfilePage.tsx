@@ -4,6 +4,7 @@ import { useAuth } from '../context/AuthContext'
 import { supabase } from '../lib/supabase'
 import { AppShell } from '../components/AppShell'
 import { Button } from '../components/Button'
+import { Mascot } from '../components/Mascot'
 import { formatCurrency } from '../lib/format'
 import {
   User,
@@ -165,11 +166,7 @@ export const ProfilePage: React.FC = () => {
                   className="w-full h-full object-cover"
                 />
               ) : (
-                <img
-                  src="/assets/pig-oficial-512.png"
-                  alt="Avatar"
-                  className="w-10 h-10 object-contain"
-                />
+                <Mascot pose="head" size="xs" alt="Avatar" />
               )}
             </div>
             <label className="absolute -bottom-1 -right-1 bg-primary text-white p-1 rounded-full cursor-pointer hover:brightness-110 shadow-xs">
@@ -204,6 +201,22 @@ export const ProfilePage: React.FC = () => {
         >
           Editar
         </button>
+      </div>
+
+      {/* Card de Conquistas & Medalhas do Usuário */}
+      <div className="bg-white rounded-[22px] p-4 border border-lilac/15 shadow-card flex items-center justify-between">
+        <div className="flex items-center gap-3">
+          <Mascot size="sm" pose="medal" />
+          <div>
+            <h3 className="text-xs font-extrabold text-deep">Conquistas & Evolução</h3>
+            <p className="text-[11px] font-semibold text-textSec">
+              Ofensiva ativa e metas em progresso contínuo.
+            </p>
+          </div>
+        </div>
+        <span className="text-[11px] font-extrabold text-primary bg-primary/10 px-2.5 py-1 rounded-full">
+          Nível 3
+        </span>
       </div>
 
       {/* Seção Minha Conta */}

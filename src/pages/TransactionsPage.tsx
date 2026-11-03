@@ -4,6 +4,7 @@ import { supabase } from '../lib/supabase'
 import { useAuth } from '../context/AuthContext'
 import { AppShell } from '../components/AppShell'
 import { Button } from '../components/Button'
+import { Mascot } from '../components/Mascot'
 import { TransactionModal } from '../components/TransactionModal'
 import { formatCurrency, formatDate } from '../lib/format'
 import {
@@ -247,7 +248,25 @@ export const TransactionsPage: React.FC = () => {
           <span className="text-xs font-bold text-textSec/70">{filtered.length} lançamentos</span>
         </div>
 
-        {filtered.length > 0 ? (
+        {loading ? (
+          <div className="flex flex-col divide-y divide-lilac/10">
+            {[1, 2, 3, 4].map((i) => (
+              <div
+                key={i}
+                className="py-3 flex items-center justify-between animate-pulse px-1"
+              >
+                <div className="flex items-center gap-3">
+                  <div className="w-10 h-10 rounded-2xl bg-lilac/30 shrink-0" />
+                  <div className="space-y-1.5">
+                    <div className="w-28 h-3.5 bg-lilac/30 rounded" />
+                    <div className="w-16 h-2.5 bg-lilac/20 rounded" />
+                  </div>
+                </div>
+                <div className="w-16 h-4 bg-lilac/30 rounded" />
+              </div>
+            ))}
+          </div>
+        ) : filtered.length > 0 ? (
           <div className="flex flex-col divide-y divide-lilac/10">
             {filtered.map((tx) => {
               const cat = categories[tx.category_id]
@@ -290,8 +309,9 @@ export const TransactionsPage: React.FC = () => {
             })}
           </div>
         ) : (
-          <div className="py-8 text-center text-xs font-bold text-textSec">
-            Nenhuma transação encontrada para os filtros selecionados.
+          <div className="py-8 text-center text-xs font-bold text-textSec flex flex-col items-center">
+            <Mascot size="lg" pose="empty" floating={true} className="mb-2" />
+            <span>Nenhuma transação encontrada para os filtros selecionados.</span>
           </div>
         )}
       </div>

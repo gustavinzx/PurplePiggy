@@ -1,17 +1,23 @@
 import React from 'react'
 
-interface LogoProps {
-  variant?: 'dark' | 'light' | 'icon'
+export interface LogoProps {
+  variant?: 'stacked' | 'inline' | 'icon'
   size?: 'sm' | 'md' | 'lg' | 'xl'
   className?: string
+  showIcon?: boolean
 }
 
-export const Logo: React.FC<LogoProps> = ({ variant = 'dark', size = 'md', className = '' }) => {
+export const Logo: React.FC<LogoProps> = ({
+  variant = 'inline',
+  size = 'md',
+  className = '',
+  showIcon = true,
+}) => {
   const sizeMap = {
-    sm: { img: 'w-6 h-6', text: 'text-xl' },
-    md: { img: 'w-9 h-9', text: 'text-2xl' },
-    lg: { img: 'w-12 h-12', text: 'text-3xl' },
-    xl: { img: 'w-16 h-16', text: 'text-4xl' },
+    sm: { img: 'w-7 h-7', text: 'text-xl' },
+    md: { img: 'w-10 h-10', text: 'text-2xl' },
+    lg: { img: 'w-14 h-14', text: 'text-3xl' },
+    xl: { img: 'w-20 h-20', text: 'text-4xl' },
   }
 
   const currentSize = sizeMap[size]
@@ -19,26 +25,36 @@ export const Logo: React.FC<LogoProps> = ({ variant = 'dark', size = 'md', class
   if (variant === 'icon') {
     return (
       <img
-        src="/assets/pig-oficial-512.png"
+        src="/assets/brand/pig-oficial-512.png"
         alt="PurplePiggy"
         className={`${currentSize.img} object-contain ${className}`}
       />
     )
   }
 
-  const isLight = variant === 'light'
+  const isStacked = variant === 'stacked'
 
   return (
-    <div className={`inline-flex items-center gap-2 select-none ${className}`}>
-      <img
-        src="/assets/pig-oficial-512.png"
-        alt="PurplePiggy"
-        className={`${currentSize.img} object-contain transition-transform hover:scale-105`}
-      />
-      <span className={`font-extrabold tracking-tight ${currentSize.text} leading-none font-sans`}>
-        <span className={isLight ? 'text-white' : 'text-deep'}>Purple</span>
-        <span className="text-primary">Piggy</span>
-      </span>
+    <div
+      className={`inline-flex ${
+        isStacked ? 'flex-col items-center gap-1.5 text-center' : 'items-center gap-2.5'
+      } select-none ${className}`}
+    >
+      {showIcon && (
+        <img
+          src="/assets/brand/pig-oficial-512.png"
+          alt="PurplePiggy Logo"
+          className={`${currentSize.img} object-contain transition-transform duration-300 hover:scale-105`}
+        />
+      )}
+      <div className={`font-extrabold font-sans tracking-tight ${currentSize.text} leading-none flex items-center`}>
+        <span className="text-[#3A017A]">Purple</span>
+        <span className="bg-gradient-to-r from-[#9D4EDD] via-[#C740D8] to-[#FF5E98] bg-clip-text text-transparent ml-0.5">
+          Piggy
+        </span>
+      </div>
     </div>
   )
 }
+
+export default Logo

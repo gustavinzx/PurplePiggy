@@ -1,4 +1,5 @@
 @import '@fontsource/nunito/400.css';
+@import '@fontsource/nunito/500.css';
 @import '@fontsource/nunito/600.css';
 @import '@fontsource/nunito/700.css';
 @import '@fontsource/nunito/800.css';
@@ -7,6 +8,56 @@
 @tailwind components;
 @tailwind utilities;
 
+:root {
+  /* Fundo do app e blobs */
+  --color-bg-app-top: #F6EEFF;
+  --color-bg-app-bottom: #E9D8FF;
+  --color-bg-blob-lilac: #EEDEFB;
+  --color-bg-blob-baby: #DEEEFC;
+
+  /* Botão primário (degradê horizontal) */
+  --color-btn-primary-start: #7D2BD6;
+  --color-btn-primary-end: #B037F8;
+
+  /* Botão secundário / outline */
+  --color-btn-secondary-border: #6D28C9;
+  --color-btn-secondary-text: #5B21B6;
+
+  /* Tipografia */
+  --color-text-title: #432171;
+  --color-text-secondary: #7D6A9C;
+
+  /* Wordmark */
+  --color-brand-purple: #432171;
+  --color-brand-piggy-start: #8E2DE2;
+  --color-brand-piggy-end: #C026D3;
+
+  /* Cards e Vidro */
+  --color-card-glass-bg: rgba(255, 255, 255, 0.85);
+  --color-card-glass-border: rgba(216, 194, 255, 0.5);
+  --color-card-saldo-start: #8E32D8;
+  --color-card-saldo-end: #521D83;
+
+  /* Status e Acentos */
+  --color-positive: #15803D;
+  --color-positive-bg: #DCFCE7;
+  --color-negative: #E5487A;
+  --color-negative-bg: #FCE7F3;
+  --color-gold-coin: #F5B83D;
+
+  /* Anel de Meta */
+  --color-ring-goal-start: #F5B83D;
+  --color-ring-goal-end: #F08A3C;
+  --color-ring-track: #EADFFB;
+
+  /* Dimensões e Raios */
+  --radius-card: 24px;
+  --radius-card-sm: 20px;
+  --radius-input: 16px;
+  --radius-pill: 9999px;
+  --radius-nav: 28px;
+}
+
 @layer base {
   body {
     @apply bg-bg text-deep font-sans antialiased;
@@ -14,7 +65,7 @@
   }
 }
 
-/* Microinterações e animações suaves */
+/* Microinterações e transições */
 @keyframes fadeIn {
   from {
     opacity: 0;
@@ -41,6 +92,22 @@
 
 .animate-float {
   animation: float 3.2s ease-in-out infinite;
+}
+
+/* Flutuação sutil de mascote (±6px em 4s) com respeito a prefers-reduced-motion */
+@keyframes mascot-float {
+  0%, 100% {
+    transform: translateY(-6px);
+  }
+  50% {
+    transform: translateY(6px);
+  }
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .animate-mascot-float {
+    animation: mascot-float 4s ease-in-out infinite;
+  }
 }
 
 @keyframes pulseGlow {

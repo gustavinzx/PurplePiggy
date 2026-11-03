@@ -55,7 +55,7 @@ export const ResetPasswordPage: React.FC = () => {
         </div>
 
         <div className="text-center my-6">
-          <Mascot size="md" accessory="floating" />
+          <Mascot size="lg" pose="retry" floating={true} />
           <h2 className="text-2xl font-extrabold text-deep font-sans mt-3 mb-1">
             Esqueceu sua senha?
           </h2>

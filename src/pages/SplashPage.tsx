@@ -1,26 +1,11 @@
-import React, { useEffect } from 'react'
+import React from 'react'
 import { useNavigate } from 'react-router-dom'
-import { useAuth } from '../context/AuthContext'
 import { Mascot } from '../components/Mascot'
 import { Button } from '../components/Button'
 import { AppShell } from '../components/AppShell'
 
 export const SplashPage: React.FC = () => {
   const navigate = useNavigate()
-  const { user, profile, isLoading } = useAuth()
-
-  useEffect(() => {
-    if (!isLoading && user) {
-      const timer = setTimeout(() => {
-        if (profile && !profile.diagnostic_done) {
-          navigate('/diagnostico')
-        } else {
-          navigate('/inicio')
-        }
-      }, 1200)
-      return () => clearTimeout(timer)
-    }
-  }, [user, profile, isLoading, navigate])
 
   return (
     <AppShell showNav={false} className="justify-between px-6 py-12 relative overflow-hidden bg-gradient-to-b from-white via-bg to-white">
@@ -37,7 +22,7 @@ export const SplashPage: React.FC = () => {
       {/* Centro: Mascote oficial com coin + Tipografia de Marca */}
       <div className="flex flex-col items-center text-center z-10">
         <div className="relative mb-6">
-          <Mascot size="hero" accessory="floating" />
+          <Mascot size="hero" pose="head" floating={true} priority />
         </div>
 
         <h1 className="text-4xl font-extrabold font-sans tracking-tight leading-none mb-3">

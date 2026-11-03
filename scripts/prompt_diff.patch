@@ -1,0 +1,309 @@
+--- a/PROMPT_PURPLEPIGGY_ANTIGRAVITY.md
++++ b/PROMPT_PURPLEPIGGY_ANTIGRAVITY.md
+@@ -1,4 +1,4 @@
+-# 💜 PURPLEPIGGY — PROMPT MESTRE DE DESENVOLVIMENTO
++# PURPLEPIGGY — PROMPT MESTRE DE DESENVOLVIMENTO
+ 
+ > Cole este documento inteiro no Antigravity e anexe os arquivos listados na seção 2.
+ > Idioma do produto: **português do Brasil**. Idioma do código: inglês (nomes de variáveis, tabelas e funções).
+@@ -66,9 +66,9 @@
+ | Porquinho simplificado/sorridente (opcional) | A página "Aplicações da Marca" do brandbook mostra uma versão simplificada para ícone do app e boas-vindas. Se o arquivo for anexado, usar nesses pontos; se não, usar só o oficial. |
+ 
+ **Regras da mascote e da logo**
+-- Use **exatamente** o arquivo oficial. **Proibido** redesenhar, recriar com IA, distorcer, recolorir ou trocar por emoji.
++- Use **exatamente** o arquivo oficial. **Proibido** redesenhar, recriar com IA, distorcer, recolorir ou trocar por outras ilustrações.
+ - Mantenha proporção, contorno preto, orelhas em degradê, bochechas, focinho rosa e moeda amarela.
+-- Quando o layout mostrar o porquinho em outra pose (segurando moeda, com capelo de formatura, com lâmpada), **use o asset oficial** na posição indicada e, se desejar o efeito, componha adereços **ao redor** dele com SVG/CSS (capelo, lâmpada, brilhos). Nunca altere o porquinho em si.
++- As poses do mascote são imagens prontas em `public/assets/mascot/` (consultar `mascotes/manifest.json`). Proibido recriar ou compor o mascote em SVG/CSS.
+ - Logotipo: "Purple" em roxo escuro `#432171` e "Piggy" em roxo vibrante `#B037F8`, Nunito Extra-Bold; em fundo escuro, "Purple" em branco. Componente `<Logo variant="light|dark|icon" />`.
+ - Favicon e ícone PWA: cabeça do porquinho sobre fundo lilás arredondado. **[P2]** PWA instalável com manifest.
+ 
+@@ -76,50 +76,17 @@
+ 
+ ## 3. IDENTIDADE VISUAL E DESIGN SYSTEM
+ 
+-**Paleta (tokens CSS/Tailwind)**
+-
+-| Token | Hex | Uso |
+-|---|---|---|
+-| `primary` | `#B037F8` | Ações principais, destaques, "Piggy" |
+-| `lilac` | `#CF91F6` | Gradientes, estados suaves, gráficos |
+-| `deep` | `#432171` | Títulos, texto forte, cabeçalhos escuros |
+-| `pink` | `#FF79A8` | Botão secundário e detalhes (uso moderado) |
+-| `baby` | `#DEEEFC` | Cards informativos, fundos de destaque |
+-| `gold` | `#FEDA70` | Conquistas, moedas, alertas de atenção |
+-| `bg` | `#F8F5FC` | Fundo do app |
+-| `white` | `#FFFFFF` | Cards |
+-
+-Complementares sugeridos (derivar, não inventar paleta nova): verde-sucesso suave para receitas, rosa-vermelho `#E5487A` para exclusão/estouro, cinza-lilás `#7D6A9C` para texto secundário.
+-
+-**Tipografia:** Nunito (via `@fontsource/nunito`). Títulos e destaques: ExtraBold/Bold. Subtítulos: SemiBold. Texto corrido: Regular (itálico apenas para apoio e slogans). Escala: 12/14/16/20/24/32/40.
+-
+-**Componentes** (reproduzir como no layout e no brandbook)
+-- Botão **principal**: pílula com degradê roxo (`#7D2BD6 → #B037F8`), texto branco, altura 48px, sombra suave, estado pressionado com leve escala.
+-- Botão **secundário**: pílula rosa `#FF79A8` (brandbook) ou contorno roxo (layout, telas de login/boas-vindas). Botão **destrutivo**: contorno rosa-vermelho.
+-- **Cards**: raio 20–24px, fundo branco ou `baby`, sombra roxa translúcida muito suave. Card de saldo: degradê roxo (`#B037F8 → #432171`) com texto branco e ícone de olho.
+-- **Barras de progresso** (11–12px, raio total) e **anéis de progresso** circulares (SVG) nas metas, com cor muda por faixa: normal (roxo), atenção ≥80% (dourado), limite ≥100% (rosa).
+-- Barra empilhada de categorias no "Painel de gastos" (roxo, rosa, amarelo, azul-bebê, lilás).
+-- **Bottom navigation** de 5 itens: Início, Gastos, Metas, Aprender, Perfil (como no layout), com item ativo em roxo e ícone preenchido.
+-- Inputs com ícone à esquerda, borda lilás, foco roxo; campo de senha com olho para mostrar/ocultar.
+-- Fundo com **blobs lilás/azul-bebê**, estrelinhas e brilhos discretos nas telas de entrada (splash, boas-vindas, cadastro, login), como no layout.
+-- Ícones: **Lucide React**, traço consistente, em "tiles" de fundo lilás claro. Ícones de categoria: Moradia (casa), Alimentação (carrinho), Transporte (ônibus), Saúde (coração/pílula), Educação (capelo), Lazer (balão/estrela), Compras (sacola), Cuidados com a família (pessoas), Outros (sparkles).
+-- Microinterações: transição de tela suave (150–250ms), contagem animada em valores principais, anel/barra que preenchem ao entrar, confete leve ao concluir meta ou lição. Respeitar `prefers-reduced-motion`.
+-- Responsivo **mobile-first**. No desktop, manter o app em uma coluna central de até 480px com moldura sutil **ou** adaptar para layout com sidebar (navegação lateral no lugar da bottom nav) em ≥1024px. **Não deixar telas vazias**: preencher com cards, gráficos e dicas úteis.
+-- Acessibilidade: contraste AA, foco visível, `aria-label` em ícones, formulários com labels, áreas de toque ≥44px.
+-
+-**Cabeçalho de marca (referência do layout):** chips "Controle de gastos", "Metas personalizadas", "Educação financeira", "Mais tranquilidade" podem ser usados em uma seção "Por que o PurplePiggy" na tela de boas-vindas (carrossel) e em "Sobre".
+-
+----
++Consulte os tokens oficiais em `design/tokens.md` e as referências visuais de cada tela em `design/telas/`.
+ 
+ ## 4. STACK E ARQUITETURA
+ 
+ - **React 18 + TypeScript + Vite**
+-- **Tailwind CSS + shadcn/ui** (customizados com os tokens acima)
++- **Tailwind CSS** (customizado com os tokens de design/tokens.md)
+ - **React Router** (rotas protegidas)
+ - **TanStack Query** (cache e invalidação: o dashboard atualiza sozinho ao criar/editar/excluir)
+ - **React Hook Form + Zod** (validação)
+ - **Supabase**: PostgreSQL, Auth, Row Level Security, Edge Functions, RPC
+-- **Recharts** (gráficos), **Lucide React** (ícones), **Sonner** (toasts), **date-fns** (pt-BR)
++- **Recharts** (gráficos), **Sonner** (toasts), **date-fns** (pt-BR)
+ - **Vitest** (unidade das regras financeiras) e **Playwright** ou o navegador do agente (fluxos)
+ - Deploy: **Vercel** (front) + **Supabase** (backend)
+ 
+@@ -129,7 +96,7 @@
+ ├─ public/assets/ (pig-oficial.png, logos, og-image)
+ ├─ src/
+ │  ├─ app/ (router, providers, layout, guards)
+-│  ├─ components/ (ui/, Logo, Mascot, ProgressRing, BottomNav, EmptyState, Skeletons, ConfirmDialog)
++│  ├─ components/ (Logo, Mascot, ProgressRing, BottomNav, EmptyState, Skeletons, ConfirmDialog)
+ │  ├─ features/
+ │  │  ├─ auth/  ├─ diagnostic/  ├─ dashboard/  ├─ transactions/
+ │  │  ├─ budget/  ├─ goals/  ├─ learn/  ├─ simulator/
+@@ -327,7 +294,7 @@
+ - `seed_demo_data()` e `reset_demo_data()`: só funcionam se `profiles.is_demo = true` para `auth.uid()`. `reset` apaga transações, orçamentos, metas, contribuições, progresso e conexões **apenas daquela usuária demo** e recria o conjunto fictício (seção 11). Jamais tocam dados de usuárias reais.
+ - `dashboard_summary(month date)` **[P1]**: retorna receitas, despesas, saldo, variação, gastos por categoria e série dos últimos 6 meses numa chamada (ou implemente no cliente com queries agregadas; escolha a opção mais simples e rápida).
+ 
+-**Seed**: categorias padrão (user_id null) com `is_essential`: Moradia✔, Alimentação✔, Transporte✔, Saúde✔, Educação, Lazer, Compras, Cuidados com a família✔, Outros. Mais as lições da seção 9.
++**Seed**: categorias padrão (user_id null) com `is_essential`: Moradia, Alimentação, Transporte, Saúde, Educação, Lazer, Compras, Cuidados com a família, Outros (com flag is_essential nas categorias essenciais). Mais as lições da seção 9.
+ 
+ ---
+ 
+@@ -344,101 +311,99 @@
+ 
+ ---
+ 
+-## 7. TELAS (15) — FIEL AO LAYOUT, COM COMPORTAMENTO REAL
+-
+-Rotas sugeridas entre parênteses. Textos entre aspas vêm do layout oficial: **mantenha-os**.
+-
+-### 01 Splash `/`
+-Logo PurplePiggy, mascote com leve flutuação, slogan "Seu dinheiro, seu ritmo.", botões "Começar" e "Entrar". Animação de entrada suave. Se houver sessão válida, redireciona sozinho (início ou diagnóstico) após ~1,5s; senão mostra os botões.
+-
+-### 02 Boas-vindas `/boas-vindas`
+-"Bem-vinda!" / "Aqui você aprende, organiza e conquista seus objetivos financeiros com leveza." Carrossel de 3 pontos (organizar gastos, metas, aprender) com indicador de pontos. Botão "Começar agora" (vai ao cadastro) e link "Já tenho uma conta · Entrar". **Botão extra discreto: "Ver modo demonstração"** (seção 11).
+-
+-### 03 Cadastro `/cadastrar`
+-"Crie sua conta" / "Um novo começo para sua vida financeira." Campos com ícone: Nome completo, E-mail, Senha, Confirmar senha. Aviso "Seus dados são tratados com cuidado." (cadeado). Botão "Criar minha conta". Rodapé "Já tem conta? Entrar". Validação com Zod, erros inline, cadastro **real** no Supabase Auth, criação do perfil, redirecionamento ao diagnóstico.
+-
+-### 04 Login `/entrar`
+-"Que bom ter você de volta!" / "Entre para acompanhar sua evolução." Mascote no canto superior direito. E-mail, Senha (olho para mostrar), "Esqueci minha senha ?" (fluxo real de recuperação), botão "Entrar", botão contorno "Criar uma conta". Mensagens de erro acolhedoras e estado de carregamento no botão.
+-
+-### 05 Diagnóstico `/diagnostico`
+-Wizard de **3 passos** com barra de progresso e contador ("1 de 3"). Título "Vamos conhecer você" / "Responda no seu ritmo. Não existe resposta certa ou errada."
+-- **Passo 1:** "Como você se sente com suas finanças?" (rádios: Quero começar a me organizar / Tenho controle parcial / Quero melhorar meu planejamento / Estou com dívidas) e "Qual sua renda mensal aproximada?" (valor numérico com máscara R$, ou faixa; preferir valor, pois alimenta o orçamento).
+-- **Passo 2:** gastos essenciais mensais aproximados (moradia, mercado, transporte, saúde, família) e "Você tem reserva financeira?" (Não / Sim, pequena / Sim, de 3 meses ou mais).
+-- **Passo 3:** principal objetivo (Reserva de emergência, Quitar dívida, Viagem, Curso, Notebook/compra, Outro) e hábitos de consumo (Planejo minhas compras / Compro por impulso às vezes / Uso muito o cartão / Não acompanho meus gastos).
+-- Botão final "Concluir diagnóstico". Permite voltar entre passos sem perder respostas e **pular** com "Fazer depois" (usa valores nulos e mantém `diagnostic_done=false` com lembrete no dashboard).
+-- **Resumo inicial** ao concluir (modal/tela com mascote): renda, essenciais (valor e % da renda), sobra estimada, reserva sugerida (1 semana de essenciais), 1 mensagem acolhedora conforme o perfil, e botão "Ir para o meu painel". Ao concluir, o sistema **cria** automaticamente: orçamento mensal inicial (seção 8.4) e a meta "Reserva de emergência" com primeiro passo.
+-
+-### 06 Dashboard `/inicio` (a tela mais importante)
+-Seguir o layout, com todos os valores vindos do banco da usuária autenticada:
+-- Saudação "Olá, {primeiro nome}! 👋" / "Sua vida financeira no caminho certo." + mascote no canto.
+-- **Card "Saldo disponível"** (degradê roxo) com valor, olho para ocultar/mostrar (persistir em `profiles.hide_balance`), chip de variação (ex.: "▲ +12%") e "Atualizado hoje".
+-- Duas mini-cards: **Receitas** e **Despesas** do mês.
+-- **Comparação com o mês anterior** (setas e %, sem tom de cobrança).
+-- **Painel de gastos** ("Este mês >" leva a `/gastos`): total do mês + barra empilhada por categoria com legenda e percentuais; abaixo, **gráfico de rosca ou barras** por categoria.
+-- **Evolução financeira**: gráfico de linha/área dos últimos 6 meses (receitas x despesas) com tooltip.
+-- **Orçamento mensal**: barra com % usado e valor disponível (vai a `/orcamento`).
+-- **Reserva de emergência**: "60% · R$ 6.000,00 de R$ 10.000,00" (vem da meta de categoria `emergency`; se não existir, CTA para criá-la).
+-- **Progresso das metas** (até 3 anéis pequenos).
+-- **Alertas de orçamento** (≥80% e ≥100%) em cards dourados/rosa, com texto acolhedor.
+-- **Transações recentes** (4 últimas) com "Ver todas".
+-- **Atalhos**: "+ Despesa", "+ Receita" (abrem o modal de lançamento), "Simular compra".
+-- Mensagem motivacional rotativa curta ("Pequenos passos também são conquistas.").
+-- Skeletons no carregamento; estado vazio elegante para conta nova ("Vamos organizar isso juntas? Registre seu primeiro gasto.") com mascote.
+-- **Atualização automática**: ao criar/editar/excluir transação, meta ou orçamento, invalidar as queries e o dashboard reflete na hora.
+-
+-### 07 Gastos `/gastos`
+-"Seus gastos" / "Acompanhe para onde seu dinheiro está indo."
+-- Filtros: período (Este mês, Mês anterior, Últimos 3 meses, Personalizado) e categoria ("Todas" + categorias); filtro de tipo (todas/receitas/despesas); **busca** por descrição; **ordenação** por data ou valor.
+-- "Total de despesas" do filtro e **gráfico de barras mensais** (como no layout) com meses recentes.
+-- Lista "Transações recentes" agrupada por dia, com ícone da categoria, descrição, categoria e valor (despesa em rosa-vermelho com "-", receita em verde com "+"), paginação ou scroll infinito, "Ver todas".
+-- Botão flutuante/fixo "**+ Adicionar gasto**" abre modal de lançamento manual (também para receita): descrição, valor, tipo (receita/despesa), categoria, data (padrão hoje), forma de pagamento (Pix, Cartão de crédito, Cartão de débito, Dinheiro, Boleto, Transferência), observações opcionais.
+-- Estado vazio e skeleton. Resultado de busca vazio com sugestão.
+-
+-### 08 Detalhes da transação `/gastos/:id`
+-Botão "< Voltar". Card de destaque com ícone, descrição, valor e etiqueta "Despesa" (ou "Receita"). Campos **editáveis**: Descrição, Categoria (select), Data (date picker, ex.: 02/11/2026), Valor, Forma de pagamento, Observações. Botão "Salvar alterações" (persiste, toast "Lançamento atualizado ✓") e botão contorno vermelho "Excluir lançamento" com **diálogo de confirmação**. Ao salvar/excluir, voltar à lista com dados atualizados.
+-
+-### 09 Orçamento `/orcamento`
+-"Seu orçamento" / "Planeje seus limites com tranquilidade."
+-- Card "Orçamento mensal": valor total, "disponíveis" (restante) e percentual usado (ex.: 67%), com barra.
+-- Lista por categoria: ícone, "R$ gasto / R$ limite", % e barra com cor por faixa (normal, ≥80% atenção, ≥100% limite).
+-- Botão "+ Ajustar orçamento": modal para editar o total e os limites por categoria, com validação (soma dos limites pode exceder o total? **avisar** com mensagem gentil, sem bloquear).
+-- Botão **"✨ Sugerir limites"**: aplica a regra 8.4 e mostra pré-visualização antes de salvar (usuária confirma).
+-- Navegação entre meses (anterior/próximo) **[P1]**.
+-- **Alertas** ao cruzar 80% e 100%: banner na tela, card no dashboard e toast no momento do lançamento que causou o cruzamento. Texto: "Você chegou a 80% do limite de Alimentação este mês. Vamos reorganizar isso juntas?"
+-
+-### 10 Metas `/metas`
+-"Suas metas" / "Pequenos passos, grandes conquistas."
+-- Cards com estrela/ícone, nome, "R$ acumulado de R$ meta", **anel de progresso** com % (como no layout: 60%, 35%, 20%) e, ao abrir, detalhes: valor restante, prazo, aporte mensal necessário, **previsão de conclusão** (8.5).
+-- Botão "+ Criar nova meta": nome, valor desejado, prazo, categoria (Reserva de emergência, Viagem, Compra, Quitar dívida, Curso, Pessoal).
+-- Por meta: **Editar**, **Excluir** (com confirmação), **Adicionar dinheiro**, **Retirar dinheiro** (valida saldo da meta), histórico de aportes (`goal_contributions`).
+-- Ao concluir 100%: celebração (confete leve, moeda dourada) e mensagem de conquista.
+-- Sugestão da meta de reserva com primeiro passo pequeno (1 semana de essenciais).
+-
+-### 11 Aprender `/aprender`
+-"Aprenda no seu ritmo" / "Conhecimento financeiro para a vida real." Mascote com capelo (adereço compositado ao redor do asset oficial).
+-- Trilhas como no layout ("TRILHA 01 · Organização financeira · Comece a entender seus hábitos." com barra de progresso e botão "Continuar trilha"; "TRILHA 02 · Juros sem mistério · Entenda como os juros funcionam." com "Começar a aprender"). Total de **8 trilhas** (seção 9), cada uma com ilustração, tempo estimado e progresso real calculado de `educational_progress`.
+-- Resumo de progresso geral e sequência de estudo **[P2]**. Glossário em linguagem simples **[P2]**.
+-
+-### 12 Lição `/aprender/:trilha/:licao`
+-Botão "< Voltar", etiqueta "EDUCAÇÃO FINANCEIRA · {n} MIN", título, subtítulo, ilustração (mascote oficial + lâmpada em SVG), texto organizado em blocos (explicação, **exemplo prático**, **dica**), botão "Concluir lição ✓" (grava progresso, toast acolhedor, atualiza barra da trilha) e "Próxima lição →" (avança dentro da trilha; na última, volta à trilha com parabéns).
+-
+-### 13 Simulador de compras `/simulador`
+-"Antes de comprar, veja como essa escolha pode impactar seu planejamento." (regras em 8.6)
+-- Card roxo "Quanto custa sua compra?" com valor grande e **slider** de R$ 50 a R$ 2.000 (+ campo numérico para valores fora da faixa), nome do produto, forma de pagamento (À vista, Cartão à vista, Parcelado) e número de parcelas (2–24) com juros opcionais.
+-- "O que esse valor pode representar?": cards com Reserva de emergência, Educação, Sonho pessoal (e as **metas reais** da usuária) mostrando quanto o valor avançaria cada uma.
+-- "Impacto no orçamento": "{x}% do saldo disponível" com barra; também % do orçamento mensal e da categoria.
+-- Comparação de valores (ideia do grupo): "Esse valor equivale a {x}% do seu gasto com mercado este mês" e outros equivalentes calculados com os **dados dela**.
+-- Simulação de economia: "Se guardasse esse valor por 12 meses, poderia chegar a ~R$ {y}", claramente rotulada **"Simulação simples e ilustrativa. Não é recomendação de investimento."**
+-- Botões úteis: "Aplicar numa meta" (cria aporte real após confirmação) e "Registrar como gasto".
+-- Tom: a decisão é da usuária; nunca "você não deveria comprar".
+-
+-### 14 Perfil `/perfil`
+-"Seu perfil" / "Personalize sua experiência PurplePiggy." Foto (upload com recorte), nome, e-mail, botão "Editar". Seção **Minha conta** (itens com seta): Dados pessoais (nome, telefone, nascimento, saldo inicial), Preferências (tema claro/escuro **[P2]**, moeda pt-BR), Notificações (alertas de orçamento 80%/100%, metas, lembretes de estudo; salvas no perfil), Privacidade e segurança (alterar senha, política, excluir conta), Sobre o PurplePiggy (MVV, versão). Seção **Conexões financeiras**: "Open Finance · Contas e consentimentos". Botão contorno vermelho "Sair da conta". Se `is_demo`, mostrar botão "Restaurar dados demonstrativos".
+-
+-### 15 Open Finance `/open-finance`
+-"Suas contas em um só lugar, com transparência e controle." Ver seção 10 (arquitetura e regras de honestidade). Estrutura do layout: card da instituição com status ("Ativa"), **Dados compartilhados** ("Você controla o que compartilhar e por quanto tempo.") com itens (Saldo e extrato; Dados de cartão) e "Compartilhamento autorizado", **Consentimento** ("A autorização pode ser revogada a qualquer momento."), botões "Gerenciar consentimento" e "Revogar acesso", e rodapé "🔒 Dados demonstrativos." quando em modo demo.
+-
+----
++## 7. TELAS (15) — ESPECIFICAÇÃO FUNCIONAL E REGRAS DE NEGÓCIO
++
++Todas as rotas, comportamentos, dados persistidos e regras de cada tela estão descritos abaixo. A aparência e os elementos visuais devem seguir estritamente as imagens correspondentes em `design/telas/` e os tokens em `design/tokens.md`.
++
++### 01 Splash (`/`)
++- **Rota:** `/`
++- **Comportamento:** Verifica se há sessão ativa e status do perfil. Se houver sessão com diagnóstico pendente, redireciona para `/diagnostico`; se o diagnóstico já foi concluído, redireciona para `/inicio`. Sem sessão ativa, apresenta botões de início e login.
++- **Dados usados:** Sessão em `auth.users` e flag `profiles.diagnostic_done`.
++- **Regras de negócio:** Rota pública de entrada.
++
++### 02 Boas-vindas (`/boas-vindas`)
++- **Rota:** `/boas-vindas`
++- **Comportamento:** Apresentação introdutória dos pilares do produto (controle de gastos, metas no seu ritmo, educação financeira). Ações para criar conta (`/cadastrar`), acessar conta existente (`/entrar`) ou explorar o modo demonstração.
++- **Dados usados:** Nenhum dado persistido; aciona `signInDemo()` ao solicitar demonstração.
++- **Regras de negócio:** Inicia sessão anônima isolada com os dados fictícios da usuária demonstrativa Ana Oliveira.
++
++### 03 Cadastro (`/cadastrar`)
++- **Rota:** `/cadastrar`
++- **Comportamento:** Formulário de registro com Nome completo, E-mail, Senha e Confirmação de senha. Validação dos campos com feedback inline de erro e feedback visual de carregamento.
++- **Dados usados:** Criação de conta em `auth.users`; trigger do banco cria o registro correspondente em `profiles`.
++- **Regras de negócio:** Senha com no mínimo 8 caracteres; senha e confirmação devem ser idênticas. Após criação bem-sucedida, redireciona automaticamente para `/diagnostico`.
++
++### 04 Login (`/entrar`)
++- **Rota:** `/entrar`
++- **Comportamento:** Formulário de autenticação com E-mail e Senha, controle para alternar visibilidade da senha, link para recuperação de senha (`/redefinir-senha`) e botão secundário para cadastro.
++- **Dados usados:** Autenticação via Supabase Auth (`auth.users`) e consulta a `profiles`.
++- **Regras de negócio:** Tratamento acolhedor de credenciais inválidas; redireciona para `/diagnostico` se o diagnóstico não estiver feito, ou para `/inicio` caso concluído.
++
++### 05 Diagnóstico (`/diagnostico`)
++- **Rota:** `/diagnostico`
++- **Comportamento:** Wizard de 3 etapas com perguntas sobre sentimento financeiro, renda mensal, gastos essenciais, reserva financeira e objetivo principal. Apresenta resumo financeiro ao concluir e direciona para o painel principal.
++- **Dados usados:** Persistência em `financial_diagnosis`, atualização de `profiles.diagnostic_done = true` e `profiles.initial_balance`.
++- **Regras de negócio:** Cálculo de comprometimento da renda segundo regra 8.7; geração automática do orçamento inicial em `budgets` (regra 8.4) e criação da meta "Reserva de emergência" em `financial_goals` com primeiro passo correspondente a 1 semana de essenciais (essenciais / 4). Permite pular mantendo `diagnostic_done = false`.
++
++### 06 Dashboard (`/inicio`)
++- **Rota:** `/inicio`
++- **Comportamento:** Painel principal com visão consolidada da usuária autenticada. Permite ocultar/mostrar saldo (persistido no perfil), navegar para detalhes de gastos, acessar gerenciamento de metas, abrir trilhas educativas e acionar atalhos de transação (+ Gasto, + Receita) e simulador.
++- **Dados usados:** `profiles.initial_balance` e `profiles.hide_balance`, agregação de `transactions` do mês corrente e anterior, metas ativas em `financial_goals`, meta de categoria `emergency`, e limites do mês em `budgets`.
++- **Regras de negócio:** Regra 8.1 (saldo disponível), regra 8.2 (resumo mensal e variação percentual vs. mês anterior), regra 8.3 (alerta ao cruzar 80% e 100% do orçamento). Invalidação reativa de queries após inclusão, edição ou exclusão de transações e metas.
++
++### 07 Gastos (`/gastos`)
++- **Rota:** `/gastos`
++- **Comportamento:** Consulta e listagem de transações. Filtros por período (mês atual, mês anterior, últimos 3 meses, personalizado), por categoria e por tipo (todas/receitas/despesas). Campo de busca textual por descrição e ordenação por data ou valor. Ação para abrir modal de inclusão de gasto ou receita.
++- **Dados usados:** Consulta e filtragem em `transactions`, junção com `categories`.
++- **Regras de negócio:** Totalização de despesas no período filtrado; inclusão manual com campos obrigatórios validados (valor positivo, descrição, categoria, data e forma de pagamento); disparo de alerta caso a despesa atinja os limiares de orçamento.
++
++### 08 Detalhes da transação (`/gastos/:id`)
++- **Rota:** `/gastos/:id`
++- **Comportamento:** Visualização detalhada e edição dos campos do lançamento: descrição, categoria, data, valor, forma de pagamento e observações. Ação para salvar alterações e ação de exclusão protegida por confirmação.
++- **Dados usados:** Leitura, atualização e exclusão em `transactions` onde `id = :id` e `user_id = auth.uid()`.
++- **Regras de negócio:** Ao salvar ou excluir, recalcula o saldo disponível e limites do orçamento e redireciona de volta para `/gastos`.
++
++### 09 Orçamento (`/orcamento`)
++- **Rota:** `/orcamento`
++- **Comportamento:** Acompanhamento do teto mensal global e por categoria. Exibição do valor total, gasto acumulado, valor disponível restante e porcentagem consumida. Modal de ajuste manual de limites e ação de sugestão automática de limites.
++- **Dados usados:** Tabela `budgets` para o mês de referência e soma de despesas em `transactions` agrupadas por categoria.
++- **Regras de negócio:** Regra 8.3 (alertas por categoria e geral em 80% e 100%); regra 8.4 (cálculo de sugestão com base na média dos últimos até 3 meses completos com margem de 10%, arredondada para cima em múltiplos de R$ 10).
++
++### 10 Metas (`/metas`)
++- **Rota:** `/metas`
++- **Comportamento:** Listagem de metas financeiras em andamento e concluídas. Modais para criar nova meta, realizar aporte de dinheiro (depósito), efetuar retirada de dinheiro, editar prazos/valores e excluir meta.
++- **Dados usados:** Tabela `financial_goals` e histórico em `goal_contributions`.
++- **Regras de negócio:** Regra 8.5; trigger no banco atualiza `saved_amount` a cada aporte/retirada; validação impede retirada superior ao saldo acumulado; registro de `completed_at` ao atingir 100% da meta.
++
++### 11 Aprender (`/aprender`)
++- **Rota:** `/aprender`
++- **Comportamento:** Trilha de formação financeira com 8 módulos estruturados. Exibição do progresso de conclusão de cada módulo e card de ofensiva diária de aprendizado.
++- **Dados usados:** Consulta a `educational_contents` e consolidação de conclusões em `educational_progress`.
++- **Regras de negócio:** Cálculo percentual de conclusão por trilha baseado na proporção de lições finalizadas pela usuária.
++
++### 12 Lição (`/aprender/:trilha/:licao`)
++- **Rota:** `/aprender/:trilha/:licao`
++- **Comportamento:** Leitura do conteúdo teórico, exemplo prático e recomendação. Seção de desafio rápido (quiz de fixação) com validação de resposta, explicação didática e opção de tentar novamente em caso de erro. Ação para concluir a lição e botão para avançar para a próxima.
++- **Dados usados:** Leitura de `educational_contents`, gravação em `educational_progress`.
++- **Regras de negócio:** A conclusão da lição é habilitada mediante acerto do quiz; grava a data de conclusão em `educational_progress` evitando duplicatas.
++
++### 13 Simulador de compras (`/simulador`)
++- **Rota:** `/simulador`
++- **Comportamento:** Simulação prévia do impacto financeiro de uma compra. Ajuste do valor desejado, forma de pagamento (à vista ou parcelado) e número de parcelas com taxa de juros opcional. Apresenta o peso percentual frente ao saldo disponível e orçamento do mês, além da equivalência do valor se aplicado nas metas ativas. Botões para aplicar o valor simulado em uma meta ou registrá-lo como despesa.
++- **Dados usados:** Leitura de `profiles.initial_balance`, despesas de `transactions`, limites de `budgets` e metas em `financial_goals`.
++- **Regras de negócio:** Regra 8.6; cálculo de parcelas com fórmula de juros compostos; tratamento para evitar divisão por zero em saldos nulos ou negativos; ação de aplicar em meta gera registro em `goal_contributions`.
++
++### 14 Perfil (`/perfil`)
++- **Rota:** `/perfil`
++- **Comportamento:** Gerenciamento dos dados cadastrais (nome, telefone, saldo inicial), preferências de notificação (alertas de orçamento, metas, estudos), links para privacidade e segurança, informações institucionais, área de Open Finance e ação para desconectar da conta. No modo demonstrativo, botão para restaurar os dados de teste originais.
++- **Dados usados:** Leitura e edição em `profiles`, bucket de armazenamento `avatars`, autenticação em `auth.users`.
++- **Regras de negócio:** Atualização protegida por RLS; restauração de dados demo aciona `reset_demo_data()` e opera exclusivamente em contas com `is_demo = true`.
++
++### 15 Open Finance (`/open-finance`)
++- **Rota:** `/open-finance`
++- **Comportamento:** Apresentação da instituição bancária conectada, exibição dos escopos de dados autorizados (saldo, extrato, cartões) e opções de gerenciamento de consentimento ou revogação imediata.
++- **Dados usados:** Tabelas `bank_connections` e `open_finance_consents`.
++- **Regras de negócio:** Validade do consentimento com prazo máximo de 12 meses conforme regulamentação do Banco Central; revogação altera status para `revoked` e encerra a sincronização; operação em modo demonstrativo conforme seção 10.
+ 
+ ## 8. REGRAS DE NEGÓCIO (implementar em `src/lib/finance/` + testes unitários)
+ 
+@@ -514,10 +479,10 @@
+ 
+ Acolhedor, simples, autônomo, sem julgamento. Frases-base: "Você está construindo uma relação mais saudável com seu dinheiro." / "Pequenos passos também são conquistas." / "Seu planejamento está evoluindo." / "Vamos organizar isso juntas?" / "Seus dados são tratados com cuidado."
+ 
+-**Proibido:** culpar ("você gastou demais", "erro", "irresponsável"), linguagem de ameaça, urgência artificial, "corte supérfluos", emojis de reprovação.
++**Proibido:** culpar ("você gastou demais", "erro", "irresponsável"), linguagem de ameaça, urgência artificial, "corte supérfluos", expressões de reprovação.
+ **Padrão de erro:** diz o que aconteceu e como resolver, sem pedir desculpas em excesso ("Não conseguimos salvar agora. Confira sua conexão e tente de novo.").
+ **Padrão de vazio:** convite à ação com mascote.
+-**Botões:** verbo + objeto ("Salvar alterações", "Criar minha conta"); mesmo nome da ação na confirmação ("Lançamento salvo ✓").
++**Botões:** verbo + objeto ("Salvar alterações", "Criar minha conta"); mesmo nome da ação na confirmação ("Lançamento salvo com sucesso").
+ 
+ ---
+ 
+@@ -556,7 +521,7 @@
+ 
+ ## 15. FASES DE EXECUÇÃO
+ 
+-1. **Fundação**: projeto Vite+TS, Tailwind/shadcn com tokens, fonte Nunito, assets, `Logo`, `Mascot`, layout/rotas, bottom nav, componentes base.
++1. **Fundação**: projeto Vite+TS, Tailwind com tokens, fonte Nunito, assets, `Logo`, `Mascot`, layout/rotas, bottom nav, componentes base.
+ 2. **Banco e auth**: migrations, RLS, triggers, seed de categorias e lições, cadastro/login/recuperação, guards, perfil automático. **Teste de RLS.**
+ 3. **Núcleo financeiro [P0]**: transações (CRUD, filtros), diagnóstico, dashboard, orçamento, metas — com regras em `lib/finance` e testes.
+ 4. **Educação e simulador [P0]**.

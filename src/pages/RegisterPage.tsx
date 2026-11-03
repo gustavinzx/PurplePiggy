@@ -5,6 +5,7 @@ import { zodResolver } from '@hookform/resolvers/zod'
 import { z } from 'zod'
 import { useAuth } from '../context/AuthContext'
 import { Button } from '../components/Button'
+import { Mascot } from '../components/Mascot'
 import { AppShell } from '../components/AppShell'
 import { ArrowLeft, User, Mail, Lock, ShieldCheck, Eye, EyeOff } from 'lucide-react'
 import { toast } from 'sonner'
@@ -67,7 +68,9 @@ export const RegisterPage: React.FC = () => {
           >
             <ArrowLeft className="w-6 h-6" />
           </button>
-          <span className="text-gold text-lg">✦</span>
+          <div className="-mr-2 -mt-2">
+            <Mascot size="sm" pose="welcome" />
+          </div>
         </div>
 
         {/* Título */}
