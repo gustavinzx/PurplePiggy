@@ -414,13 +414,27 @@ Botão "< Voltar". Card de destaque com ícone, descrição, valor e etiqueta "D
 - Ao concluir 100%: celebração (confete leve, moeda dourada) e mensagem de conquista.
 - Sugestão da meta de reserva com primeiro passo pequeno (1 semana de essenciais).
 
-### 11 Aprender `/aprender`
-"Aprenda no seu ritmo" / "Conhecimento financeiro para a vida real." Mascote com capelo (adereço compositado ao redor do asset oficial).
-- Trilhas como no layout ("TRILHA 01 · Organização financeira · Comece a entender seus hábitos." com barra de progresso e botão "Continuar trilha"; "TRILHA 02 · Juros sem mistério · Entenda como os juros funcionam." com "Começar a aprender"). Total de **8 trilhas** (seção 9), cada uma com ilustração, tempo estimado e progresso real calculado de `educational_progress`.
-- Resumo de progresso geral e sequência de estudo **[P2]**. Glossário em linguagem simples **[P2]**.
+### 11 Aprender `/aprender` (Mockups `10-aprender.png` e `10b-trocar-trilha.png`)
+Módulo **Desafio Piggy** (educação financeira gamificada no estilo Duolingo com identidade, tokens e tom PurplePiggy).
+- **Top Bar Fixa:** Seletor de Trilha ativa com chevron que abre a gaveta de troca (`10b-trocar-trilha.png` com as 8 trilhas e suas barras de progresso), contador de Ofensiva (streak de dias seguidos com fogo), saldo de moedas Piggy douradas e vidas/corações.
+- **Header da Unidade:** Card de unidade em vidro lilás com título, descrição de foco e botão para abrir o Caderno da Trilha (resumo em 1 min e glossário sem economês).
+- **Trilha Sinuosa (Mapa de Níveis):** Caminho em zigue-zague com nós circulares táteis 3D (bisel inferior `border-b-[6px]`):
+  - *Nó Concluído:* Círculo roxo com check branco e 3 estrelas de maestria douradas.
+  - *Nó Ativo:* Pulso de brilho suave (`animate-pulseGlow`), balão flutuante "COMEÇAR!" e mascote `pig-welcome` apoiado ao lado.
+  - *Nó Bloqueado:* Fundo lilás suave com cadeado discreto.
+  - *Baú do Tesouro:* Porquinho-cofre que entrega 50 moedas Piggy ao desbloquear.
+- **Desafio Rápido Diário:** Mini-atividade diária de 60 segundos para manter o streak ativo mesmo em dias corridos.
 
-### 12 Lição `/aprender/:trilha/:licao`
-Botão "< Voltar", etiqueta "EDUCAÇÃO FINANCEIRA · {n} MIN", título, subtítulo, ilustração (mascote oficial + lâmpada em SVG), texto organizado em blocos (explicação, **exemplo prático**, **dica**), botão "Concluir lição ✓" (grava progresso, toast acolhedor, atualiza barra da trilha) e "Próxima lição →" (avança dentro da trilha; na última, volta à trilha com parabéns).
+### 12 Lição `/aprender/:trilha/:licao` (Mockup `11-licao.png`)
+Experiência de aprendizado gamificada em microdoses de 2 a 3 minutos com física tátil e feedback imediato:
+- **Top Bar da Lição:** Botão fechar `X` à esquerda (com diálogo de saída acolhedor sem punição), barra de progresso contínua pílula (avança com elasticidade a cada resposta certa) e corações roxos.
+- **Área de Exercício:**
+  - Mascote `pig-idea` apresentando o enunciado com balão de fala acolhedor.
+  - **Cards de Opção Chunky:** Botões de resposta com bisel 3D inferior de 4px (`border-b-[4px]`) que afundam fisicamente ao toque (`active:translate-y-[2px]`). Suporte a múltipla escolha rápida, cenários do cotidiano (Sim/Não), ordenação de prioridades e pareamento de conceitos.
+- **Painel de Feedback Fixo (Drawer de Rodapé):**
+  - *Acerto:* Gaveta verde suave (`#DCFCE7`), ícone check, mascote `pig-success`, celebração sonora/confete e botão chunky verde "CONTINUAR".
+  - *Erro Construtivo:* Gaveta rosa suave (`#FCE7F3`), explicação didática sem termos difíceis, mascote `pig-retry` acolhedor e botão chunky roxo "ENTENDI" (a questão retorna ao final da lição para fixação).
+- **Encerramento da Lição:** Tela de celebração com mascote `pig-trophy`, ganho de XP e moedas Piggy, avanço da Ofensiva e retorno suave ao mapa.
 
 ### 13 Simulador de compras `/simulador`
 "Antes de comprar, veja como essa escolha pode impactar seu planejamento." (regras em 8.6)

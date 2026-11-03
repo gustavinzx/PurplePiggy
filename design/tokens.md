@@ -102,3 +102,41 @@ Documento canônico de tokens visuais extraídos diretamente de `design/LayoutDo
 | `shadow-button` | Glow vibrante magenta/violeta acompanhando o botão primário | `0 4px 14px 0 rgba(176, 55, 248, 0.35)` |
 | `shadow-nav` | Sombra vertical invertida projetada para cima da barra inferior | `0 -2px 10px rgba(67, 33, 113, 0.04)` |
 | `shadow-glass` | Elevação de vidro com leve dispersão | `0 8px 32px 0 rgba(109, 40, 201, 0.08)` |
+
+
+---
+
+## 7. Módulo Desafio Piggy (Valores Derivados)
+
+Tokens de interface tátil 3D e gamificação (estilo Duolingo adaptado estritamente à paleta PurplePiggy):
+
+### 7.1. Paleta de Cores e Bisel 3D (Chunky)
+
+| Papel Visual | Face Superior (Topo) | Bisel Inferior 3D (`border-b-[4px]`) | Texto / Ícone | Uso na Interface |
+|---|---|---|---|---|
+| **Botão Primário Chunky** | `#7D2BD6` a `#8E2DE2` | `#5B21B6` | `#FFFFFF` | Botão "Verificar", "Avançar" |
+| **Botão Sucesso Chunky** | `#2FBF71` | `#1E824C` | `#FFFFFF` | Botão "Continuar" no acerto |
+| **Botão Desabilitado** | `#E8DEFB` | `#D8C2FF` | `#9CA3AF` | Botão antes de selecionar opção |
+| **Card Opção (Padrão)** | `#FFFFFF` | `#D8C2FF` (contorno `#E8DEFB`) | `#432171` | Alternativas de resposta em repouso |
+| **Card Opção (Selecionado)** | `#F6EEFF` | `#5B21B6` (contorno `#7D2BD6`) | `#432171` | Alternativa escolhida pela usuária |
+| **Card Opção (Correto)** | `#DCFCE7` | `#1E824C` (contorno `#2FBF71`) | `#15803D` | Revelação de resposta certa |
+| **Card Opção (Incorreto)** | `#FCE7F3` | `#BE185D` (contorno `#E5487A`) | `#BE185D` | Revelação de resposta errada |
+
+### 7.2. Dimensões, Raios e Física 3D
+
+| Elemento | Dimensão / Raio | Efeito 3D / Classes Tailwind |
+|---|---|---|
+| **Bisel 3D Padrão** | `4px` | `border-b-[4px]` |
+| **Pressionamento Ativo** | `translate-y-[2px]` | `active:translate-y-[2px] active:border-b-[2px]` |
+| **Nós do Mapa (Círculos)** | `68px a 72px` de diâmetro | `rounded-full border-b-[6px]` |
+| **Cards de Opção** | Raio `16px` (`rounded-2xl`) | Altura mínima `56px`, `p-4`, `gap-3` |
+| **Botão Largo da Lição** | Altura `50px` | `rounded-2xl` ou `rounded-full` |
+| **Barra de Progresso Lição** | Altura `12px` | Trilho `#F0E7FA`, preenchimento `#7D2BD6 → #B037F8` |
+| **Caminho do Mapa (SVG)** | Espessura de traço `8px` | Cor `#EADFFB` em curvas suaves de Bézier |
+
+### 7.3. Painel de Feedback Fixo (Drawer de Rodapé)
+
+| Estado | Fundo (`bg`) | Borda Superior | Título (Nunito 800) | Apoio / Mascote |
+|---|---|---|---|---|
+| **Sucesso** | `#DCFCE7` | `#86EFAC` (2px) | `#15803D` (*"Excelente!"*) | `#166534` / `pig-success` |
+| **Correção (Erro)** | `#FCE7F3` | `#F472B6` (2px) | `#BE185D` (*"Quase lá!"*) | `#831843` / `pig-retry` |

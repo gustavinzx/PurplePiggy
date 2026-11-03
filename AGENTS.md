@@ -27,3 +27,6 @@
 6. Trabalhe na branch fix/ui-<tela>. Não toque em outras telas. Não commite em main. Mostre o screenshot final e a lista do que mudou.
 
 ## Na dúvida, pergunte. Não assuma.
+
+## EXCEÇÃO AUTORIZADA: módulo Desafio Piggy
+O módulo de aprendizado gamificado (mapa de níveis, exercícios, Ofensiva Piggy, guias de estudo) não existe em design/telas/ e foi autorizado por mim. A regra "se não está na imagem, não existe" NÃO vale para ele e nenhuma auditoria pode removê-lo. A fonte visual dele é design/telas-extra/ (mockups aprovados por mim: 10-aprender.png, 10b-trocar-trilha.png e 11-licao.png). As telas 11 (Aprender) e 12 (Lição) do layout original deixam de ser contrato visual e foram substituídas por esses mockups. Estrutura, layout e mecânica vêm de design/referencias/duolingo-ui.jpg e dos mockups extras; o visual, identidade, cores, mascote, textos e tom são SEMPRE os do PurplePiggy (tokens, Nunito, mascote e assets próprios). Proibido copiar cores, mascote, ícones ou textos do Duolingo.
