@@ -143,9 +143,9 @@ export const ProfilePage: React.FC = () => {
   }
 
   return (
-    <AppShell showNav={true} className="px-5 py-6 flex flex-col gap-5">
+    <AppShell showNav={true} className="py-6 flex flex-col gap-5">
       {/* Título da tela */}
-      <div>
+      <div className="w-full min-w-0">
         <h1 className="text-xl font-extrabold text-deep font-sans mb-1">
           Seu perfil
         </h1>
@@ -155,7 +155,7 @@ export const ProfilePage: React.FC = () => {
       </div>
 
       {/* Card de Perfil da Usuária (Layout oficial) */}
-      <div className="bg-white rounded-[24px] p-5 border border-lilac/15 shadow-card flex items-center justify-between">
+      <div className="w-full bg-white rounded-[24px] p-5 border border-lilac/15 shadow-card flex items-center justify-between min-w-0">
         <div className="flex items-center gap-3.5">
           <div className="relative">
             <div className="w-14 h-14 rounded-full bg-lilac/30 border-2 border-primary/40 flex items-center justify-center overflow-hidden">

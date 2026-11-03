@@ -1,0 +1,1119 @@
+[
+  {
+    "session": "1280x800_inicio_standard",
+    "viewport": "1280x800",
+    "testCase": "standard",
+    "timestamp": 0,
+    "metrics": {
+      "mainContainer": {
+        "id": "",
+        "tag": "main",
+        "className": "flex-1 flex flex-col w-full min-w-0 ",
+        "width": 478,
+        "height": 800,
+        "left": 398,
+        "top": 0
+      },
+      "balanceCard": null,
+      "shortcutsRow": null,
+      "bottomNav": null
+    },
+    "screenshot": "1280x800_inicio_standard_0ms.png"
+  },
+  {
+    "session": "1280x800_inicio_standard",
+    "viewport": "1280x800",
+    "testCase": "standard",
+    "timestamp": 200,
+    "metrics": {
+      "mainContainer": {
+        "id": "",
+        "tag": "main",
+        "className": "flex-1 flex flex-col w-full min-w-0 relative pt-5 ",
+        "width": 478,
+        "height": 1191,
+        "left": 398,
+        "top": 0
+      },
+      "balanceCard": {
+        "id": "",
+        "tag": "div",
+        "className": "w-full bg-gradient-to-br from-[#8E32D8] to-[#521D8",
+        "width": 438,
+        "height": 142,
+        "left": 418,
+        "top": 127
+      },
+      "shortcutsRow": {
+        "id": "",
+        "tag": "div",
+        "className": "w-full grid grid-cols-3 gap-2.5 min-w-0",
+        "width": 438,
+        "height": 46,
+        "left": 418,
+        "top": 367
+      },
+      "bottomNav": {
+        "id": "",
+        "tag": "nav",
+        "className": "fixed bottom-0 left-1/2 -translate-x-1/2 z-40 w-fu",
+        "width": 480,
+        "height": 65,
+        "left": 397,
+        "top": 735
+      }
+    },
+    "screenshot": "1280x800_inicio_standard_200ms.png"
+  },
+  {
+    "session": "1280x800_inicio_standard",
+    "viewport": "1280x800",
+    "testCase": "standard",
+    "timestamp": 600,
+    "metrics": {
+      "mainContainer": {
+        "id": "",
+        "tag": "main",
+        "className": "flex-1 flex flex-col w-full min-w-0 relative pt-5 ",
+        "width": 478,
+        "height": 1191,
+        "left": 398,
+        "top": 0
+      },
+      "balanceCard": {
+        "id": "",
+        "tag": "div",
+        "className": "w-full bg-gradient-to-br from-[#8E32D8] to-[#521D8",
+        "width": 438,
+        "height": 142,
+        "left": 418,
+        "top": 127
+      },
+      "shortcutsRow": {
+        "id": "",
+        "tag": "div",
+        "className": "w-full grid grid-cols-3 gap-2.5 min-w-0",
+        "width": 438,
+        "height": 46,
+        "left": 418,
+        "top": 367
+      },
+      "bottomNav": {
+        "id": "",
+        "tag": "nav",
+        "className": "fixed bottom-0 left-1/2 -translate-x-1/2 z-40 w-fu",
+        "width": 480,
+        "height": 65,
+        "left": 397,
+        "top": 735
+      }
+    },
+    "screenshot": "1280x800_inicio_standard_600ms.png"
+  },
+  {
+    "session": "1280x800_inicio_standard",
+    "viewport": "1280x800",
+    "testCase": "standard",
+    "timestamp": 1000,
+    "metrics": {
+      "mainContainer": {
+        "id": "",
+        "tag": "main",
+        "className": "flex-1 flex flex-col w-full min-w-0 relative pt-5 ",
+        "width": 478,
+        "height": 1191,
+        "left": 398,
+        "top": 0
+      },
+      "balanceCard": {
+        "id": "",
+        "tag": "div",
+        "className": "w-full bg-gradient-to-br from-[#8E32D8] to-[#521D8",
+        "width": 438,
+        "height": 142,
+        "left": 418,
+        "top": 127
+      },
+      "shortcutsRow": {
+        "id": "",
+        "tag": "div",
+        "className": "w-full grid grid-cols-3 gap-2.5 min-w-0",
+        "width": 438,
+        "height": 46,
+        "left": 418,
+        "top": 367
+      },
+      "bottomNav": {
+        "id": "",
+        "tag": "nav",
+        "className": "fixed bottom-0 left-1/2 -translate-x-1/2 z-40 w-fu",
+        "width": 480,
+        "height": 65,
+        "left": 397,
+        "top": 735
+      }
+    },
+    "screenshot": "1280x800_inicio_standard_1000ms.png"
+  },
+  {
+    "session": "1280x800_inicio_standard",
+    "viewport": "1280x800",
+    "testCase": "standard",
+    "timestamp": 2500,
+    "metrics": {
+      "mainContainer": {
+        "id": "",
+        "tag": "main",
+        "className": "flex-1 flex flex-col w-full min-w-0 relative pt-5 ",
+        "width": 478,
+        "height": 1265.5,
+        "left": 398,
+        "top": 0
+      },
+      "balanceCard": {
+        "id": "",
+        "tag": "div",
+        "className": "w-full bg-gradient-to-br from-[#8E32D8] to-[#521D8",
+        "width": 438,
+        "height": 145,
+        "left": 418,
+        "top": 127
+      },
+      "shortcutsRow": {
+        "id": "",
+        "tag": "div",
+        "className": "w-full grid grid-cols-3 gap-2.5 min-w-0",
+        "width": 438,
+        "height": 46,
+        "left": 418,
+        "top": 370
+      },
+      "bottomNav": {
+        "id": "",
+        "tag": "nav",
+        "className": "fixed bottom-0 left-1/2 -translate-x-1/2 z-40 w-fu",
+        "width": 480,
+        "height": 65,
+        "left": 397,
+        "top": 735
+      }
+    },
+    "screenshot": "1280x800_inicio_standard_2500ms.png"
+  },
+  {
+    "session": "1920x1080_inicio_standard",
+    "viewport": "1920x1080",
+    "testCase": "standard",
+    "timestamp": 0,
+    "metrics": {
+      "mainContainer": {
+        "id": "",
+        "tag": "main",
+        "className": "flex-1 flex flex-col w-full min-w-0 ",
+        "width": 478,
+        "height": 1080,
+        "left": 718,
+        "top": 0
+      },
+      "balanceCard": null,
+      "shortcutsRow": null,
+      "bottomNav": null
+    },
+    "screenshot": "1920x1080_inicio_standard_0ms.png"
+  },
+  {
+    "session": "1920x1080_inicio_standard",
+    "viewport": "1920x1080",
+    "testCase": "standard",
+    "timestamp": 200,
+    "metrics": {
+      "mainContainer": {
+        "id": "",
+        "tag": "main",
+        "className": "flex-1 flex flex-col w-full min-w-0 relative pt-5 ",
+        "width": 478,
+        "height": 1191,
+        "left": 718,
+        "top": 0
+      },
+      "balanceCard": {
+        "id": "",
+        "tag": "div",
+        "className": "w-full bg-gradient-to-br from-[#8E32D8] to-[#521D8",
+        "width": 438,
+        "height": 142,
+        "left": 738,
+        "top": 127
+      },
+      "shortcutsRow": {
+        "id": "",
+        "tag": "div",
+        "className": "w-full grid grid-cols-3 gap-2.5 min-w-0",
+        "width": 438,
+        "height": 46,
+        "left": 738,
+        "top": 367
+      },
+      "bottomNav": {
+        "id": "",
+        "tag": "nav",
+        "className": "fixed bottom-0 left-1/2 -translate-x-1/2 z-40 w-fu",
+        "width": 480,
+        "height": 65,
+        "left": 717,
+        "top": 1015
+      }
+    },
+    "screenshot": "1920x1080_inicio_standard_200ms.png"
+  },
+  {
+    "session": "1920x1080_inicio_standard",
+    "viewport": "1920x1080",
+    "testCase": "standard",
+    "timestamp": 600,
+    "metrics": {
+      "mainContainer": {
+        "id": "",
+        "tag": "main",
+        "className": "flex-1 flex flex-col w-full min-w-0 relative pt-5 ",
+        "width": 478,
+        "height": 1191,
+        "left": 718,
+        "top": 0
+      },
+      "balanceCard": {
+        "id": "",
+        "tag": "div",
+        "className": "w-full bg-gradient-to-br from-[#8E32D8] to-[#521D8",
+        "width": 438,
+        "height": 142,
+        "left": 738,
+        "top": 127
+      },
+      "shortcutsRow": {
+        "id": "",
+        "tag": "div",
+        "className": "w-full grid grid-cols-3 gap-2.5 min-w-0",
+        "width": 438,
+        "height": 46,
+        "left": 738,
+        "top": 367
+      },
+      "bottomNav": {
+        "id": "",
+        "tag": "nav",
+        "className": "fixed bottom-0 left-1/2 -translate-x-1/2 z-40 w-fu",
+        "width": 480,
+        "height": 65,
+        "left": 717,
+        "top": 1015
+      }
+    },
+    "screenshot": "1920x1080_inicio_standard_600ms.png"
+  },
+  {
+    "session": "1920x1080_inicio_standard",
+    "viewport": "1920x1080",
+    "testCase": "standard",
+    "timestamp": 1000,
+    "metrics": {
+      "mainContainer": {
+        "id": "",
+        "tag": "main",
+        "className": "flex-1 flex flex-col w-full min-w-0 relative pt-5 ",
+        "width": 478,
+        "height": 1191,
+        "left": 718,
+        "top": 0
+      },
+      "balanceCard": {
+        "id": "",
+        "tag": "div",
+        "className": "w-full bg-gradient-to-br from-[#8E32D8] to-[#521D8",
+        "width": 438,
+        "height": 142,
+        "left": 738,
+        "top": 127
+      },
+      "shortcutsRow": {
+        "id": "",
+        "tag": "div",
+        "className": "w-full grid grid-cols-3 gap-2.5 min-w-0",
+        "width": 438,
+        "height": 46,
+        "left": 738,
+        "top": 367
+      },
+      "bottomNav": {
+        "id": "",
+        "tag": "nav",
+        "className": "fixed bottom-0 left-1/2 -translate-x-1/2 z-40 w-fu",
+        "width": 480,
+        "height": 65,
+        "left": 717,
+        "top": 1015
+      }
+    },
+    "screenshot": "1920x1080_inicio_standard_1000ms.png"
+  },
+  {
+    "session": "1920x1080_inicio_standard",
+    "viewport": "1920x1080",
+    "testCase": "standard",
+    "timestamp": 2500,
+    "metrics": {
+      "mainContainer": {
+        "id": "",
+        "tag": "main",
+        "className": "flex-1 flex flex-col w-full min-w-0 relative pt-5 ",
+        "width": 478,
+        "height": 1265.5,
+        "left": 718,
+        "top": 0
+      },
+      "balanceCard": {
+        "id": "",
+        "tag": "div",
+        "className": "w-full bg-gradient-to-br from-[#8E32D8] to-[#521D8",
+        "width": 438,
+        "height": 145,
+        "left": 738,
+        "top": 127
+      },
+      "shortcutsRow": {
+        "id": "",
+        "tag": "div",
+        "className": "w-full grid grid-cols-3 gap-2.5 min-w-0",
+        "width": 438,
+        "height": 46,
+        "left": 738,
+        "top": 370
+      },
+      "bottomNav": {
+        "id": "",
+        "tag": "nav",
+        "className": "fixed bottom-0 left-1/2 -translate-x-1/2 z-40 w-fu",
+        "width": 480,
+        "height": 65,
+        "left": 717,
+        "top": 1015
+      }
+    },
+    "screenshot": "1920x1080_inicio_standard_2500ms.png"
+  },
+  {
+    "session": "390x844_inicio_standard",
+    "viewport": "390x844",
+    "testCase": "standard",
+    "timestamp": 0,
+    "metrics": {
+      "mainContainer": {
+        "id": "",
+        "tag": "main",
+        "className": "flex-1 flex flex-col w-full min-w-0 ",
+        "width": 382,
+        "height": 844,
+        "left": 1,
+        "top": 0
+      },
+      "balanceCard": null,
+      "shortcutsRow": null,
+      "bottomNav": null
+    },
+    "screenshot": "390x844_inicio_standard_0ms.png"
+  },
+  {
+    "session": "390x844_inicio_standard",
+    "viewport": "390x844",
+    "testCase": "standard",
+    "timestamp": 200,
+    "metrics": {
+      "mainContainer": {
+        "id": "",
+        "tag": "main",
+        "className": "flex-1 flex flex-col w-full min-w-0 relative pt-5 ",
+        "width": 382,
+        "height": 1191,
+        "left": 1,
+        "top": 0
+      },
+      "balanceCard": {
+        "id": "",
+        "tag": "div",
+        "className": "w-full bg-gradient-to-br from-[#8E32D8] to-[#521D8",
+        "width": 342,
+        "height": 142,
+        "left": 21,
+        "top": 127
+      },
+      "shortcutsRow": {
+        "id": "",
+        "tag": "div",
+        "className": "w-full grid grid-cols-3 gap-2.5 min-w-0",
+        "width": 342,
+        "height": 46,
+        "left": 21,
+        "top": 367
+      },
+      "bottomNav": {
+        "id": "",
+        "tag": "nav",
+        "className": "fixed bottom-0 left-1/2 -translate-x-1/2 z-40 w-fu",
+        "width": 384,
+        "height": 65,
+        "left": 0,
+        "top": 779
+      }
+    },
+    "screenshot": "390x844_inicio_standard_200ms.png"
+  },
+  {
+    "session": "390x844_inicio_standard",
+    "viewport": "390x844",
+    "testCase": "standard",
+    "timestamp": 600,
+    "metrics": {
+      "mainContainer": {
+        "id": "",
+        "tag": "main",
+        "className": "flex-1 flex flex-col w-full min-w-0 relative pt-5 ",
+        "width": 382,
+        "height": 1191,
+        "left": 1,
+        "top": 0
+      },
+      "balanceCard": {
+        "id": "",
+        "tag": "div",
+        "className": "w-full bg-gradient-to-br from-[#8E32D8] to-[#521D8",
+        "width": 342,
+        "height": 142,
+        "left": 21,
+        "top": 127
+      },
+      "shortcutsRow": {
+        "id": "",
+        "tag": "div",
+        "className": "w-full grid grid-cols-3 gap-2.5 min-w-0",
+        "width": 342,
+        "height": 46,
+        "left": 21,
+        "top": 367
+      },
+      "bottomNav": {
+        "id": "",
+        "tag": "nav",
+        "className": "fixed bottom-0 left-1/2 -translate-x-1/2 z-40 w-fu",
+        "width": 384,
+        "height": 65,
+        "left": 0,
+        "top": 779
+      }
+    },
+    "screenshot": "390x844_inicio_standard_600ms.png"
+  },
+  {
+    "session": "390x844_inicio_standard",
+    "viewport": "390x844",
+    "testCase": "standard",
+    "timestamp": 1000,
+    "metrics": {
+      "mainContainer": {
+        "id": "",
+        "tag": "main",
+        "className": "flex-1 flex flex-col w-full min-w-0 relative pt-5 ",
+        "width": 382,
+        "height": 1191,
+        "left": 1,
+        "top": 0
+      },
+      "balanceCard": {
+        "id": "",
+        "tag": "div",
+        "className": "w-full bg-gradient-to-br from-[#8E32D8] to-[#521D8",
+        "width": 342,
+        "height": 142,
+        "left": 21,
+        "top": 127
+      },
+      "shortcutsRow": {
+        "id": "",
+        "tag": "div",
+        "className": "w-full grid grid-cols-3 gap-2.5 min-w-0",
+        "width": 342,
+        "height": 46,
+        "left": 21,
+        "top": 367
+      },
+      "bottomNav": {
+        "id": "",
+        "tag": "nav",
+        "className": "fixed bottom-0 left-1/2 -translate-x-1/2 z-40 w-fu",
+        "width": 384,
+        "height": 65,
+        "left": 0,
+        "top": 779
+      }
+    },
+    "screenshot": "390x844_inicio_standard_1000ms.png"
+  },
+  {
+    "session": "390x844_inicio_standard",
+    "viewport": "390x844",
+    "testCase": "standard",
+    "timestamp": 2500,
+    "metrics": {
+      "mainContainer": {
+        "id": "",
+        "tag": "main",
+        "className": "flex-1 flex flex-col w-full min-w-0 relative pt-5 ",
+        "width": 382,
+        "height": 1191,
+        "left": 1,
+        "top": 0
+      },
+      "balanceCard": {
+        "id": "",
+        "tag": "div",
+        "className": "w-full bg-gradient-to-br from-[#8E32D8] to-[#521D8",
+        "width": 342,
+        "height": 142,
+        "left": 21,
+        "top": 127
+      },
+      "shortcutsRow": {
+        "id": "",
+        "tag": "div",
+        "className": "w-full grid grid-cols-3 gap-2.5 min-w-0",
+        "width": 342,
+        "height": 46,
+        "left": 21,
+        "top": 367
+      },
+      "bottomNav": {
+        "id": "",
+        "tag": "nav",
+        "className": "fixed bottom-0 left-1/2 -translate-x-1/2 z-40 w-fu",
+        "width": 384,
+        "height": 65,
+        "left": 0,
+        "top": 779
+      }
+    },
+    "screenshot": "390x844_inicio_standard_2500ms.png"
+  },
+  {
+    "session": "1920x1080_inicio_long_values",
+    "viewport": "1920x1080",
+    "testCase": "long_values",
+    "timestamp": 0,
+    "metrics": {
+      "mainContainer": {
+        "id": "",
+        "tag": "main",
+        "className": "flex-1 flex flex-col w-full min-w-0 ",
+        "width": 478,
+        "height": 1080,
+        "left": 718,
+        "top": 0
+      },
+      "balanceCard": null,
+      "shortcutsRow": null,
+      "bottomNav": null
+    },
+    "screenshot": "1920x1080_inicio_long_values_0ms.png"
+  },
+  {
+    "session": "1920x1080_inicio_long_values",
+    "viewport": "1920x1080",
+    "testCase": "long_values",
+    "timestamp": 200,
+    "metrics": {
+      "mainContainer": {
+        "id": "",
+        "tag": "main",
+        "className": "flex-1 flex flex-col w-full min-w-0 relative pt-5 ",
+        "width": 478,
+        "height": 1191,
+        "left": 718,
+        "top": 0
+      },
+      "balanceCard": {
+        "id": "",
+        "tag": "div",
+        "className": "w-full bg-gradient-to-br from-[#8E32D8] to-[#521D8",
+        "width": 438,
+        "height": 142,
+        "left": 738,
+        "top": 127
+      },
+      "shortcutsRow": {
+        "id": "",
+        "tag": "div",
+        "className": "w-full grid grid-cols-3 gap-2.5 min-w-0",
+        "width": 438,
+        "height": 46,
+        "left": 738,
+        "top": 367
+      },
+      "bottomNav": {
+        "id": "",
+        "tag": "nav",
+        "className": "fixed bottom-0 left-1/2 -translate-x-1/2 z-40 w-fu",
+        "width": 480,
+        "height": 65,
+        "left": 717,
+        "top": 1015
+      }
+    },
+    "screenshot": "1920x1080_inicio_long_values_200ms.png"
+  },
+  {
+    "session": "1920x1080_inicio_long_values",
+    "viewport": "1920x1080",
+    "testCase": "long_values",
+    "timestamp": 600,
+    "metrics": {
+      "mainContainer": {
+        "id": "",
+        "tag": "main",
+        "className": "flex-1 flex flex-col w-full min-w-0 relative pt-5 ",
+        "width": 478,
+        "height": 1191,
+        "left": 718,
+        "top": 0
+      },
+      "balanceCard": {
+        "id": "",
+        "tag": "div",
+        "className": "w-full bg-gradient-to-br from-[#8E32D8] to-[#521D8",
+        "width": 438,
+        "height": 142,
+        "left": 738,
+        "top": 127
+      },
+      "shortcutsRow": {
+        "id": "",
+        "tag": "div",
+        "className": "w-full grid grid-cols-3 gap-2.5 min-w-0",
+        "width": 438,
+        "height": 46,
+        "left": 738,
+        "top": 367
+      },
+      "bottomNav": {
+        "id": "",
+        "tag": "nav",
+        "className": "fixed bottom-0 left-1/2 -translate-x-1/2 z-40 w-fu",
+        "width": 480,
+        "height": 65,
+        "left": 717,
+        "top": 1015
+      }
+    },
+    "screenshot": "1920x1080_inicio_long_values_600ms.png"
+  },
+  {
+    "session": "1920x1080_inicio_long_values",
+    "viewport": "1920x1080",
+    "testCase": "long_values",
+    "timestamp": 1000,
+    "metrics": {
+      "mainContainer": {
+        "id": "",
+        "tag": "main",
+        "className": "flex-1 flex flex-col w-full min-w-0 relative pt-5 ",
+        "width": 478,
+        "height": 1191,
+        "left": 718,
+        "top": 0
+      },
+      "balanceCard": {
+        "id": "",
+        "tag": "div",
+        "className": "w-full bg-gradient-to-br from-[#8E32D8] to-[#521D8",
+        "width": 438,
+        "height": 142,
+        "left": 738,
+        "top": 127
+      },
+      "shortcutsRow": {
+        "id": "",
+        "tag": "div",
+        "className": "w-full grid grid-cols-3 gap-2.5 min-w-0",
+        "width": 438,
+        "height": 46,
+        "left": 738,
+        "top": 367
+      },
+      "bottomNav": {
+        "id": "",
+        "tag": "nav",
+        "className": "fixed bottom-0 left-1/2 -translate-x-1/2 z-40 w-fu",
+        "width": 480,
+        "height": 65,
+        "left": 717,
+        "top": 1015
+      }
+    },
+    "screenshot": "1920x1080_inicio_long_values_1000ms.png"
+  },
+  {
+    "session": "1920x1080_inicio_long_values",
+    "viewport": "1920x1080",
+    "testCase": "long_values",
+    "timestamp": 2500,
+    "metrics": {
+      "mainContainer": {
+        "id": "",
+        "tag": "main",
+        "className": "flex-1 flex flex-col w-full min-w-0 relative pt-5 ",
+        "width": 478,
+        "height": 1265.5,
+        "left": 718,
+        "top": 0
+      },
+      "balanceCard": {
+        "id": "",
+        "tag": "div",
+        "className": "w-full bg-gradient-to-br from-[#8E32D8] to-[#521D8",
+        "width": 438,
+        "height": 145,
+        "left": 738,
+        "top": 127
+      },
+      "shortcutsRow": {
+        "id": "",
+        "tag": "div",
+        "className": "w-full grid grid-cols-3 gap-2.5 min-w-0",
+        "width": 438,
+        "height": 46,
+        "left": 738,
+        "top": 370
+      },
+      "bottomNav": {
+        "id": "",
+        "tag": "nav",
+        "className": "fixed bottom-0 left-1/2 -translate-x-1/2 z-40 w-fu",
+        "width": 480,
+        "height": 65,
+        "left": 717,
+        "top": 1015
+      }
+    },
+    "screenshot": "1920x1080_inicio_long_values_2500ms.png"
+  },
+  {
+    "session": "390x844_inicio_long_values",
+    "viewport": "390x844",
+    "testCase": "long_values",
+    "timestamp": 0,
+    "metrics": {
+      "mainContainer": {
+        "id": "",
+        "tag": "main",
+        "className": "flex-1 flex flex-col w-full min-w-0 ",
+        "width": 382,
+        "height": 844,
+        "left": 1,
+        "top": 0
+      },
+      "balanceCard": null,
+      "shortcutsRow": null,
+      "bottomNav": null
+    },
+    "screenshot": "390x844_inicio_long_values_0ms.png"
+  },
+  {
+    "session": "390x844_inicio_long_values",
+    "viewport": "390x844",
+    "testCase": "long_values",
+    "timestamp": 200,
+    "metrics": {
+      "mainContainer": {
+        "id": "",
+        "tag": "main",
+        "className": "flex-1 flex flex-col w-full min-w-0 relative pt-5 ",
+        "width": 382,
+        "height": 1191,
+        "left": 1,
+        "top": 0
+      },
+      "balanceCard": {
+        "id": "",
+        "tag": "div",
+        "className": "w-full bg-gradient-to-br from-[#8E32D8] to-[#521D8",
+        "width": 342,
+        "height": 142,
+        "left": 21,
+        "top": 127
+      },
+      "shortcutsRow": {
+        "id": "",
+        "tag": "div",
+        "className": "w-full grid grid-cols-3 gap-2.5 min-w-0",
+        "width": 342,
+        "height": 46,
+        "left": 21,
+        "top": 367
+      },
+      "bottomNav": {
+        "id": "",
+        "tag": "nav",
+        "className": "fixed bottom-0 left-1/2 -translate-x-1/2 z-40 w-fu",
+        "width": 384,
+        "height": 65,
+        "left": 0,
+        "top": 779
+      }
+    },
+    "screenshot": "390x844_inicio_long_values_200ms.png"
+  },
+  {
+    "session": "390x844_inicio_long_values",
+    "viewport": "390x844",
+    "testCase": "long_values",
+    "timestamp": 600,
+    "metrics": {
+      "mainContainer": {
+        "id": "",
+        "tag": "main",
+        "className": "flex-1 flex flex-col w-full min-w-0 relative pt-5 ",
+        "width": 382,
+        "height": 1191,
+        "left": 1,
+        "top": 0
+      },
+      "balanceCard": {
+        "id": "",
+        "tag": "div",
+        "className": "w-full bg-gradient-to-br from-[#8E32D8] to-[#521D8",
+        "width": 342,
+        "height": 142,
+        "left": 21,
+        "top": 127
+      },
+      "shortcutsRow": {
+        "id": "",
+        "tag": "div",
+        "className": "w-full grid grid-cols-3 gap-2.5 min-w-0",
+        "width": 342,
+        "height": 46,
+        "left": 21,
+        "top": 367
+      },
+      "bottomNav": {
+        "id": "",
+        "tag": "nav",
+        "className": "fixed bottom-0 left-1/2 -translate-x-1/2 z-40 w-fu",
+        "width": 384,
+        "height": 65,
+        "left": 0,
+        "top": 779
+      }
+    },
+    "screenshot": "390x844_inicio_long_values_600ms.png"
+  },
+  {
+    "session": "390x844_inicio_long_values",
+    "viewport": "390x844",
+    "testCase": "long_values",
+    "timestamp": 1000,
+    "metrics": {
+      "mainContainer": {
+        "id": "",
+        "tag": "main",
+        "className": "flex-1 flex flex-col w-full min-w-0 relative pt-5 ",
+        "width": 382,
+        "height": 1191,
+        "left": 1,
+        "top": 0
+      },
+      "balanceCard": {
+        "id": "",
+        "tag": "div",
+        "className": "w-full bg-gradient-to-br from-[#8E32D8] to-[#521D8",
+        "width": 342,
+        "height": 142,
+        "left": 21,
+        "top": 127
+      },
+      "shortcutsRow": {
+        "id": "",
+        "tag": "div",
+        "className": "w-full grid grid-cols-3 gap-2.5 min-w-0",
+        "width": 342,
+        "height": 46,
+        "left": 21,
+        "top": 367
+      },
+      "bottomNav": {
+        "id": "",
+        "tag": "nav",
+        "className": "fixed bottom-0 left-1/2 -translate-x-1/2 z-40 w-fu",
+        "width": 384,
+        "height": 65,
+        "left": 0,
+        "top": 779
+      }
+    },
+    "screenshot": "390x844_inicio_long_values_1000ms.png"
+  },
+  {
+    "session": "390x844_inicio_long_values",
+    "viewport": "390x844",
+    "testCase": "long_values",
+    "timestamp": 2500,
+    "metrics": {
+      "mainContainer": {
+        "id": "",
+        "tag": "main",
+        "className": "flex-1 flex flex-col w-full min-w-0 relative pt-5 ",
+        "width": 382,
+        "height": 1191,
+        "left": 1,
+        "top": 0
+      },
+      "balanceCard": {
+        "id": "",
+        "tag": "div",
+        "className": "w-full bg-gradient-to-br from-[#8E32D8] to-[#521D8",
+        "width": 342,
+        "height": 142,
+        "left": 21,
+        "top": 127
+      },
+      "shortcutsRow": {
+        "id": "",
+        "tag": "div",
+        "className": "w-full grid grid-cols-3 gap-2.5 min-w-0",
+        "width": 342,
+        "height": 46,
+        "left": 21,
+        "top": 367
+      },
+      "bottomNav": {
+        "id": "",
+        "tag": "nav",
+        "className": "fixed bottom-0 left-1/2 -translate-x-1/2 z-40 w-fu",
+        "width": 384,
+        "height": 65,
+        "left": 0,
+        "top": 779
+      }
+    },
+    "screenshot": "390x844_inicio_long_values_2500ms.png"
+  },
+  {
+    "session": "tab_gastos",
+    "viewport": "1280x800",
+    "route": "/gastos",
+    "metrics": {
+      "mainContainer": {
+        "id": "",
+        "tag": "main",
+        "className": "flex-1 flex flex-col w-full min-w-0 py-6 flex flex",
+        "width": 478,
+        "height": 1106,
+        "left": 398,
+        "top": 0
+      },
+      "balanceCard": null,
+      "shortcutsRow": null,
+      "bottomNav": {
+        "id": "",
+        "tag": "nav",
+        "className": "fixed bottom-0 left-1/2 -translate-x-1/2 z-40 w-fu",
+        "width": 480,
+        "height": 65,
+        "left": 397,
+        "top": 735
+      }
+    },
+    "screenshot": "tab_gastos_1280x800.png"
+  },
+  {
+    "session": "tab_metas",
+    "viewport": "1280x800",
+    "route": "/metas",
+    "metrics": {
+      "mainContainer": {
+        "id": "",
+        "tag": "main",
+        "className": "flex-1 flex flex-col w-full min-w-0 py-6 flex flex",
+        "width": 478,
+        "height": 800,
+        "left": 398,
+        "top": 0
+      },
+      "balanceCard": null,
+      "shortcutsRow": null,
+      "bottomNav": {
+        "id": "",
+        "tag": "nav",
+        "className": "fixed bottom-0 left-1/2 -translate-x-1/2 z-40 w-fu",
+        "width": 480,
+        "height": 65,
+        "left": 397,
+        "top": 735
+      }
+    },
+    "screenshot": "tab_metas_1280x800.png"
+  },
+  {
+    "session": "tab_aprender",
+    "viewport": "1280x800",
+    "route": "/aprender",
+    "metrics": {
+      "mainContainer": {
+        "id": "",
+        "tag": "main",
+        "className": "flex-1 flex flex-col w-full min-w-0 bg-gradient-to",
+        "width": 478,
+        "height": 822.5,
+        "left": 398,
+        "top": -23
+      },
+      "balanceCard": null,
+      "shortcutsRow": null,
+      "bottomNav": {
+        "id": "",
+        "tag": "nav",
+        "className": "fixed bottom-0 left-1/2 -translate-x-1/2 z-40 w-fu",
+        "width": 480,
+        "height": 65,
+        "left": 397,
+        "top": 735
+      }
+    },
+    "screenshot": "tab_aprender_1280x800.png"
+  },
+  {
+    "session": "tab_perfil",
+    "viewport": "1280x800",
+    "route": "/perfil",
+    "metrics": {
+      "mainContainer": {
+        "id": "",
+        "tag": "main",
+        "className": "flex-1 flex flex-col w-full min-w-0 py-6 flex flex",
+        "width": 478,
+        "height": 925,
+        "left": 398,
+        "top": 0
+      },
+      "balanceCard": null,
+      "shortcutsRow": null,
+      "bottomNav": {
+        "id": "",
+        "tag": "nav",
+        "className": "fixed bottom-0 left-1/2 -translate-x-1/2 z-40 w-fu",
+        "width": 480,
+        "height": 65,
+        "left": 397,
+        "top": 735
+      }
+    },
+    "screenshot": "tab_perfil_1280x800.png"
+  }
+]

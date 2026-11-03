@@ -51,8 +51,8 @@ const NavIconMetas: React.FC<{ active: boolean }> = ({ active }) => (
     strokeLinejoin="round"
   >
     <circle cx="12" cy="12" r="10" />
-    <circle cx="12" cy="12" r="5" />
-    <circle cx="12" cy="12" r="1" fill="currentColor" />
+    <circle cx="12" cy="12" r="6" />
+    <circle cx="12" cy="12" r="2" fill="currentColor" />
   </svg>
 )
 
@@ -67,14 +67,12 @@ const NavIconAprender: React.FC<{ active: boolean }> = ({ active }) => (
     strokeLinecap="round"
     strokeLinejoin="round"
   >
-    <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20" />
-    <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z" />
-    <path d="M8 7h8" />
-    <path d="M8 11h6" />
+    <path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z" />
+    <path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z" />
   </svg>
 )
 
-// 5. Ícone Perfil (Busto com contorno arredondado)
+// 5. Ícone Perfil (Silhueta clássica com cabeça e tronco arredondados)
 const NavIconPerfil: React.FC<{ active: boolean }> = ({ active }) => (
   <svg
     className="w-5 h-5 transition-transform"
@@ -100,7 +98,7 @@ export const BottomNav: React.FC<BottomNavProps> = ({ className = '', isFixed = 
   ]
 
   const positionClass = isFixed
-    ? 'fixed bottom-0 left-0 right-0 z-40 max-w-[480px] mx-auto'
+    ? 'fixed bottom-0 left-1/2 -translate-x-1/2 z-40 w-full max-w-[var(--app-max-width)]'
     : 'relative w-full'
 
   return (
@@ -150,7 +148,7 @@ export interface FloatingActionButtonProps {
 
 /**
  * Botão flutuante de ação rápida ("+ Adicionar gasto", "+ Criar nova meta", "+ Ajustar orçamento"):
- * Fixado logo acima da barra inferior de navegação (bottom-[74px]) com largura total confortável e sombra de destaque.
+ * Fixado logo acima da barra inferior de navegação na MESMA coluna centralizada do AppShell.
  */
 export const FloatingActionButton: React.FC<FloatingActionButtonProps> = ({
   children,
@@ -160,7 +158,7 @@ export const FloatingActionButton: React.FC<FloatingActionButtonProps> = ({
   className = '',
 }) => {
   const containerClass = isFixed
-    ? 'fixed bottom-[74px] left-0 right-0 max-w-[480px] mx-auto px-5 z-30 pointer-events-auto'
+    ? 'fixed bottom-[calc(var(--nav-height)+10px)] left-1/2 -translate-x-1/2 w-full max-w-[var(--app-max-width)] px-[var(--screen-x)] z-30 pointer-events-auto'
     : 'w-full'
 
   return (

@@ -240,7 +240,7 @@ export const BudgetPage: React.FC = () => {
   }
 
   return (
-    <AppShell showNav={true} className="px-5 py-6 flex flex-col gap-4">
+    <AppShell showNav={true} className="py-6 flex flex-col gap-4">
       {/* Título */}
       <div className="flex items-center justify-between">
         <div>
@@ -300,16 +300,16 @@ export const BudgetPage: React.FC = () => {
       </div>
 
       {/* Lista de Categorias com Limites e Progresso */}
-      <div className="bg-white rounded-[22px] p-5 border border-lilac/15 shadow-card flex flex-col gap-4">
+      <div className="w-full bg-white rounded-[22px] p-5 border border-lilac/15 shadow-card flex flex-col gap-4 min-w-0">
         <div className="flex items-center justify-between pb-2 border-b border-lilac/10">
           <span className="text-xs font-bold text-textSec">Limites por categoria</span>
           <span className="text-[11px] font-bold text-textSec/70">Mês corrente</span>
         </div>
 
-        <div className="flex flex-col gap-4">
+        <div className="w-full flex flex-col gap-4 min-w-0">
           {loading ? (
             [1, 2, 3, 4].map((i) => (
-              <div key={i} className="flex flex-col gap-2 animate-pulse">
+              <div key={i} className="w-full flex flex-col gap-2 animate-pulse min-w-0">
                 <div className="flex items-center justify-between">
                   <div className="flex items-center gap-2.5">
                     <div className="w-7 h-7 rounded-xl bg-lilac/30 shrink-0" />

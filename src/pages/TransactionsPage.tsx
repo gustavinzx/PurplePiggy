@@ -145,9 +145,9 @@ export const TransactionsPage: React.FC = () => {
   }
 
   return (
-    <AppShell showNav={true} className="px-5 py-6 flex flex-col gap-4">
+    <AppShell showNav={true} className="py-6 flex flex-col gap-4">
       {/* Título da tela */}
-      <div>
+      <div className="w-full min-w-0">
         <h1 className="text-xl font-extrabold text-deep font-sans mb-1">
           Seus gastos
         </h1>
@@ -157,7 +157,7 @@ export const TransactionsPage: React.FC = () => {
       </div>
 
       {/* Chips de Filtro (fiel ao layout) */}
-      <div className="flex items-center gap-2">
+      <div className="w-full flex items-center gap-2 min-w-0">
         <select
           value={period}
           onChange={(e) => setPeriod(e.target.value as any)}
@@ -193,7 +193,7 @@ export const TransactionsPage: React.FC = () => {
       </div>
 
       {/* Busca */}
-      <div className="relative flex items-center">
+      <div className="w-full relative flex items-center min-w-0">
         <Search className="w-4 h-4 text-textSec absolute left-3.5" />
         <input
           type="text"
@@ -205,7 +205,7 @@ export const TransactionsPage: React.FC = () => {
       </div>
 
       {/* Total de despesas e Gráfico de barras mensais (Layout oficial) */}
-      <div className="bg-white rounded-[22px] p-5 border border-lilac/15 shadow-card">
+      <div className="w-full bg-white rounded-[22px] p-5 border border-lilac/15 shadow-card min-w-0">
         <span className="text-xs font-bold text-textSec">Total de despesas</span>
         <div className="text-2xl font-extrabold text-deep font-sans mb-4">
           {formatCurrency(totalExpenses)}
@@ -249,11 +249,11 @@ export const TransactionsPage: React.FC = () => {
         </div>
 
         {loading ? (
-          <div className="flex flex-col divide-y divide-lilac/10">
+          <div className="w-full flex flex-col divide-y divide-lilac/10 min-w-0">
             {[1, 2, 3, 4].map((i) => (
               <div
                 key={i}
-                className="py-3 flex items-center justify-between animate-pulse px-1"
+                className="w-full py-3 flex items-center justify-between animate-pulse px-1 min-w-0"
               >
                 <div className="flex items-center gap-3">
                   <div className="w-10 h-10 rounded-2xl bg-lilac/30 shrink-0" />

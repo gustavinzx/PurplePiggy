@@ -1,0 +1,539 @@
+[
+  {
+    "session": "1280x800_inicio_slow3g",
+    "viewport": "1280x800",
+    "timestamp": 0,
+    "metrics": {
+      "mainContainer": {
+        "tag": "main",
+        "className": "flex-1 flex flex-col  ",
+        "width": 478,
+        "height": 800,
+        "left": 398,
+        "top": 0
+      },
+      "balanceCard": null,
+      "shortcutsRow": null,
+      "bottomNav": null
+    },
+    "screenshot": "1280x800_inicio_slow3g_0ms.png"
+  },
+  {
+    "session": "1280x800_inicio_slow3g",
+    "viewport": "1280x800",
+    "timestamp": 200,
+    "metrics": {
+      "mainContainer": {
+        "tag": "main",
+        "className": "flex-1 flex flex-col pb-24 relative px-5 pt-5 flex",
+        "width": 478,
+        "height": 1207,
+        "left": 398,
+        "top": 0
+      },
+      "balanceCard": {
+        "tag": "div",
+        "className": "bg-gradient-to-br from-[#8E32D8] to-[#521D83] text",
+        "width": 438,
+        "height": 142,
+        "left": 418,
+        "top": 127
+      },
+      "shortcutsRow": {
+        "tag": "div",
+        "className": "grid grid-cols-3 gap-2.5",
+        "width": 438,
+        "height": 46,
+        "left": 418,
+        "top": 367
+      },
+      "bottomNav": {
+        "tag": "nav",
+        "className": "fixed bottom-0 left-0 right-0 z-40 max-w-[480px] m",
+        "width": 480,
+        "height": 65,
+        "left": 397,
+        "top": 735
+      }
+    },
+    "screenshot": "1280x800_inicio_slow3g_200ms.png"
+  },
+  {
+    "session": "1280x800_inicio_slow3g",
+    "viewport": "1280x800",
+    "timestamp": 600,
+    "metrics": {
+      "mainContainer": {
+        "tag": "main",
+        "className": "flex-1 flex flex-col pb-24 relative px-5 pt-5 flex",
+        "width": 478,
+        "height": 1207,
+        "left": 398,
+        "top": 0
+      },
+      "balanceCard": {
+        "tag": "div",
+        "className": "bg-gradient-to-br from-[#8E32D8] to-[#521D83] text",
+        "width": 438,
+        "height": 142,
+        "left": 418,
+        "top": 127
+      },
+      "shortcutsRow": {
+        "tag": "div",
+        "className": "grid grid-cols-3 gap-2.5",
+        "width": 438,
+        "height": 46,
+        "left": 418,
+        "top": 367
+      },
+      "bottomNav": {
+        "tag": "nav",
+        "className": "fixed bottom-0 left-0 right-0 z-40 max-w-[480px] m",
+        "width": 480,
+        "height": 65,
+        "left": 397,
+        "top": 735
+      }
+    },
+    "screenshot": "1280x800_inicio_slow3g_600ms.png"
+  },
+  {
+    "session": "1280x800_inicio_slow3g",
+    "viewport": "1280x800",
+    "timestamp": 1000,
+    "metrics": {
+      "mainContainer": {
+        "tag": "main",
+        "className": "flex-1 flex flex-col pb-24 relative px-5 pt-5 flex",
+        "width": 478,
+        "height": 1207,
+        "left": 398,
+        "top": 0
+      },
+      "balanceCard": {
+        "tag": "div",
+        "className": "bg-gradient-to-br from-[#8E32D8] to-[#521D83] text",
+        "width": 438,
+        "height": 142,
+        "left": 418,
+        "top": 127
+      },
+      "shortcutsRow": {
+        "tag": "div",
+        "className": "grid grid-cols-3 gap-2.5",
+        "width": 438,
+        "height": 46,
+        "left": 418,
+        "top": 367
+      },
+      "bottomNav": {
+        "tag": "nav",
+        "className": "fixed bottom-0 left-0 right-0 z-40 max-w-[480px] m",
+        "width": 480,
+        "height": 65,
+        "left": 397,
+        "top": 735
+      }
+    },
+    "screenshot": "1280x800_inicio_slow3g_1000ms.png"
+  },
+  {
+    "session": "1280x800_inicio_slow3g",
+    "viewport": "1280x800",
+    "timestamp": 2500,
+    "metrics": {
+      "mainContainer": {
+        "tag": "main",
+        "className": "flex-1 flex flex-col pb-24 relative px-5 pt-5 flex",
+        "width": 478,
+        "height": 1281.5,
+        "left": 398,
+        "top": 0
+      },
+      "balanceCard": {
+        "tag": "div",
+        "className": "bg-gradient-to-br from-[#8E32D8] to-[#521D83] text",
+        "width": 438,
+        "height": 145,
+        "left": 418,
+        "top": 127
+      },
+      "shortcutsRow": {
+        "tag": "div",
+        "className": "grid grid-cols-3 gap-2.5",
+        "width": 438,
+        "height": 46,
+        "left": 418,
+        "top": 370
+      },
+      "bottomNav": {
+        "tag": "nav",
+        "className": "fixed bottom-0 left-0 right-0 z-40 max-w-[480px] m",
+        "width": 480,
+        "height": 65,
+        "left": 397,
+        "top": 735
+      }
+    },
+    "screenshot": "1280x800_inicio_slow3g_2500ms.png"
+  },
+  {
+    "session": "1920x1080_inicio_slow3g",
+    "viewport": "1920x1080",
+    "timestamp": 0,
+    "metrics": {
+      "mainContainer": {
+        "tag": "main",
+        "className": "flex-1 flex flex-col  ",
+        "width": 478,
+        "height": 1080,
+        "left": 718,
+        "top": 0
+      },
+      "balanceCard": null,
+      "shortcutsRow": null,
+      "bottomNav": null
+    },
+    "screenshot": "1920x1080_inicio_slow3g_0ms.png"
+  },
+  {
+    "session": "1920x1080_inicio_slow3g",
+    "viewport": "1920x1080",
+    "timestamp": 200,
+    "metrics": {
+      "mainContainer": {
+        "tag": "main",
+        "className": "flex-1 flex flex-col pb-24 relative px-5 pt-5 flex",
+        "width": 478,
+        "height": 1207,
+        "left": 718,
+        "top": 0
+      },
+      "balanceCard": {
+        "tag": "div",
+        "className": "bg-gradient-to-br from-[#8E32D8] to-[#521D83] text",
+        "width": 438,
+        "height": 142,
+        "left": 738,
+        "top": 127
+      },
+      "shortcutsRow": {
+        "tag": "div",
+        "className": "grid grid-cols-3 gap-2.5",
+        "width": 438,
+        "height": 46,
+        "left": 738,
+        "top": 367
+      },
+      "bottomNav": {
+        "tag": "nav",
+        "className": "fixed bottom-0 left-0 right-0 z-40 max-w-[480px] m",
+        "width": 480,
+        "height": 65,
+        "left": 717,
+        "top": 1015
+      }
+    },
+    "screenshot": "1920x1080_inicio_slow3g_200ms.png"
+  },
+  {
+    "session": "1920x1080_inicio_slow3g",
+    "viewport": "1920x1080",
+    "timestamp": 600,
+    "metrics": {
+      "mainContainer": {
+        "tag": "main",
+        "className": "flex-1 flex flex-col pb-24 relative px-5 pt-5 flex",
+        "width": 478,
+        "height": 1207,
+        "left": 718,
+        "top": 0
+      },
+      "balanceCard": {
+        "tag": "div",
+        "className": "bg-gradient-to-br from-[#8E32D8] to-[#521D83] text",
+        "width": 438,
+        "height": 142,
+        "left": 738,
+        "top": 127
+      },
+      "shortcutsRow": {
+        "tag": "div",
+        "className": "grid grid-cols-3 gap-2.5",
+        "width": 438,
+        "height": 46,
+        "left": 738,
+        "top": 367
+      },
+      "bottomNav": {
+        "tag": "nav",
+        "className": "fixed bottom-0 left-0 right-0 z-40 max-w-[480px] m",
+        "width": 480,
+        "height": 65,
+        "left": 717,
+        "top": 1015
+      }
+    },
+    "screenshot": "1920x1080_inicio_slow3g_600ms.png"
+  },
+  {
+    "session": "1920x1080_inicio_slow3g",
+    "viewport": "1920x1080",
+    "timestamp": 1000,
+    "metrics": {
+      "mainContainer": {
+        "tag": "main",
+        "className": "flex-1 flex flex-col pb-24 relative px-5 pt-5 flex",
+        "width": 478,
+        "height": 1207,
+        "left": 718,
+        "top": 0
+      },
+      "balanceCard": {
+        "tag": "div",
+        "className": "bg-gradient-to-br from-[#8E32D8] to-[#521D83] text",
+        "width": 438,
+        "height": 142,
+        "left": 738,
+        "top": 127
+      },
+      "shortcutsRow": {
+        "tag": "div",
+        "className": "grid grid-cols-3 gap-2.5",
+        "width": 438,
+        "height": 46,
+        "left": 738,
+        "top": 367
+      },
+      "bottomNav": {
+        "tag": "nav",
+        "className": "fixed bottom-0 left-0 right-0 z-40 max-w-[480px] m",
+        "width": 480,
+        "height": 65,
+        "left": 717,
+        "top": 1015
+      }
+    },
+    "screenshot": "1920x1080_inicio_slow3g_1000ms.png"
+  },
+  {
+    "session": "1920x1080_inicio_slow3g",
+    "viewport": "1920x1080",
+    "timestamp": 2500,
+    "metrics": {
+      "mainContainer": {
+        "tag": "main",
+        "className": "flex-1 flex flex-col pb-24 relative px-5 pt-5 flex",
+        "width": 478,
+        "height": 1281.5,
+        "left": 718,
+        "top": 0
+      },
+      "balanceCard": {
+        "tag": "div",
+        "className": "bg-gradient-to-br from-[#8E32D8] to-[#521D83] text",
+        "width": 438,
+        "height": 145,
+        "left": 738,
+        "top": 127
+      },
+      "shortcutsRow": {
+        "tag": "div",
+        "className": "grid grid-cols-3 gap-2.5",
+        "width": 438,
+        "height": 46,
+        "left": 738,
+        "top": 370
+      },
+      "bottomNav": {
+        "tag": "nav",
+        "className": "fixed bottom-0 left-0 right-0 z-40 max-w-[480px] m",
+        "width": 480,
+        "height": 65,
+        "left": 717,
+        "top": 1015
+      }
+    },
+    "screenshot": "1920x1080_inicio_slow3g_2500ms.png"
+  },
+  {
+    "session": "390x844_inicio_slow3g",
+    "viewport": "390x844",
+    "timestamp": 0,
+    "metrics": {
+      "mainContainer": {
+        "tag": "main",
+        "className": "flex-1 flex flex-col  ",
+        "width": 382,
+        "height": 844,
+        "left": 1,
+        "top": 0
+      },
+      "balanceCard": null,
+      "shortcutsRow": null,
+      "bottomNav": null
+    },
+    "screenshot": "390x844_inicio_slow3g_0ms.png"
+  },
+  {
+    "session": "390x844_inicio_slow3g",
+    "viewport": "390x844",
+    "timestamp": 200,
+    "metrics": {
+      "mainContainer": {
+        "tag": "main",
+        "className": "flex-1 flex flex-col pb-24 relative px-5 pt-5 flex",
+        "width": 382,
+        "height": 1207,
+        "left": 1,
+        "top": 0
+      },
+      "balanceCard": {
+        "tag": "div",
+        "className": "bg-gradient-to-br from-[#8E32D8] to-[#521D83] text",
+        "width": 342,
+        "height": 142,
+        "left": 21,
+        "top": 127
+      },
+      "shortcutsRow": {
+        "tag": "div",
+        "className": "grid grid-cols-3 gap-2.5",
+        "width": 342,
+        "height": 46,
+        "left": 21,
+        "top": 367
+      },
+      "bottomNav": {
+        "tag": "nav",
+        "className": "fixed bottom-0 left-0 right-0 z-40 max-w-[480px] m",
+        "width": 384,
+        "height": 65,
+        "left": 0,
+        "top": 779
+      }
+    },
+    "screenshot": "390x844_inicio_slow3g_200ms.png"
+  },
+  {
+    "session": "390x844_inicio_slow3g",
+    "viewport": "390x844",
+    "timestamp": 600,
+    "metrics": {
+      "mainContainer": {
+        "tag": "main",
+        "className": "flex-1 flex flex-col pb-24 relative px-5 pt-5 flex",
+        "width": 382,
+        "height": 1207,
+        "left": 1,
+        "top": 0
+      },
+      "balanceCard": {
+        "tag": "div",
+        "className": "bg-gradient-to-br from-[#8E32D8] to-[#521D83] text",
+        "width": 342,
+        "height": 142,
+        "left": 21,
+        "top": 127
+      },
+      "shortcutsRow": {
+        "tag": "div",
+        "className": "grid grid-cols-3 gap-2.5",
+        "width": 342,
+        "height": 46,
+        "left": 21,
+        "top": 367
+      },
+      "bottomNav": {
+        "tag": "nav",
+        "className": "fixed bottom-0 left-0 right-0 z-40 max-w-[480px] m",
+        "width": 384,
+        "height": 65,
+        "left": 0,
+        "top": 779
+      }
+    },
+    "screenshot": "390x844_inicio_slow3g_600ms.png"
+  },
+  {
+    "session": "390x844_inicio_slow3g",
+    "viewport": "390x844",
+    "timestamp": 1000,
+    "metrics": {
+      "mainContainer": {
+        "tag": "main",
+        "className": "flex-1 flex flex-col pb-24 relative px-5 pt-5 flex",
+        "width": 382,
+        "height": 1207,
+        "left": 1,
+        "top": 0
+      },
+      "balanceCard": {
+        "tag": "div",
+        "className": "bg-gradient-to-br from-[#8E32D8] to-[#521D83] text",
+        "width": 342,
+        "height": 142,
+        "left": 21,
+        "top": 127
+      },
+      "shortcutsRow": {
+        "tag": "div",
+        "className": "grid grid-cols-3 gap-2.5",
+        "width": 342,
+        "height": 46,
+        "left": 21,
+        "top": 367
+      },
+      "bottomNav": {
+        "tag": "nav",
+        "className": "fixed bottom-0 left-0 right-0 z-40 max-w-[480px] m",
+        "width": 384,
+        "height": 65,
+        "left": 0,
+        "top": 779
+      }
+    },
+    "screenshot": "390x844_inicio_slow3g_1000ms.png"
+  },
+  {
+    "session": "390x844_inicio_slow3g",
+    "viewport": "390x844",
+    "timestamp": 2500,
+    "metrics": {
+      "mainContainer": {
+        "tag": "main",
+        "className": "flex-1 flex flex-col pb-24 relative px-5 pt-5 flex",
+        "width": 382,
+        "height": 1281.5,
+        "left": 1,
+        "top": 0
+      },
+      "balanceCard": {
+        "tag": "div",
+        "className": "bg-gradient-to-br from-[#8E32D8] to-[#521D83] text",
+        "width": 342,
+        "height": 145,
+        "left": 21,
+        "top": 127
+      },
+      "shortcutsRow": {
+        "tag": "div",
+        "className": "grid grid-cols-3 gap-2.5",
+        "width": 342,
+        "height": 46,
+        "left": 21,
+        "top": 370
+      },
+      "bottomNav": {
+        "tag": "nav",
+        "className": "fixed bottom-0 left-0 right-0 z-40 max-w-[480px] m",
+        "width": 384,
+        "height": 65,
+        "left": 0,
+        "top": 779
+      }
+    },
+    "screenshot": "390x844_inicio_slow3g_2500ms.png"
+  }
+]

@@ -194,9 +194,9 @@ export const GoalsPage: React.FC = () => {
   }
 
   return (
-    <AppShell showNav={true} className="px-5 py-6 flex flex-col gap-4">
+    <AppShell showNav={true} className="py-6 flex flex-col gap-4">
       {/* Título da tela */}
-      <div>
+      <div className="w-full min-w-0">
         <h1 className="text-xl font-extrabold text-deep font-sans mb-1">
           Suas metas
         </h1>
@@ -206,12 +206,12 @@ export const GoalsPage: React.FC = () => {
       </div>
 
       {/* Lista de Metas (fiel ao layout oficial) */}
-      <div className="flex flex-col gap-3.5">
+      <div className="w-full flex flex-col gap-3.5 min-w-0">
         {loading ? (
           [1, 2, 3].map((i) => (
             <div
               key={i}
-              className="bg-white rounded-[22px] p-5 border border-lilac/15 shadow-card flex items-center justify-between animate-pulse"
+              className="w-full bg-white rounded-[22px] p-5 border border-lilac/15 shadow-card flex items-center justify-between animate-pulse min-w-0"
             >
               <div className="flex flex-col gap-2">
                 <div className="w-32 h-4 bg-lilac/30 rounded" />
@@ -229,7 +229,7 @@ export const GoalsPage: React.FC = () => {
               <div
                 key={g.id}
                 onClick={() => setSelectedGoal(g)}
-                className="bg-white rounded-[22px] p-5 border border-lilac/15 shadow-card hover:border-primary/40 cursor-pointer transition-all flex items-center justify-between"
+                className="w-full bg-white rounded-[22px] p-5 border border-lilac/15 shadow-card hover:border-primary/40 cursor-pointer transition-all flex items-center justify-between min-w-0"
               >
                 <div className="flex flex-col gap-1 pr-3">
                   <div className="flex items-center gap-1.5 text-xs font-extrabold text-deep">

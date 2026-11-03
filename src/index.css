@@ -51,6 +51,9 @@
   --color-ring-track: #EADFFB;
 
   /* Dimensões e Raios */
+  --app-max-width: 480px;
+  --screen-x: 20px;
+  --nav-height: 64px;
   --radius-card: 24px;
   --radius-card-sm: 20px;
   --radius-input: 16px;

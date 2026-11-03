@@ -12,7 +12,7 @@ import {
   calculateMonthlySummary,
   calculateGoalMetrics,
 } from '../lib/finance'
-import { formatCurrency, formatPercent } from '../lib/format'
+import { formatCurrency } from '../lib/format'
 import {
   Eye,
   EyeOff,
@@ -70,6 +70,9 @@ export const DashboardPage: React.FC = () => {
     setLoading(true)
 
     try {
+      // Atraso artificial de 2s para medições de carregamento (conforme item 1 do prompt)
+      await new Promise((r) => setTimeout(r, 2000))
+
       // 1. Categorias
       const { data: cats } = await supabase.from('categories').select('*')
       const catMap: Record<string, Category> = {}
@@ -140,13 +143,15 @@ export const DashboardPage: React.FC = () => {
     (t) => t.type === 'expense' && t.occurred_on.startsWith(curMonthStr)
   )
 
-  const categoryTotals: Record<string, number> = {}
-  currentMonthExpenses.forEach((t) => {
-    categoryTotals[t.category_id] = (categoryTotals[t.category_id] || 0) + Number(t.amount)
-  })
+  const spentByCategory = currentMonthExpenses.reduce((acc, t) => {
+    acc[t.category_id] = (acc[t.category_id] || 0) + Number(t.amount)
+    return acc
+  }, {} as Record<string, number>)
 
-  const segmentColors = ['#7D2BD6', '#FF79A8', '#FBBF24', '#60A5FA', '#CF91F6']
-  const expenseCategories = Object.entries(categoryTotals)
+  // Array ordenado com maiores categorias de despesa
+  const expenseCategories = Object.entries(spentByCategory).sort((a, b) => b[1] - a[1])
+  const segmentColors = ['#7D2BD6', '#B037F8', '#F5B83D', '#2FBF71', '#E5487A']
+
   const totalPainelGastos = monthlySummary.expense
 
   const getCategoryIcon = (iconName?: string) => {
@@ -175,15 +180,15 @@ export const DashboardPage: React.FC = () => {
   const firstName = profile?.full_name?.split(' ')[0] || 'Gustavo'
 
   return (
-    <AppShell showNav={true} className="relative px-5 pt-5 flex flex-col gap-4 select-none">
+    <AppShell showNav={true} className="relative pt-5 flex flex-col gap-4 select-none">
       {/* Fundo com manchas orgânicas lilás e brilhos dourados sutis */}
       <BackgroundBlobs showSparkles={true} />
 
       {/* 1. Header: Saudação e Mascote */}
-      <div className="flex items-center justify-between pt-1">
-        <div>
-          <div className="flex items-center gap-1.5">
-            <h1 className="text-[22px] font-extrabold text-deep font-sans tracking-tight">
+      <div className="w-full flex items-center justify-between pt-1 min-w-0">
+        <div className="min-w-0 flex-1 pr-2">
+          <div className="flex items-center gap-1.5 min-w-0">
+            <h1 className="text-[22px] font-extrabold text-deep font-sans tracking-tight truncate">
               Olá, {firstName}!
             </h1>
             <svg
@@ -193,8 +198,8 @@ export const DashboardPage: React.FC = () => {
               <path d="M12 0L14.59 9.41L24 12L14.59 14.59L12 24L9.41 14.59L0 12L9.41 9.41L12 0Z" />
             </svg>
           </div>
-          <p className="text-[13px] font-semibold text-deep leading-tight mt-0.5">
-            Sua vida financeira<br />no caminho certo.
+          <p className="text-[13px] font-semibold text-deep leading-tight mt-0.5 truncate">
+            Sua vida financeira no caminho certo.
           </p>
         </div>
 
@@ -210,9 +215,9 @@ export const DashboardPage: React.FC = () => {
       </div>
 
       {/* 2. Card "Saldo disponível" (Degradê roxo canônico #8E32D8 -> #521D83) */}
-      <div className="bg-gradient-to-br from-[#8E32D8] to-[#521D83] text-white rounded-[24px] p-5 shadow-card-saldo relative overflow-hidden">
+      <div className="w-full bg-gradient-to-br from-[#8E32D8] to-[#521D83] text-white rounded-[24px] p-5 shadow-card-saldo relative overflow-hidden min-w-0">
         {/* Linha superior: Rótulo e Olho para ocultar/mostrar */}
-        <div className="flex items-center justify-between mb-1.5">
+        <div className="flex items-center justify-between mb-1.5 min-w-0">
           <span className="text-[13px] font-medium text-white/90">Saldo disponível</span>
           <button
             onClick={toggleHideBalance}
@@ -228,9 +233,9 @@ export const DashboardPage: React.FC = () => {
         </div>
 
         {/* Valor principal real do banco */}
-        <div className="text-[28px] font-extrabold font-sans tracking-tight mb-3.5 leading-tight">
+        <div className="text-[28px] font-extrabold font-sans tracking-tight mb-3.5 leading-tight truncate min-w-0">
           {loading ? (
-            <div className="w-36 h-8 bg-white/20 rounded animate-pulse" />
+            <div className="w-full max-w-[144px] h-8 bg-white/20 rounded animate-pulse" />
           ) : hideBalance ? (
             '••••••••'
           ) : (
@@ -239,9 +244,9 @@ export const DashboardPage: React.FC = () => {
         </div>
 
         {/* Linha inferior: Pílula verde de variação e Atualizado hoje */}
-        <div className="flex items-center justify-between text-[11px] font-bold">
+        <div className="flex items-center justify-between text-[11px] font-bold min-w-0">
           {monthlySummary.variationPct !== null ? (
-            <div className={`inline-flex items-center gap-1 px-2.5 py-1 rounded-pill text-[12px] font-bold ${
+            <div className={`inline-flex items-center gap-1 px-2.5 py-1 rounded-pill text-[12px] font-bold shrink-0 ${
               monthlySummary.variationPct >= 0
                 ? 'bg-[#DCFCE7] text-[#15803D]'
                 : 'bg-[#FCE7F3] text-[#BE185D]'
@@ -254,38 +259,38 @@ export const DashboardPage: React.FC = () => {
               <span>{monthlySummary.variationPct >= 0 ? '+' : ''}{monthlySummary.variationPct}%</span>
             </div>
           ) : (
-            <div className="inline-flex items-center gap-1 bg-[#DCFCE7] text-[#15803D] px-2.5 py-1 rounded-pill text-[12px] font-bold">
+            <div className="inline-flex items-center gap-1 bg-[#DCFCE7] text-[#15803D] px-2.5 py-1 rounded-pill text-[12px] font-bold shrink-0">
               <ArrowUp className="w-3.5 h-3.5 text-[#15803D]" strokeWidth={2.5} />
               <span>+12%</span>
             </div>
           )}
-          <span className="text-white/80 font-medium text-[12px]">Atualizado hoje</span>
+          <span className="text-white/80 font-medium text-[12px] shrink-0">Atualizado hoje</span>
         </div>
       </div>
 
       {/* 3. Dois Mini-Cards: Receitas e Despesas lado a lado */}
-      <div className="grid grid-cols-2 gap-3">
+      <div className="w-full grid grid-cols-2 gap-3 min-w-0">
         {/* Mini Card Receitas */}
-        <div className="bg-white rounded-[20px] p-3.5 border border-[#F0EBF8] shadow-card flex items-center gap-2.5">
+        <div className="w-full bg-white rounded-[20px] p-3.5 border border-[#F0EBF8] shadow-card flex items-center gap-2.5 min-w-0">
           <div className="w-9 h-9 rounded-xl bg-[#DCFCE7] text-[#15803D] flex items-center justify-center shrink-0">
             <TrendingUp className="w-5 h-5" strokeWidth={2.2} />
           </div>
-          <div className="flex flex-col min-w-0">
+          <div className="flex flex-col min-w-0 flex-1">
             <span className="text-[12px] font-bold text-deep leading-tight">Receitas</span>
-            <span className="text-[14px] font-extrabold text-deep leading-tight whitespace-nowrap mt-0.5">
+            <span className="text-[14px] font-extrabold text-deep leading-tight truncate mt-0.5">
               {hideBalance ? '••••' : formatCurrency(monthlySummary.income)}
             </span>
           </div>
         </div>
 
         {/* Mini Card Despesas */}
-        <div className="bg-white rounded-[20px] p-3.5 border border-[#F0EBF8] shadow-card flex items-center gap-2.5">
+        <div className="w-full bg-white rounded-[20px] p-3.5 border border-[#F0EBF8] shadow-card flex items-center gap-2.5 min-w-0">
           <div className="w-9 h-9 rounded-xl bg-[#FEF3C7] text-[#D97706] flex items-center justify-center shrink-0">
             <TrendingDown className="w-5 h-5" strokeWidth={2.2} />
           </div>
-          <div className="flex flex-col min-w-0">
+          <div className="flex flex-col min-w-0 flex-1">
             <span className="text-[12px] font-bold text-deep leading-tight">Despesas</span>
-            <span className="text-[14px] font-extrabold text-deep leading-tight whitespace-nowrap mt-0.5">
+            <span className="text-[14px] font-extrabold text-deep leading-tight truncate mt-0.5">
               {hideBalance ? '••••' : formatCurrency(monthlySummary.expense)}
             </span>
           </div>
@@ -293,46 +298,46 @@ export const DashboardPage: React.FC = () => {
       </div>
 
       {/* 4. Atalhos Rápidos Interativos (+ Gasto, + Receita, Simulador) */}
-      <div className="grid grid-cols-3 gap-2.5">
+      <div className="w-full grid grid-cols-3 gap-2.5 min-w-0">
         <button
           onClick={() => openAddTransaction('expense')}
-          className="bg-white hover:bg-[#FAF6FD] border border-[#F0EBF8] rounded-[18px] py-2.5 px-2 flex items-center justify-center gap-1.5 text-[12px] font-bold text-deep transition-all shadow-card hover:scale-[1.02] active:scale-95"
+          className="w-full bg-white hover:bg-[#FAF6FD] border border-[#F0EBF8] rounded-[18px] py-2.5 px-2 flex items-center justify-center gap-1.5 text-[12px] font-bold text-deep transition-all shadow-card hover:scale-[1.02] active:scale-95 min-w-0"
         >
-          <div className="w-6 h-6 rounded-full bg-[#FCE7F3] text-[#BE185D] flex items-center justify-center">
+          <div className="w-6 h-6 rounded-full bg-[#FCE7F3] text-[#BE185D] flex items-center justify-center shrink-0">
             <Plus className="w-3.5 h-3.5" strokeWidth={2.5} />
           </div>
-          <span>+ Gasto</span>
+          <span className="truncate">+ Gasto</span>
         </button>
 
         <button
           onClick={() => openAddTransaction('income')}
-          className="bg-white hover:bg-[#FAF6FD] border border-[#F0EBF8] rounded-[18px] py-2.5 px-2 flex items-center justify-center gap-1.5 text-[12px] font-bold text-deep transition-all shadow-card hover:scale-[1.02] active:scale-95"
+          className="w-full bg-white hover:bg-[#FAF6FD] border border-[#F0EBF8] rounded-[18px] py-2.5 px-2 flex items-center justify-center gap-1.5 text-[12px] font-bold text-deep transition-all shadow-card hover:scale-[1.02] active:scale-95 min-w-0"
         >
-          <div className="w-6 h-6 rounded-full bg-[#DCFCE7] text-[#15803D] flex items-center justify-center">
+          <div className="w-6 h-6 rounded-full bg-[#DCFCE7] text-[#15803D] flex items-center justify-center shrink-0">
             <Plus className="w-3.5 h-3.5" strokeWidth={2.5} />
           </div>
-          <span>+ Receita</span>
+          <span className="truncate">+ Receita</span>
         </button>
 
         <button
           onClick={() => navigate('/simulador')}
-          className="bg-white hover:bg-[#FAF6FD] border border-[#F0EBF8] rounded-[18px] py-2.5 px-2 flex items-center justify-center gap-1.5 text-[12px] font-bold text-deep transition-all shadow-card hover:scale-[1.02] active:scale-95"
+          className="w-full bg-white hover:bg-[#FAF6FD] border border-[#F0EBF8] rounded-[18px] py-2.5 px-2 flex items-center justify-center gap-1.5 text-[12px] font-bold text-deep transition-all shadow-card hover:scale-[1.02] active:scale-95 min-w-0"
         >
-          <div className="w-6 h-6 rounded-full bg-[#F3E8FF] text-[#7D2BD6] flex items-center justify-center">
+          <div className="w-6 h-6 rounded-full bg-[#F3E8FF] text-[#7D2BD6] flex items-center justify-center shrink-0">
             <Calculator className="w-3.5 h-3.5" strokeWidth={2.5} />
           </div>
-          <span>Simulador</span>
+          <span className="truncate">Simulador</span>
         </button>
       </div>
 
       {/* 5. Card "Painel de gastos" */}
-      <div className="bg-white rounded-[24px] p-5 border border-[#F0EBF8] shadow-card">
+      <div className="w-full bg-white rounded-[24px] p-5 border border-[#F0EBF8] shadow-card min-w-0">
         {/* Topo do card com link "Este mês >" */}
-        <div className="flex items-center justify-between mb-1">
+        <div className="flex items-center justify-between mb-1 min-w-0">
           <span className="text-[15px] font-bold text-deep">Painel de gastos</span>
           <Link
             to="/gastos"
-            className="text-[12px] font-bold text-deep hover:text-primary flex items-center gap-0.5"
+            className="text-[12px] font-bold text-deep hover:text-primary flex items-center gap-0.5 shrink-0"
           >
             <span>Este mês</span>
             <ChevronRight className="w-3.5 h-3.5 text-deep" strokeWidth={2.5} />
@@ -340,12 +345,12 @@ export const DashboardPage: React.FC = () => {
         </div>
 
         {/* Valor consolidado real */}
-        <div className="text-[20px] font-extrabold text-deep mb-3">
+        <div className="text-[20px] font-extrabold text-deep mb-3 truncate min-w-0">
           {formatCurrency(totalPainelGastos)}
         </div>
 
         {/* Barra empilhada multicolorida */}
-        <div className="w-full h-3 rounded-full bg-[#F0E7FA] overflow-hidden flex">
+        <div className="w-full h-3 rounded-full bg-[#F0E7FA] overflow-hidden flex min-w-0">
           {expenseCategories.length > 0 && totalPainelGastos > 0 ? (
             expenseCategories.map(([catId, amount], idx) => {
               const pct = (amount / totalPainelGastos) * 100
@@ -370,13 +375,13 @@ export const DashboardPage: React.FC = () => {
       {/* 6. Card "Reserva de emergência" */}
       <div
         onClick={() => navigate('/metas')}
-        className="bg-white rounded-[24px] p-5 border border-[#F0EBF8] shadow-card cursor-pointer hover:border-primary/20 transition-all"
+        className="w-full bg-white rounded-[24px] p-5 border border-[#F0EBF8] shadow-card cursor-pointer hover:border-primary/20 transition-all min-w-0"
       >
-        <div className="flex items-center justify-between mb-1.5">
+        <div className="flex items-center justify-between mb-1.5 min-w-0">
           <span className="text-[14px] font-bold text-deep">Reserva de emergência</span>
-          <span className="text-[15px] font-extrabold text-deep">{emergencyPct}%</span>
+          <span className="text-[15px] font-extrabold text-deep shrink-0">{emergencyPct}%</span>
         </div>
-        <div className="text-[14px] font-bold text-deep">
+        <div className="text-[14px] font-bold text-deep truncate min-w-0">
           {emergencyGoal
             ? `${formatCurrency(emergencySaved)} de ${formatCurrency(emergencyTarget)}`
             : 'Criar minha reserva de emergência →'}
@@ -384,12 +389,12 @@ export const DashboardPage: React.FC = () => {
       </div>
 
       {/* 7. Card "Progresso das metas" (com anéis circulares reais) */}
-      <div className="bg-white rounded-[24px] p-5 border border-[#F0EBF8] shadow-card">
-        <div className="flex items-center justify-between mb-4">
+      <div className="w-full bg-white rounded-[24px] p-5 border border-[#F0EBF8] shadow-card min-w-0">
+        <div className="flex items-center justify-between mb-4 min-w-0">
           <span className="text-[14px] font-bold text-deep">Progresso das metas</span>
           <Link
             to="/metas"
-            className="text-[12px] font-bold text-deep hover:text-primary flex items-center gap-0.5"
+            className="text-[12px] font-bold text-deep hover:text-primary flex items-center gap-0.5 shrink-0"
           >
             <span>Ver todas</span>
             <ChevronRight className="w-3.5 h-3.5 text-deep" strokeWidth={2.5} />
@@ -397,20 +402,20 @@ export const DashboardPage: React.FC = () => {
         </div>
 
         {loading ? (
-          <div className="grid grid-cols-3 gap-2">
+          <div className="w-full grid grid-cols-3 gap-2 min-w-0">
             {[1, 2, 3].map((i) => (
-              <div key={i} className="flex flex-col items-center text-center animate-pulse">
-                <div className="w-[54px] h-[54px] rounded-full bg-lilac/30" />
+              <div key={i} className="w-full flex flex-col items-center text-center animate-pulse min-w-0">
+                <div className="w-[54px] h-[54px] rounded-full bg-lilac/30 shrink-0" />
                 <div className="w-12 h-2.5 bg-lilac/20 rounded mt-2" />
               </div>
             ))}
           </div>
         ) : displayGoals.length > 0 ? (
-          <div className="grid grid-cols-3 gap-2">
+          <div className="w-full grid grid-cols-3 gap-2 min-w-0">
             {displayGoals.map((g) => {
               const metrics = calculateGoalMetrics(g)
               return (
-                <div key={g.id} className="flex flex-col items-center text-center">
+                <div key={g.id} className="w-full flex flex-col items-center text-center min-w-0">
                   <ProgressRing progress={metrics.progressPct} size={54} strokeWidth={5} />
                   <span className="text-[11px] font-bold text-deep mt-2 truncate w-full">
                     {g.name}
@@ -420,11 +425,11 @@ export const DashboardPage: React.FC = () => {
             })}
           </div>
         ) : (
-          <div className="flex items-center justify-between py-1">
-            <span className="text-xs text-textSec font-medium">Nenhuma meta criada ainda.</span>
+          <div className="flex items-center justify-between py-1 min-w-0">
+            <span className="text-xs text-textSec font-medium truncate">Nenhuma meta criada ainda.</span>
             <button
               onClick={() => navigate('/metas')}
-              className="text-xs font-bold text-primary-dark hover:underline"
+              className="text-xs font-bold text-primary-dark hover:underline shrink-0 ml-2"
             >
               + Criar meta
             </button>
@@ -433,12 +438,12 @@ export const DashboardPage: React.FC = () => {
       </div>
 
       {/* 8. Transações Recentes reais */}
-      <div className="bg-white rounded-[24px] p-5 border border-[#F0EBF8] shadow-card">
-        <div className="flex items-center justify-between mb-3">
+      <div className="w-full bg-white rounded-[24px] p-5 border border-[#F0EBF8] shadow-card min-w-0">
+        <div className="flex items-center justify-between mb-3 min-w-0">
           <span className="text-[14px] font-bold text-deep">Transações recentes</span>
           <Link
             to="/gastos"
-            className="text-[12px] font-bold text-deep hover:text-primary flex items-center gap-0.5"
+            className="text-[12px] font-bold text-deep hover:text-primary flex items-center gap-0.5 shrink-0"
           >
             <span>Ver todas</span>
             <ChevronRight className="w-3.5 h-3.5 text-deep" strokeWidth={2.5} />
@@ -446,22 +451,22 @@ export const DashboardPage: React.FC = () => {
         </div>
 
         {loading ? (
-          <div className="flex flex-col divide-y divide-[#F3EBF9]">
+          <div className="w-full flex flex-col divide-y divide-[#F3EBF9] min-w-0">
             {[1, 2, 3].map((i) => (
-              <div key={i} className="py-3 flex items-center justify-between animate-pulse px-1">
-                <div className="flex items-center gap-3">
+              <div key={i} className="w-full py-3 flex items-center justify-between animate-pulse px-1 min-w-0">
+                <div className="flex items-center gap-3 min-w-0 flex-1">
                   <div className="w-10 h-10 rounded-2xl bg-lilac/30 shrink-0" />
-                  <div className="space-y-1.5">
+                  <div className="space-y-1.5 min-w-0 flex-1">
                     <div className="w-24 h-3.5 bg-lilac/30 rounded" />
                     <div className="w-16 h-2 bg-lilac/20 rounded" />
                   </div>
                 </div>
-                <div className="w-14 h-4 bg-lilac/30 rounded" />
+                <div className="w-14 h-4 bg-lilac/30 rounded shrink-0 ml-2" />
               </div>
             ))}
           </div>
         ) : recentTransactions.length > 0 ? (
-          <div className="flex flex-col divide-y divide-[#F3EBF9]">
+          <div className="w-full flex flex-col divide-y divide-[#F3EBF9] min-w-0">
             {recentTransactions.map((tx) => {
               const cat = categories[tx.category_id]
               const isIncome = tx.type === 'income'
@@ -469,20 +474,20 @@ export const DashboardPage: React.FC = () => {
                 <Link
                   key={tx.id}
                   to={`/gastos/${tx.id}`}
-                  className="py-3 flex items-center justify-between hover:bg-[#FAF6FD] px-1 rounded-xl transition-colors"
+                  className="w-full py-3 flex items-center justify-between hover:bg-[#FAF6FD] px-1 rounded-xl transition-colors min-w-0"
                 >
-                  <div className="flex items-center gap-3 min-w-0">
+                  <div className="flex items-center gap-3 min-w-0 flex-1">
                     <div
                       className="w-10 h-10 rounded-2xl flex items-center justify-center text-white shrink-0 shadow-xs"
                       style={{ backgroundColor: cat?.color || '#7D2BD6' }}
                     >
                       {getCategoryIcon(cat?.icon)}
                     </div>
-                    <div className="min-w-0">
+                    <div className="min-w-0 flex-1">
                       <div className="text-[14px] font-bold text-deep leading-tight truncate">
                         {tx.description}
                       </div>
-                      <div className="text-[11px] font-semibold text-textSec">
+                      <div className="text-[11px] font-semibold text-textSec truncate">
                         {cat?.name || 'Geral'}
                       </div>
                     </div>
@@ -501,7 +506,7 @@ export const DashboardPage: React.FC = () => {
             })}
           </div>
         ) : (
-          <div className="py-4 text-center">
+          <div className="py-4 text-center min-w-0">
             <p className="text-xs font-semibold text-textSec mb-2">
               Nenhuma transação registrada este mês.
             </p>
@@ -525,3 +530,5 @@ export const DashboardPage: React.FC = () => {
     </AppShell>
   )
 }
+
+export default DashboardPage

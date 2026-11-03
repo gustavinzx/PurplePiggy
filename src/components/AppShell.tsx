@@ -11,6 +11,12 @@ export interface AppShellProps {
   containerClassName?: string
 }
 
+/**
+ * AppShell unificado:
+ * Garante largura constante (100% até var(--app-max-width)), alinhamento centralizado
+ * e espaçamento horizontal padronizado (var(--screen-x)) em TODOS os estados (carregamento,
+ * esqueleto, vazio, erro e dados).
+ */
 export const AppShell: React.FC<AppShellProps> = ({
   children,
   showNav = true,
@@ -24,15 +30,30 @@ export const AppShell: React.FC<AppShellProps> = ({
       {/* Atmosphere de fundo cobrindo todo o viewport desktop */}
       <Atmosphere variant={variant} plain={plainAtmosphere} />
 
-      {/* Container Mobile Principal com largura e alinhamento constantes */}
+      {/* Container Mobile Principal: coluna centralizada com largura fixa nos tokens */}
       <div
         id="app-shell-container"
-        className={`w-full max-w-[480px] min-h-[100vh] min-h-[100dvh] flex flex-col relative shadow-2xl overflow-x-hidden border-x border-lilac/10 ${
+        className={`w-full max-w-[var(--app-max-width)] min-h-[100vh] min-h-[100dvh] flex flex-col relative shadow-2xl overflow-x-hidden border-x border-lilac/10 mx-auto ${
           variant === 'splash' ? 'bg-transparent' : 'bg-bg'
         } ${containerClassName}`}
+        style={{
+          width: '100%',
+          maxWidth: 'var(--app-max-width)',
+          marginInline: 'auto',
+        }}
       >
-        {/* Conteúdo da Tela */}
-        <main className={`flex-1 flex flex-col ${showNav ? 'pb-24' : ''} ${className}`}>
+        {/* Conteúdo da Tela: largura 100%, nunca depende do conteúdo */}
+        <main
+          className={`flex-1 flex flex-col w-full min-w-0 ${className}`}
+          style={{
+            width: '100%',
+            minWidth: 0,
+            paddingInline: 'var(--screen-x)',
+            paddingBottom: showNav
+              ? 'calc(var(--nav-height) + env(safe-area-inset-bottom, 0px) + 16px)'
+              : undefined,
+          }}
+        >
           {children}
         </main>
 

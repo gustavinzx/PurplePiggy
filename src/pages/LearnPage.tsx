@@ -264,7 +264,7 @@ export const LearnPage: React.FC = () => {
 
         {/* Skeleton de carregamento */}
         {loading || !activeTrack ? (
-          <div className="py-8 space-y-6 animate-pulse">
+          <div className="w-full py-8 space-y-6 animate-pulse min-w-0">
             <div className="h-28 bg-purple-200/50 rounded-3xl w-full" />
             <div className="flex flex-col items-center space-y-10 pt-6">
               <div className="w-18 h-18 rounded-full bg-purple-200/60" />
@@ -273,7 +273,7 @@ export const LearnPage: React.FC = () => {
             </div>
           </div>
         ) : (
-          <main className="pt-4">
+          <div className="w-full pt-4 min-w-0">
             {/* Banner da Trilha Atual */}
             <SectionBanner
               trackOrder={activeTrack.trackOrder}
@@ -305,7 +305,7 @@ export const LearnPage: React.FC = () => {
               onSelectTrack={handleSelectTrack}
               onOpenStudyGuides={handleOpenStudyGuides}
             />
-          </main>
+          </div>
         )}
       </div>
     </AppShell>
