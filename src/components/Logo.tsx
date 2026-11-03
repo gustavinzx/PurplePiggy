@@ -48,8 +48,8 @@ export const Logo: React.FC<LogoProps> = ({
         />
       )}
       <div className={`font-extrabold font-sans tracking-tight ${currentSize.text} leading-none flex items-center`}>
-        <span className="text-[#3A017A]">Purple</span>
-        <span className="bg-gradient-to-r from-[#9D4EDD] via-[#C740D8] to-[#FF5E98] bg-clip-text text-transparent ml-0.5">
+        <span className="text-deep">Purple</span>
+        <span className="bg-gradient-to-r from-brand-piggy-start to-brand-piggy-end bg-clip-text text-transparent ml-0.5">
           Piggy
         </span>
       </div>
