@@ -1,7 +1,13 @@
 // src/features/learn/components/index.ts
-// Exportações de Componentes Chunky do Módulo Aprender (Prompt N8B)
-
+// Exportação unificada de componentes chunky do Desafio Piggy
 export * from './ChunkyButton'
 export * from './OptionCard'
 export * from './QuizTopBar'
 export * from './FeedbackPanel'
+export * from './StatChip'
+export * from './LevelNode'
+export * from './SectionBanner'
+export * from './NodeSheet'
+export * from './TrackSelectorSheet'
+export * from './LearnMap'
+export * from './GuideReader'
