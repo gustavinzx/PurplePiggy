@@ -48,34 +48,34 @@ export const Atmosphere: React.FC<AtmosphereProps> = ({
           {variant === 'splash' && (
             <>
               {/* Moeda dourada parcialmente cortada no canto superior direito */}
-              <div className="absolute -top-4 -right-5 opacity-90 drop-shadow-sm">
+              <div className="absolute -top-4 -right-5 opacity-90 drop-shadow-sm pointer-events-none">
                 <Decor name="coin-1" size="lg" className="rotate-12" />
               </div>
 
               {/* Moeda dourada menor parcialmente cortada na lateral inferior esquerda */}
-              <div className="absolute bottom-28 -left-5 opacity-75 drop-shadow-xs">
+              <div className="absolute bottom-28 -left-5 opacity-75 drop-shadow-xs pointer-events-none">
                 <Decor name="coin-1" size="md" className="-rotate-12" />
               </div>
 
               {/* Estrelas de 4 pontas (sparkles) espalhadas */}
-              <div className="absolute top-12 left-7 opacity-85">
+              <div className="absolute top-12 left-7 opacity-85 pointer-events-none">
                 <Decor name="sparkle" size="sm" />
               </div>
-              <div className="absolute top-28 right-8 opacity-75">
+              <div className="absolute top-28 right-8 opacity-75 pointer-events-none">
                 <Decor name="sparkle" size="xs" />
               </div>
-              <div className="absolute top-64 right-5 opacity-80">
+              <div className="absolute top-64 right-5 opacity-80 pointer-events-none">
                 <Decor name="sparkle" size="sm" />
               </div>
-              <div className="absolute bottom-36 left-10 opacity-70">
+              <div className="absolute bottom-36 left-10 opacity-70 pointer-events-none">
                 <Decor name="sparkle" size="xs" />
               </div>
 
               {/* Corações espalhados de forma discreta */}
-              <div className="absolute top-48 right-7 opacity-80">
+              <div className="absolute top-48 right-7 opacity-80 pointer-events-none">
                 <Decor name="heart-filled" size="xs" className="rotate-12" />
               </div>
-              <div className="absolute bottom-48 left-7 opacity-75">
+              <div className="absolute bottom-48 left-7 opacity-75 pointer-events-none">
                 <Decor name="heart-filled" size="xs" className="-rotate-6" />
               </div>
             </>
@@ -85,23 +85,23 @@ export const Atmosphere: React.FC<AtmosphereProps> = ({
           {variant === 'auth' && (
             <>
               {/* Moeda cortada sutilmente na borda superior direita */}
-              <div className="absolute -top-3 -right-4 opacity-75 drop-shadow-xs">
+              <div className="absolute -top-3 -right-4 opacity-75 drop-shadow-xs pointer-events-none">
                 <Decor name="coin-1" size="md" className="rotate-6" />
               </div>
 
               {/* Estrelas de 4 pontas (sparkles) discretas */}
-              <div className="absolute top-14 left-8 opacity-80">
+              <div className="absolute top-14 left-8 opacity-80 pointer-events-none">
                 <Decor name="sparkle" size="sm" />
               </div>
-              <div className="absolute top-24 right-10 opacity-75">
+              <div className="absolute top-24 right-10 opacity-75 pointer-events-none">
                 <Decor name="sparkle" size="xs" />
               </div>
-              <div className="absolute bottom-24 right-6 opacity-60">
+              <div className="absolute bottom-24 right-6 opacity-60 pointer-events-none">
                 <Decor name="sparkle" size="xs" />
               </div>
 
               {/* Coração sutil */}
-              <div className="absolute top-60 left-6 opacity-65">
+              <div className="absolute top-60 left-6 opacity-65 pointer-events-none">
                 <Decor name="heart-filled" size="xs" className="-rotate-12" />
               </div>
             </>
@@ -111,10 +111,10 @@ export const Atmosphere: React.FC<AtmosphereProps> = ({
           {variant === 'app' && (
             <>
               {/* Brilhos discretos sem poluição visual */}
-              <div className="absolute top-12 right-8 opacity-45">
+              <div className="absolute top-12 right-8 opacity-45 pointer-events-none">
                 <Decor name="sparkle" size="xs" />
               </div>
-              <div className="absolute top-52 left-6 opacity-35">
+              <div className="absolute top-52 left-6 opacity-35 pointer-events-none">
                 <Decor name="sparkle" size="xs" />
               </div>
             </>
@@ -127,7 +127,7 @@ export const Atmosphere: React.FC<AtmosphereProps> = ({
   // Se houver children, envolve num container com a atmosfera aplicada como plano de fundo
   if (children) {
     return (
-      <div className={`relative min-h-screen w-full overflow-x-hidden ${className}`}>
+      <div className={`relative min-h-[100vh] min-h-[100dvh] w-full overflow-x-hidden ${className}`}>
         {backgroundContent}
         {children}
       </div>

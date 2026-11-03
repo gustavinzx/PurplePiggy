@@ -175,7 +175,7 @@ export const DashboardPage: React.FC = () => {
   const firstName = profile?.full_name?.split(' ')[0] || 'Gustavo'
 
   return (
-    <AppShell showNav={true} className="relative px-5 pt-5 pb-24 flex flex-col gap-4 max-w-[480px] mx-auto select-none">
+    <AppShell showNav={true} className="relative px-5 pt-5 flex flex-col gap-4 select-none">
       {/* Fundo com manchas orgânicas lilás e brilhos dourados sutis */}
       <BackgroundBlobs showSparkles={true} />
 

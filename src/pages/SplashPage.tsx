@@ -1,6 +1,6 @@
 import React from 'react'
 import { useNavigate } from 'react-router-dom'
-import { Atmosphere } from '../components/Atmosphere'
+import { AppShell } from '../components/AppShell'
 import { Mascot } from '../components/Mascot'
 import { Logo } from '../components/Logo'
 import { Button } from '../components/Button'
@@ -9,12 +9,13 @@ export const SplashPage: React.FC = () => {
   const navigate = useNavigate()
 
   return (
-    <div className="relative min-h-screen w-full flex flex-col items-center justify-between px-6 pt-12 pb-16 overflow-hidden select-none">
-      {/* Fundo oficial da Splash: degradê lilás, blobs nos cantos, moedas cortadas na borda, corações e estrelas */}
-      <Atmosphere variant="splash" />
-
+    <AppShell
+      showNav={false}
+      variant="splash"
+      className="items-center justify-between px-6 pt-12 pb-16 overflow-hidden select-none"
+    >
       {/* Conteúdo central: Mascote grande com moeda no topo + Wordmark + Slogan */}
-      <div className="flex-1 flex flex-col items-center justify-center text-center z-10 w-full max-w-xs animate-splash-entrance pt-4">
+      <div className="flex-1 flex flex-col items-center justify-center text-center z-10 w-full max-w-xs animate-splash-entrance pt-4 mx-auto">
         {/* Mascote oficial: Cabeça com moeda no topo (flutuação sutil de ±6px) */}
         <div className="relative mb-5">
           <Mascot size="hero" pose="head" float priority />
@@ -32,7 +33,7 @@ export const SplashPage: React.FC = () => {
       </div>
 
       {/* Ações inferiores: Botão primário 'Começar' e link de texto 'Entrar' */}
-      <div className="w-full max-w-xs flex flex-col items-center gap-2.5 z-10 pb-2 animate-splash-entrance [animation-delay:150ms]">
+      <div className="w-full max-w-xs flex flex-col items-center gap-2.5 z-10 pb-2 animate-splash-entrance [animation-delay:150ms] mx-auto">
         <Button
           variant="primary"
           size="md"
@@ -51,7 +52,7 @@ export const SplashPage: React.FC = () => {
           Entrar
         </Button>
       </div>
-    </div>
+    </AppShell>
   )
 }
 

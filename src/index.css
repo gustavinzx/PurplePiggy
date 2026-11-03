@@ -59,8 +59,16 @@
 }
 
 @layer base {
+  html {
+    scrollbar-gutter: stable;
+    overflow-x: clip;
+  }
+
   body {
     @apply bg-bg text-deep font-sans antialiased;
+    overflow-x: clip;
+    min-height: 100vh;
+    min-height: 100dvh;
     font-feature-settings: "cv02", "cv03", "cv04", "cv11";
   }
 }

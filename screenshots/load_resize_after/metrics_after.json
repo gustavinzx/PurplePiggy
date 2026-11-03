@@ -1,0 +1,3242 @@
+[
+  {
+    "session": "1280x800_splash_cold",
+    "viewport": "1280x800",
+    "route": "/",
+    "cache": "cold",
+    "timestamp": 0,
+    "metrics": {
+      "clientWidth": 1280,
+      "innerWidth": 1280,
+      "scrollbarWidth": 0,
+      "scrollHeight": 800,
+      "clientHeight": 800,
+      "fontsStatus": "loading",
+      "mainContainer": {
+        "id": "app-shell-container",
+        "tag": "div",
+        "className": "w-full max-w-[480px] min-h-[100vh] min-h-[100dvh] flex flex-",
+        "width": 480,
+        "height": 800,
+        "left": 397,
+        "top": 0
+      },
+      "loadingWrapper": {
+        "id": "",
+        "tag": "div",
+        "className": "flex-1 flex flex-col items-center justify-center gap-4 z-10 ",
+        "width": 478,
+        "height": 800,
+        "left": 398,
+        "top": 0
+      },
+      "splashWrapper": null,
+      "atmosphere": {
+        "id": "",
+        "tag": "div",
+        "className": "fixed inset-0 pointer-events-none select-none overflow-hidde",
+        "width": 1274,
+        "height": 800,
+        "left": 0,
+        "top": 0
+      }
+    },
+    "screenshot": "1280x800_splash_cold_0ms.png"
+  },
+  {
+    "session": "1280x800_splash_cold",
+    "viewport": "1280x800",
+    "route": "/",
+    "cache": "cold",
+    "timestamp": 100,
+    "metrics": {
+      "clientWidth": 1280,
+      "innerWidth": 1280,
+      "scrollbarWidth": 0,
+      "scrollHeight": 800,
+      "clientHeight": 800,
+      "fontsStatus": "loaded",
+      "mainContainer": {
+        "id": "app-shell-container",
+        "tag": "div",
+        "className": "w-full max-w-[480px] min-h-[100vh] min-h-[100dvh] flex flex-",
+        "width": 480,
+        "height": 800,
+        "left": 397,
+        "top": 0
+      },
+      "loadingWrapper": null,
+      "splashWrapper": {
+        "id": "",
+        "tag": "div",
+        "className": "flex-1 flex flex-col items-center justify-center text-center",
+        "width": 320,
+        "height": 602,
+        "left": 477,
+        "top": 48.69
+      },
+      "atmosphere": {
+        "id": "",
+        "tag": "div",
+        "className": "fixed inset-0 pointer-events-none select-none overflow-hidde",
+        "width": 1274,
+        "height": 800,
+        "left": 0,
+        "top": 0
+      }
+    },
+    "screenshot": "1280x800_splash_cold_100ms.png"
+  },
+  {
+    "session": "1280x800_splash_cold",
+    "viewport": "1280x800",
+    "route": "/",
+    "cache": "cold",
+    "timestamp": 300,
+    "metrics": {
+      "clientWidth": 1280,
+      "innerWidth": 1280,
+      "scrollbarWidth": 0,
+      "scrollHeight": 800,
+      "clientHeight": 800,
+      "fontsStatus": "loaded",
+      "mainContainer": {
+        "id": "app-shell-container",
+        "tag": "div",
+        "className": "w-full max-w-[480px] min-h-[100vh] min-h-[100dvh] flex flex-",
+        "width": 480,
+        "height": 800,
+        "left": 397,
+        "top": 0
+      },
+      "loadingWrapper": null,
+      "splashWrapper": {
+        "id": "",
+        "tag": "div",
+        "className": "flex-1 flex flex-col items-center justify-center text-center",
+        "width": 320,
+        "height": 602,
+        "left": 477,
+        "top": 48
+      },
+      "atmosphere": {
+        "id": "",
+        "tag": "div",
+        "className": "fixed inset-0 pointer-events-none select-none overflow-hidde",
+        "width": 1274,
+        "height": 800,
+        "left": 0,
+        "top": 0
+      }
+    },
+    "screenshot": "1280x800_splash_cold_300ms.png"
+  },
+  {
+    "session": "1280x800_splash_cold",
+    "viewport": "1280x800",
+    "route": "/",
+    "cache": "cold",
+    "timestamp": 600,
+    "metrics": {
+      "clientWidth": 1280,
+      "innerWidth": 1280,
+      "scrollbarWidth": 0,
+      "scrollHeight": 800,
+      "clientHeight": 800,
+      "fontsStatus": "loaded",
+      "mainContainer": {
+        "id": "app-shell-container",
+        "tag": "div",
+        "className": "w-full max-w-[480px] min-h-[100vh] min-h-[100dvh] flex flex-",
+        "width": 480,
+        "height": 800,
+        "left": 397,
+        "top": 0
+      },
+      "loadingWrapper": null,
+      "splashWrapper": {
+        "id": "",
+        "tag": "div",
+        "className": "flex-1 flex flex-col items-center justify-center text-center",
+        "width": 320,
+        "height": 602,
+        "left": 477,
+        "top": 48
+      },
+      "atmosphere": {
+        "id": "",
+        "tag": "div",
+        "className": "fixed inset-0 pointer-events-none select-none overflow-hidde",
+        "width": 1274,
+        "height": 800,
+        "left": 0,
+        "top": 0
+      }
+    },
+    "screenshot": "1280x800_splash_cold_600ms.png"
+  },
+  {
+    "session": "1280x800_splash_cold",
+    "viewport": "1280x800",
+    "route": "/",
+    "cache": "cold",
+    "timestamp": 1000,
+    "metrics": {
+      "clientWidth": 1280,
+      "innerWidth": 1280,
+      "scrollbarWidth": 0,
+      "scrollHeight": 800,
+      "clientHeight": 800,
+      "fontsStatus": "loaded",
+      "mainContainer": {
+        "id": "app-shell-container",
+        "tag": "div",
+        "className": "w-full max-w-[480px] min-h-[100vh] min-h-[100dvh] flex flex-",
+        "width": 480,
+        "height": 800,
+        "left": 397,
+        "top": 0
+      },
+      "loadingWrapper": null,
+      "splashWrapper": {
+        "id": "",
+        "tag": "div",
+        "className": "flex-1 flex flex-col items-center justify-center text-center",
+        "width": 320,
+        "height": 602,
+        "left": 477,
+        "top": 48
+      },
+      "atmosphere": {
+        "id": "",
+        "tag": "div",
+        "className": "fixed inset-0 pointer-events-none select-none overflow-hidde",
+        "width": 1274,
+        "height": 800,
+        "left": 0,
+        "top": 0
+      }
+    },
+    "screenshot": "1280x800_splash_cold_1000ms.png"
+  },
+  {
+    "session": "1280x800_splash_warm",
+    "viewport": "1280x800",
+    "route": "/",
+    "cache": "warm",
+    "timestamp": 0,
+    "metrics": {
+      "clientWidth": 1280,
+      "innerWidth": 1280,
+      "scrollbarWidth": 0,
+      "scrollHeight": 800,
+      "clientHeight": 800,
+      "fontsStatus": "loading",
+      "mainContainer": {
+        "id": "app-shell-container",
+        "tag": "div",
+        "className": "w-full max-w-[480px] min-h-[100vh] min-h-[100dvh] flex flex-",
+        "width": 480,
+        "height": 800,
+        "left": 397,
+        "top": 0
+      },
+      "loadingWrapper": {
+        "id": "",
+        "tag": "div",
+        "className": "flex-1 flex flex-col items-center justify-center gap-4 z-10 ",
+        "width": 478,
+        "height": 800,
+        "left": 398,
+        "top": 0
+      },
+      "splashWrapper": null,
+      "atmosphere": {
+        "id": "",
+        "tag": "div",
+        "className": "fixed inset-0 pointer-events-none select-none overflow-hidde",
+        "width": 1274,
+        "height": 800,
+        "left": 0,
+        "top": 0
+      }
+    },
+    "screenshot": "1280x800_splash_warm_0ms.png"
+  },
+  {
+    "session": "1280x800_splash_warm",
+    "viewport": "1280x800",
+    "route": "/",
+    "cache": "warm",
+    "timestamp": 100,
+    "metrics": {
+      "clientWidth": 1280,
+      "innerWidth": 1280,
+      "scrollbarWidth": 0,
+      "scrollHeight": 800,
+      "clientHeight": 800,
+      "fontsStatus": "loaded",
+      "mainContainer": {
+        "id": "app-shell-container",
+        "tag": "div",
+        "className": "w-full max-w-[480px] min-h-[100vh] min-h-[100dvh] flex flex-",
+        "width": 480,
+        "height": 800,
+        "left": 397,
+        "top": 0
+      },
+      "loadingWrapper": null,
+      "splashWrapper": {
+        "id": "",
+        "tag": "div",
+        "className": "flex-1 flex flex-col items-center justify-center text-center",
+        "width": 320,
+        "height": 602,
+        "left": 477,
+        "top": 48.56
+      },
+      "atmosphere": {
+        "id": "",
+        "tag": "div",
+        "className": "fixed inset-0 pointer-events-none select-none overflow-hidde",
+        "width": 1274,
+        "height": 800,
+        "left": 0,
+        "top": 0
+      }
+    },
+    "screenshot": "1280x800_splash_warm_100ms.png"
+  },
+  {
+    "session": "1280x800_splash_warm",
+    "viewport": "1280x800",
+    "route": "/",
+    "cache": "warm",
+    "timestamp": 300,
+    "metrics": {
+      "clientWidth": 1280,
+      "innerWidth": 1280,
+      "scrollbarWidth": 0,
+      "scrollHeight": 800,
+      "clientHeight": 800,
+      "fontsStatus": "loaded",
+      "mainContainer": {
+        "id": "app-shell-container",
+        "tag": "div",
+        "className": "w-full max-w-[480px] min-h-[100vh] min-h-[100dvh] flex flex-",
+        "width": 480,
+        "height": 800,
+        "left": 397,
+        "top": 0
+      },
+      "loadingWrapper": null,
+      "splashWrapper": {
+        "id": "",
+        "tag": "div",
+        "className": "flex-1 flex flex-col items-center justify-center text-center",
+        "width": 320,
+        "height": 602,
+        "left": 477,
+        "top": 48
+      },
+      "atmosphere": {
+        "id": "",
+        "tag": "div",
+        "className": "fixed inset-0 pointer-events-none select-none overflow-hidde",
+        "width": 1274,
+        "height": 800,
+        "left": 0,
+        "top": 0
+      }
+    },
+    "screenshot": "1280x800_splash_warm_300ms.png"
+  },
+  {
+    "session": "1280x800_splash_warm",
+    "viewport": "1280x800",
+    "route": "/",
+    "cache": "warm",
+    "timestamp": 600,
+    "metrics": {
+      "clientWidth": 1280,
+      "innerWidth": 1280,
+      "scrollbarWidth": 0,
+      "scrollHeight": 800,
+      "clientHeight": 800,
+      "fontsStatus": "loaded",
+      "mainContainer": {
+        "id": "app-shell-container",
+        "tag": "div",
+        "className": "w-full max-w-[480px] min-h-[100vh] min-h-[100dvh] flex flex-",
+        "width": 480,
+        "height": 800,
+        "left": 397,
+        "top": 0
+      },
+      "loadingWrapper": null,
+      "splashWrapper": {
+        "id": "",
+        "tag": "div",
+        "className": "flex-1 flex flex-col items-center justify-center text-center",
+        "width": 320,
+        "height": 602,
+        "left": 477,
+        "top": 48
+      },
+      "atmosphere": {
+        "id": "",
+        "tag": "div",
+        "className": "fixed inset-0 pointer-events-none select-none overflow-hidde",
+        "width": 1274,
+        "height": 800,
+        "left": 0,
+        "top": 0
+      }
+    },
+    "screenshot": "1280x800_splash_warm_600ms.png"
+  },
+  {
+    "session": "1280x800_splash_warm",
+    "viewport": "1280x800",
+    "route": "/",
+    "cache": "warm",
+    "timestamp": 1000,
+    "metrics": {
+      "clientWidth": 1280,
+      "innerWidth": 1280,
+      "scrollbarWidth": 0,
+      "scrollHeight": 800,
+      "clientHeight": 800,
+      "fontsStatus": "loaded",
+      "mainContainer": {
+        "id": "app-shell-container",
+        "tag": "div",
+        "className": "w-full max-w-[480px] min-h-[100vh] min-h-[100dvh] flex flex-",
+        "width": 480,
+        "height": 800,
+        "left": 397,
+        "top": 0
+      },
+      "loadingWrapper": null,
+      "splashWrapper": {
+        "id": "",
+        "tag": "div",
+        "className": "flex-1 flex flex-col items-center justify-center text-center",
+        "width": 320,
+        "height": 602,
+        "left": 477,
+        "top": 48
+      },
+      "atmosphere": {
+        "id": "",
+        "tag": "div",
+        "className": "fixed inset-0 pointer-events-none select-none overflow-hidde",
+        "width": 1274,
+        "height": 800,
+        "left": 0,
+        "top": 0
+      }
+    },
+    "screenshot": "1280x800_splash_warm_1000ms.png"
+  },
+  {
+    "session": "1280x800_inicio_cold",
+    "viewport": "1280x800",
+    "route": "/inicio",
+    "cache": "cold",
+    "timestamp": 0,
+    "metrics": {
+      "clientWidth": 1280,
+      "innerWidth": 1280,
+      "scrollbarWidth": 0,
+      "scrollHeight": 800,
+      "clientHeight": 800,
+      "fontsStatus": "loading",
+      "mainContainer": null,
+      "loadingWrapper": null,
+      "splashWrapper": null,
+      "atmosphere": null
+    },
+    "screenshot": "1280x800_inicio_cold_0ms.png"
+  },
+  {
+    "session": "1280x800_inicio_cold",
+    "viewport": "1280x800",
+    "route": "/inicio",
+    "cache": "cold",
+    "timestamp": 100,
+    "metrics": {
+      "clientWidth": 1280,
+      "innerWidth": 1280,
+      "scrollbarWidth": 0,
+      "scrollHeight": 800,
+      "clientHeight": 800,
+      "fontsStatus": "loaded",
+      "mainContainer": {
+        "id": "app-shell-container",
+        "tag": "div",
+        "className": "w-full max-w-[480px] min-h-[100vh] min-h-[100dvh] flex flex-",
+        "width": 480,
+        "height": 800,
+        "left": 397,
+        "top": 0
+      },
+      "loadingWrapper": null,
+      "splashWrapper": null,
+      "atmosphere": {
+        "id": "",
+        "tag": "div",
+        "className": "fixed inset-0 pointer-events-none select-none overflow-hidde",
+        "width": 1274,
+        "height": 800,
+        "left": 0,
+        "top": 0
+      }
+    },
+    "screenshot": "1280x800_inicio_cold_100ms.png"
+  },
+  {
+    "session": "1280x800_inicio_cold",
+    "viewport": "1280x800",
+    "route": "/inicio",
+    "cache": "cold",
+    "timestamp": 300,
+    "metrics": {
+      "clientWidth": 1280,
+      "innerWidth": 1280,
+      "scrollbarWidth": 0,
+      "scrollHeight": 800,
+      "clientHeight": 800,
+      "fontsStatus": "loaded",
+      "mainContainer": {
+        "id": "app-shell-container",
+        "tag": "div",
+        "className": "w-full max-w-[480px] min-h-[100vh] min-h-[100dvh] flex flex-",
+        "width": 480,
+        "height": 800,
+        "left": 397,
+        "top": 0
+      },
+      "loadingWrapper": null,
+      "splashWrapper": null,
+      "atmosphere": {
+        "id": "",
+        "tag": "div",
+        "className": "fixed inset-0 pointer-events-none select-none overflow-hidde",
+        "width": 1274,
+        "height": 800,
+        "left": 0,
+        "top": 0
+      }
+    },
+    "screenshot": "1280x800_inicio_cold_300ms.png"
+  },
+  {
+    "session": "1280x800_inicio_cold",
+    "viewport": "1280x800",
+    "route": "/inicio",
+    "cache": "cold",
+    "timestamp": 600,
+    "metrics": {
+      "clientWidth": 1280,
+      "innerWidth": 1280,
+      "scrollbarWidth": 0,
+      "scrollHeight": 800,
+      "clientHeight": 800,
+      "fontsStatus": "loaded",
+      "mainContainer": {
+        "id": "app-shell-container",
+        "tag": "div",
+        "className": "w-full max-w-[480px] min-h-[100vh] min-h-[100dvh] flex flex-",
+        "width": 480,
+        "height": 800,
+        "left": 397,
+        "top": 0
+      },
+      "loadingWrapper": null,
+      "splashWrapper": null,
+      "atmosphere": {
+        "id": "",
+        "tag": "div",
+        "className": "fixed inset-0 pointer-events-none select-none overflow-hidde",
+        "width": 1274,
+        "height": 800,
+        "left": 0,
+        "top": 0
+      }
+    },
+    "screenshot": "1280x800_inicio_cold_600ms.png"
+  },
+  {
+    "session": "1280x800_inicio_cold",
+    "viewport": "1280x800",
+    "route": "/inicio",
+    "cache": "cold",
+    "timestamp": 1000,
+    "metrics": {
+      "clientWidth": 1280,
+      "innerWidth": 1280,
+      "scrollbarWidth": 0,
+      "scrollHeight": 800,
+      "clientHeight": 800,
+      "fontsStatus": "loaded",
+      "mainContainer": {
+        "id": "app-shell-container",
+        "tag": "div",
+        "className": "w-full max-w-[480px] min-h-[100vh] min-h-[100dvh] flex flex-",
+        "width": 480,
+        "height": 800,
+        "left": 397,
+        "top": 0
+      },
+      "loadingWrapper": null,
+      "splashWrapper": null,
+      "atmosphere": {
+        "id": "",
+        "tag": "div",
+        "className": "fixed inset-0 pointer-events-none select-none overflow-hidde",
+        "width": 1274,
+        "height": 800,
+        "left": 0,
+        "top": 0
+      }
+    },
+    "screenshot": "1280x800_inicio_cold_1000ms.png"
+  },
+  {
+    "session": "1280x800_inicio_warm",
+    "viewport": "1280x800",
+    "route": "/inicio",
+    "cache": "warm",
+    "timestamp": 0,
+    "metrics": {
+      "clientWidth": 1280,
+      "innerWidth": 1280,
+      "scrollbarWidth": 0,
+      "scrollHeight": 800,
+      "clientHeight": 800,
+      "fontsStatus": "loading",
+      "mainContainer": {
+        "id": "app-shell-container",
+        "tag": "div",
+        "className": "w-full max-w-[480px] min-h-[100vh] min-h-[100dvh] flex flex-",
+        "width": 480,
+        "height": 800,
+        "left": 397,
+        "top": 0
+      },
+      "loadingWrapper": {
+        "id": "",
+        "tag": "div",
+        "className": "flex-1 flex flex-col items-center justify-center gap-4 z-10 ",
+        "width": 478,
+        "height": 800,
+        "left": 398,
+        "top": 0
+      },
+      "splashWrapper": null,
+      "atmosphere": {
+        "id": "",
+        "tag": "div",
+        "className": "fixed inset-0 pointer-events-none select-none overflow-hidde",
+        "width": 1274,
+        "height": 800,
+        "left": 0,
+        "top": 0
+      }
+    },
+    "screenshot": "1280x800_inicio_warm_0ms.png"
+  },
+  {
+    "session": "1280x800_inicio_warm",
+    "viewport": "1280x800",
+    "route": "/inicio",
+    "cache": "warm",
+    "timestamp": 100,
+    "metrics": {
+      "clientWidth": 1280,
+      "innerWidth": 1280,
+      "scrollbarWidth": 0,
+      "scrollHeight": 1207,
+      "clientHeight": 800,
+      "fontsStatus": "loaded",
+      "mainContainer": {
+        "id": "app-shell-container",
+        "tag": "div",
+        "className": "w-full max-w-[480px] min-h-[100vh] min-h-[100dvh] flex flex-",
+        "width": 480,
+        "height": 1207,
+        "left": 397,
+        "top": 0
+      },
+      "loadingWrapper": null,
+      "splashWrapper": null,
+      "atmosphere": {
+        "id": "",
+        "tag": "div",
+        "className": "fixed inset-0 pointer-events-none select-none overflow-hidde",
+        "width": 1274,
+        "height": 800,
+        "left": 0,
+        "top": 0
+      }
+    },
+    "screenshot": "1280x800_inicio_warm_100ms.png"
+  },
+  {
+    "session": "1280x800_inicio_warm",
+    "viewport": "1280x800",
+    "route": "/inicio",
+    "cache": "warm",
+    "timestamp": 300,
+    "metrics": {
+      "clientWidth": 1280,
+      "innerWidth": 1280,
+      "scrollbarWidth": 0,
+      "scrollHeight": 1282,
+      "clientHeight": 800,
+      "fontsStatus": "loaded",
+      "mainContainer": {
+        "id": "app-shell-container",
+        "tag": "div",
+        "className": "w-full max-w-[480px] min-h-[100vh] min-h-[100dvh] flex flex-",
+        "width": 480,
+        "height": 1281.5,
+        "left": 397,
+        "top": 0
+      },
+      "loadingWrapper": null,
+      "splashWrapper": null,
+      "atmosphere": {
+        "id": "",
+        "tag": "div",
+        "className": "fixed inset-0 pointer-events-none select-none overflow-hidde",
+        "width": 1274,
+        "height": 800,
+        "left": 0,
+        "top": 0
+      }
+    },
+    "screenshot": "1280x800_inicio_warm_300ms.png"
+  },
+  {
+    "session": "1280x800_inicio_warm",
+    "viewport": "1280x800",
+    "route": "/inicio",
+    "cache": "warm",
+    "timestamp": 600,
+    "metrics": {
+      "clientWidth": 1280,
+      "innerWidth": 1280,
+      "scrollbarWidth": 0,
+      "scrollHeight": 1282,
+      "clientHeight": 800,
+      "fontsStatus": "loaded",
+      "mainContainer": {
+        "id": "app-shell-container",
+        "tag": "div",
+        "className": "w-full max-w-[480px] min-h-[100vh] min-h-[100dvh] flex flex-",
+        "width": 480,
+        "height": 1281.5,
+        "left": 397,
+        "top": 0
+      },
+      "loadingWrapper": null,
+      "splashWrapper": null,
+      "atmosphere": {
+        "id": "",
+        "tag": "div",
+        "className": "fixed inset-0 pointer-events-none select-none overflow-hidde",
+        "width": 1274,
+        "height": 800,
+        "left": 0,
+        "top": 0
+      }
+    },
+    "screenshot": "1280x800_inicio_warm_600ms.png"
+  },
+  {
+    "session": "1280x800_inicio_warm",
+    "viewport": "1280x800",
+    "route": "/inicio",
+    "cache": "warm",
+    "timestamp": 1000,
+    "metrics": {
+      "clientWidth": 1280,
+      "innerWidth": 1280,
+      "scrollbarWidth": 0,
+      "scrollHeight": 1282,
+      "clientHeight": 800,
+      "fontsStatus": "loaded",
+      "mainContainer": {
+        "id": "app-shell-container",
+        "tag": "div",
+        "className": "w-full max-w-[480px] min-h-[100vh] min-h-[100dvh] flex flex-",
+        "width": 480,
+        "height": 1281.5,
+        "left": 397,
+        "top": 0
+      },
+      "loadingWrapper": null,
+      "splashWrapper": null,
+      "atmosphere": {
+        "id": "",
+        "tag": "div",
+        "className": "fixed inset-0 pointer-events-none select-none overflow-hidde",
+        "width": 1274,
+        "height": 800,
+        "left": 0,
+        "top": 0
+      }
+    },
+    "screenshot": "1280x800_inicio_warm_1000ms.png"
+  },
+  {
+    "session": "1920x1080_splash_cold",
+    "viewport": "1920x1080",
+    "route": "/",
+    "cache": "cold",
+    "timestamp": 0,
+    "metrics": {
+      "clientWidth": 1920,
+      "innerWidth": 1920,
+      "scrollbarWidth": 0,
+      "scrollHeight": 1080,
+      "clientHeight": 1080,
+      "fontsStatus": "loading",
+      "mainContainer": {
+        "id": "app-shell-container",
+        "tag": "div",
+        "className": "w-full max-w-[480px] min-h-[100vh] min-h-[100dvh] flex flex-",
+        "width": 480,
+        "height": 1080,
+        "left": 717,
+        "top": 0
+      },
+      "loadingWrapper": {
+        "id": "",
+        "tag": "div",
+        "className": "flex-1 flex flex-col items-center justify-center gap-4 z-10 ",
+        "width": 478,
+        "height": 1080,
+        "left": 718,
+        "top": 0
+      },
+      "splashWrapper": null,
+      "atmosphere": {
+        "id": "",
+        "tag": "div",
+        "className": "fixed inset-0 pointer-events-none select-none overflow-hidde",
+        "width": 1914,
+        "height": 1080,
+        "left": 0,
+        "top": 0
+      }
+    },
+    "screenshot": "1920x1080_splash_cold_0ms.png"
+  },
+  {
+    "session": "1920x1080_splash_cold",
+    "viewport": "1920x1080",
+    "route": "/",
+    "cache": "cold",
+    "timestamp": 100,
+    "metrics": {
+      "clientWidth": 1920,
+      "innerWidth": 1920,
+      "scrollbarWidth": 0,
+      "scrollHeight": 1080,
+      "clientHeight": 1080,
+      "fontsStatus": "loaded",
+      "mainContainer": {
+        "id": "app-shell-container",
+        "tag": "div",
+        "className": "w-full max-w-[480px] min-h-[100vh] min-h-[100dvh] flex flex-",
+        "width": 480,
+        "height": 1080,
+        "left": 717,
+        "top": 0
+      },
+      "loadingWrapper": null,
+      "splashWrapper": {
+        "id": "",
+        "tag": "div",
+        "className": "flex-1 flex flex-col items-center justify-center text-center",
+        "width": 320,
+        "height": 882,
+        "left": 797,
+        "top": 48.1
+      },
+      "atmosphere": {
+        "id": "",
+        "tag": "div",
+        "className": "fixed inset-0 pointer-events-none select-none overflow-hidde",
+        "width": 1914,
+        "height": 1080,
+        "left": 0,
+        "top": 0
+      }
+    },
+    "screenshot": "1920x1080_splash_cold_100ms.png"
+  },
+  {
+    "session": "1920x1080_splash_cold",
+    "viewport": "1920x1080",
+    "route": "/",
+    "cache": "cold",
+    "timestamp": 300,
+    "metrics": {
+      "clientWidth": 1920,
+      "innerWidth": 1920,
+      "scrollbarWidth": 0,
+      "scrollHeight": 1080,
+      "clientHeight": 1080,
+      "fontsStatus": "loaded",
+      "mainContainer": {
+        "id": "app-shell-container",
+        "tag": "div",
+        "className": "w-full max-w-[480px] min-h-[100vh] min-h-[100dvh] flex flex-",
+        "width": 480,
+        "height": 1080,
+        "left": 717,
+        "top": 0
+      },
+      "loadingWrapper": null,
+      "splashWrapper": {
+        "id": "",
+        "tag": "div",
+        "className": "flex-1 flex flex-col items-center justify-center text-center",
+        "width": 320,
+        "height": 882,
+        "left": 797,
+        "top": 48
+      },
+      "atmosphere": {
+        "id": "",
+        "tag": "div",
+        "className": "fixed inset-0 pointer-events-none select-none overflow-hidde",
+        "width": 1914,
+        "height": 1080,
+        "left": 0,
+        "top": 0
+      }
+    },
+    "screenshot": "1920x1080_splash_cold_300ms.png"
+  },
+  {
+    "session": "1920x1080_splash_cold",
+    "viewport": "1920x1080",
+    "route": "/",
+    "cache": "cold",
+    "timestamp": 600,
+    "metrics": {
+      "clientWidth": 1920,
+      "innerWidth": 1920,
+      "scrollbarWidth": 0,
+      "scrollHeight": 1080,
+      "clientHeight": 1080,
+      "fontsStatus": "loaded",
+      "mainContainer": {
+        "id": "app-shell-container",
+        "tag": "div",
+        "className": "w-full max-w-[480px] min-h-[100vh] min-h-[100dvh] flex flex-",
+        "width": 480,
+        "height": 1080,
+        "left": 717,
+        "top": 0
+      },
+      "loadingWrapper": null,
+      "splashWrapper": {
+        "id": "",
+        "tag": "div",
+        "className": "flex-1 flex flex-col items-center justify-center text-center",
+        "width": 320,
+        "height": 882,
+        "left": 797,
+        "top": 48
+      },
+      "atmosphere": {
+        "id": "",
+        "tag": "div",
+        "className": "fixed inset-0 pointer-events-none select-none overflow-hidde",
+        "width": 1914,
+        "height": 1080,
+        "left": 0,
+        "top": 0
+      }
+    },
+    "screenshot": "1920x1080_splash_cold_600ms.png"
+  },
+  {
+    "session": "1920x1080_splash_cold",
+    "viewport": "1920x1080",
+    "route": "/",
+    "cache": "cold",
+    "timestamp": 1000,
+    "metrics": {
+      "clientWidth": 1920,
+      "innerWidth": 1920,
+      "scrollbarWidth": 0,
+      "scrollHeight": 1080,
+      "clientHeight": 1080,
+      "fontsStatus": "loaded",
+      "mainContainer": {
+        "id": "app-shell-container",
+        "tag": "div",
+        "className": "w-full max-w-[480px] min-h-[100vh] min-h-[100dvh] flex flex-",
+        "width": 480,
+        "height": 1080,
+        "left": 717,
+        "top": 0
+      },
+      "loadingWrapper": null,
+      "splashWrapper": {
+        "id": "",
+        "tag": "div",
+        "className": "flex-1 flex flex-col items-center justify-center text-center",
+        "width": 320,
+        "height": 882,
+        "left": 797,
+        "top": 48
+      },
+      "atmosphere": {
+        "id": "",
+        "tag": "div",
+        "className": "fixed inset-0 pointer-events-none select-none overflow-hidde",
+        "width": 1914,
+        "height": 1080,
+        "left": 0,
+        "top": 0
+      }
+    },
+    "screenshot": "1920x1080_splash_cold_1000ms.png"
+  },
+  {
+    "session": "1920x1080_splash_warm",
+    "viewport": "1920x1080",
+    "route": "/",
+    "cache": "warm",
+    "timestamp": 0,
+    "metrics": {
+      "clientWidth": 1920,
+      "innerWidth": 1920,
+      "scrollbarWidth": 0,
+      "scrollHeight": 1080,
+      "clientHeight": 1080,
+      "fontsStatus": "loading",
+      "mainContainer": {
+        "id": "app-shell-container",
+        "tag": "div",
+        "className": "w-full max-w-[480px] min-h-[100vh] min-h-[100dvh] flex flex-",
+        "width": 480,
+        "height": 1080,
+        "left": 717,
+        "top": 0
+      },
+      "loadingWrapper": {
+        "id": "",
+        "tag": "div",
+        "className": "flex-1 flex flex-col items-center justify-center gap-4 z-10 ",
+        "width": 478,
+        "height": 1080,
+        "left": 718,
+        "top": 0
+      },
+      "splashWrapper": null,
+      "atmosphere": {
+        "id": "",
+        "tag": "div",
+        "className": "fixed inset-0 pointer-events-none select-none overflow-hidde",
+        "width": 1914,
+        "height": 1080,
+        "left": 0,
+        "top": 0
+      }
+    },
+    "screenshot": "1920x1080_splash_warm_0ms.png"
+  },
+  {
+    "session": "1920x1080_splash_warm",
+    "viewport": "1920x1080",
+    "route": "/",
+    "cache": "warm",
+    "timestamp": 100,
+    "metrics": {
+      "clientWidth": 1920,
+      "innerWidth": 1920,
+      "scrollbarWidth": 0,
+      "scrollHeight": 1080,
+      "clientHeight": 1080,
+      "fontsStatus": "loaded",
+      "mainContainer": {
+        "id": "app-shell-container",
+        "tag": "div",
+        "className": "w-full max-w-[480px] min-h-[100vh] min-h-[100dvh] flex flex-",
+        "width": 480,
+        "height": 1080,
+        "left": 717,
+        "top": 0
+      },
+      "loadingWrapper": null,
+      "splashWrapper": {
+        "id": "",
+        "tag": "div",
+        "className": "flex-1 flex flex-col items-center justify-center text-center",
+        "width": 320,
+        "height": 882,
+        "left": 797,
+        "top": 48.45
+      },
+      "atmosphere": {
+        "id": "",
+        "tag": "div",
+        "className": "fixed inset-0 pointer-events-none select-none overflow-hidde",
+        "width": 1914,
+        "height": 1080,
+        "left": 0,
+        "top": 0
+      }
+    },
+    "screenshot": "1920x1080_splash_warm_100ms.png"
+  },
+  {
+    "session": "1920x1080_splash_warm",
+    "viewport": "1920x1080",
+    "route": "/",
+    "cache": "warm",
+    "timestamp": 300,
+    "metrics": {
+      "clientWidth": 1920,
+      "innerWidth": 1920,
+      "scrollbarWidth": 0,
+      "scrollHeight": 1080,
+      "clientHeight": 1080,
+      "fontsStatus": "loaded",
+      "mainContainer": {
+        "id": "app-shell-container",
+        "tag": "div",
+        "className": "w-full max-w-[480px] min-h-[100vh] min-h-[100dvh] flex flex-",
+        "width": 480,
+        "height": 1080,
+        "left": 717,
+        "top": 0
+      },
+      "loadingWrapper": null,
+      "splashWrapper": {
+        "id": "",
+        "tag": "div",
+        "className": "flex-1 flex flex-col items-center justify-center text-center",
+        "width": 320,
+        "height": 882,
+        "left": 797,
+        "top": 48
+      },
+      "atmosphere": {
+        "id": "",
+        "tag": "div",
+        "className": "fixed inset-0 pointer-events-none select-none overflow-hidde",
+        "width": 1914,
+        "height": 1080,
+        "left": 0,
+        "top": 0
+      }
+    },
+    "screenshot": "1920x1080_splash_warm_300ms.png"
+  },
+  {
+    "session": "1920x1080_splash_warm",
+    "viewport": "1920x1080",
+    "route": "/",
+    "cache": "warm",
+    "timestamp": 600,
+    "metrics": {
+      "clientWidth": 1920,
+      "innerWidth": 1920,
+      "scrollbarWidth": 0,
+      "scrollHeight": 1080,
+      "clientHeight": 1080,
+      "fontsStatus": "loaded",
+      "mainContainer": {
+        "id": "app-shell-container",
+        "tag": "div",
+        "className": "w-full max-w-[480px] min-h-[100vh] min-h-[100dvh] flex flex-",
+        "width": 480,
+        "height": 1080,
+        "left": 717,
+        "top": 0
+      },
+      "loadingWrapper": null,
+      "splashWrapper": {
+        "id": "",
+        "tag": "div",
+        "className": "flex-1 flex flex-col items-center justify-center text-center",
+        "width": 320,
+        "height": 882,
+        "left": 797,
+        "top": 48
+      },
+      "atmosphere": {
+        "id": "",
+        "tag": "div",
+        "className": "fixed inset-0 pointer-events-none select-none overflow-hidde",
+        "width": 1914,
+        "height": 1080,
+        "left": 0,
+        "top": 0
+      }
+    },
+    "screenshot": "1920x1080_splash_warm_600ms.png"
+  },
+  {
+    "session": "1920x1080_splash_warm",
+    "viewport": "1920x1080",
+    "route": "/",
+    "cache": "warm",
+    "timestamp": 1000,
+    "metrics": {
+      "clientWidth": 1920,
+      "innerWidth": 1920,
+      "scrollbarWidth": 0,
+      "scrollHeight": 1080,
+      "clientHeight": 1080,
+      "fontsStatus": "loaded",
+      "mainContainer": {
+        "id": "app-shell-container",
+        "tag": "div",
+        "className": "w-full max-w-[480px] min-h-[100vh] min-h-[100dvh] flex flex-",
+        "width": 480,
+        "height": 1080,
+        "left": 717,
+        "top": 0
+      },
+      "loadingWrapper": null,
+      "splashWrapper": {
+        "id": "",
+        "tag": "div",
+        "className": "flex-1 flex flex-col items-center justify-center text-center",
+        "width": 320,
+        "height": 882,
+        "left": 797,
+        "top": 48
+      },
+      "atmosphere": {
+        "id": "",
+        "tag": "div",
+        "className": "fixed inset-0 pointer-events-none select-none overflow-hidde",
+        "width": 1914,
+        "height": 1080,
+        "left": 0,
+        "top": 0
+      }
+    },
+    "screenshot": "1920x1080_splash_warm_1000ms.png"
+  },
+  {
+    "session": "1920x1080_inicio_cold",
+    "viewport": "1920x1080",
+    "route": "/inicio",
+    "cache": "cold",
+    "timestamp": 0,
+    "metrics": {
+      "clientWidth": 1920,
+      "innerWidth": 1920,
+      "scrollbarWidth": 0,
+      "scrollHeight": 1080,
+      "clientHeight": 1080,
+      "fontsStatus": "loading",
+      "mainContainer": {
+        "id": "app-shell-container",
+        "tag": "div",
+        "className": "w-full max-w-[480px] min-h-[100vh] min-h-[100dvh] flex flex-",
+        "width": 480,
+        "height": 1080,
+        "left": 717,
+        "top": 0
+      },
+      "loadingWrapper": {
+        "id": "",
+        "tag": "div",
+        "className": "flex-1 flex flex-col items-center justify-center gap-4 z-10 ",
+        "width": 478,
+        "height": 1080,
+        "left": 718,
+        "top": 0
+      },
+      "splashWrapper": null,
+      "atmosphere": {
+        "id": "",
+        "tag": "div",
+        "className": "fixed inset-0 pointer-events-none select-none overflow-hidde",
+        "width": 1914,
+        "height": 1080,
+        "left": 0,
+        "top": 0
+      }
+    },
+    "screenshot": "1920x1080_inicio_cold_0ms.png"
+  },
+  {
+    "session": "1920x1080_inicio_cold",
+    "viewport": "1920x1080",
+    "route": "/inicio",
+    "cache": "cold",
+    "timestamp": 100,
+    "metrics": {
+      "clientWidth": 1920,
+      "innerWidth": 1920,
+      "scrollbarWidth": 0,
+      "scrollHeight": 1207,
+      "clientHeight": 1080,
+      "fontsStatus": "loaded",
+      "mainContainer": {
+        "id": "app-shell-container",
+        "tag": "div",
+        "className": "w-full max-w-[480px] min-h-[100vh] min-h-[100dvh] flex flex-",
+        "width": 480,
+        "height": 1207,
+        "left": 717,
+        "top": 0
+      },
+      "loadingWrapper": null,
+      "splashWrapper": null,
+      "atmosphere": {
+        "id": "",
+        "tag": "div",
+        "className": "fixed inset-0 pointer-events-none select-none overflow-hidde",
+        "width": 1914,
+        "height": 1080,
+        "left": 0,
+        "top": 0
+      }
+    },
+    "screenshot": "1920x1080_inicio_cold_100ms.png"
+  },
+  {
+    "session": "1920x1080_inicio_cold",
+    "viewport": "1920x1080",
+    "route": "/inicio",
+    "cache": "cold",
+    "timestamp": 300,
+    "metrics": {
+      "clientWidth": 1920,
+      "innerWidth": 1920,
+      "scrollbarWidth": 0,
+      "scrollHeight": 1282,
+      "clientHeight": 1080,
+      "fontsStatus": "loaded",
+      "mainContainer": {
+        "id": "app-shell-container",
+        "tag": "div",
+        "className": "w-full max-w-[480px] min-h-[100vh] min-h-[100dvh] flex flex-",
+        "width": 480,
+        "height": 1281.5,
+        "left": 717,
+        "top": 0
+      },
+      "loadingWrapper": null,
+      "splashWrapper": null,
+      "atmosphere": {
+        "id": "",
+        "tag": "div",
+        "className": "fixed inset-0 pointer-events-none select-none overflow-hidde",
+        "width": 1914,
+        "height": 1080,
+        "left": 0,
+        "top": 0
+      }
+    },
+    "screenshot": "1920x1080_inicio_cold_300ms.png"
+  },
+  {
+    "session": "1920x1080_inicio_cold",
+    "viewport": "1920x1080",
+    "route": "/inicio",
+    "cache": "cold",
+    "timestamp": 600,
+    "metrics": {
+      "clientWidth": 1920,
+      "innerWidth": 1920,
+      "scrollbarWidth": 0,
+      "scrollHeight": 1282,
+      "clientHeight": 1080,
+      "fontsStatus": "loaded",
+      "mainContainer": {
+        "id": "app-shell-container",
+        "tag": "div",
+        "className": "w-full max-w-[480px] min-h-[100vh] min-h-[100dvh] flex flex-",
+        "width": 480,
+        "height": 1281.5,
+        "left": 717,
+        "top": 0
+      },
+      "loadingWrapper": null,
+      "splashWrapper": null,
+      "atmosphere": {
+        "id": "",
+        "tag": "div",
+        "className": "fixed inset-0 pointer-events-none select-none overflow-hidde",
+        "width": 1914,
+        "height": 1080,
+        "left": 0,
+        "top": 0
+      }
+    },
+    "screenshot": "1920x1080_inicio_cold_600ms.png"
+  },
+  {
+    "session": "1920x1080_inicio_cold",
+    "viewport": "1920x1080",
+    "route": "/inicio",
+    "cache": "cold",
+    "timestamp": 1000,
+    "metrics": {
+      "clientWidth": 1920,
+      "innerWidth": 1920,
+      "scrollbarWidth": 0,
+      "scrollHeight": 1282,
+      "clientHeight": 1080,
+      "fontsStatus": "loaded",
+      "mainContainer": {
+        "id": "app-shell-container",
+        "tag": "div",
+        "className": "w-full max-w-[480px] min-h-[100vh] min-h-[100dvh] flex flex-",
+        "width": 480,
+        "height": 1281.5,
+        "left": 717,
+        "top": 0
+      },
+      "loadingWrapper": null,
+      "splashWrapper": null,
+      "atmosphere": {
+        "id": "",
+        "tag": "div",
+        "className": "fixed inset-0 pointer-events-none select-none overflow-hidde",
+        "width": 1914,
+        "height": 1080,
+        "left": 0,
+        "top": 0
+      }
+    },
+    "screenshot": "1920x1080_inicio_cold_1000ms.png"
+  },
+  {
+    "session": "1920x1080_inicio_warm",
+    "viewport": "1920x1080",
+    "route": "/inicio",
+    "cache": "warm",
+    "timestamp": 0,
+    "metrics": {
+      "clientWidth": 1920,
+      "innerWidth": 1920,
+      "scrollbarWidth": 0,
+      "scrollHeight": 1080,
+      "clientHeight": 1080,
+      "fontsStatus": "loading",
+      "mainContainer": {
+        "id": "app-shell-container",
+        "tag": "div",
+        "className": "w-full max-w-[480px] min-h-[100vh] min-h-[100dvh] flex flex-",
+        "width": 480,
+        "height": 1080,
+        "left": 717,
+        "top": 0
+      },
+      "loadingWrapper": {
+        "id": "",
+        "tag": "div",
+        "className": "flex-1 flex flex-col items-center justify-center gap-4 z-10 ",
+        "width": 478,
+        "height": 1080,
+        "left": 718,
+        "top": 0
+      },
+      "splashWrapper": null,
+      "atmosphere": {
+        "id": "",
+        "tag": "div",
+        "className": "fixed inset-0 pointer-events-none select-none overflow-hidde",
+        "width": 1914,
+        "height": 1080,
+        "left": 0,
+        "top": 0
+      }
+    },
+    "screenshot": "1920x1080_inicio_warm_0ms.png"
+  },
+  {
+    "session": "1920x1080_inicio_warm",
+    "viewport": "1920x1080",
+    "route": "/inicio",
+    "cache": "warm",
+    "timestamp": 100,
+    "metrics": {
+      "clientWidth": 1920,
+      "innerWidth": 1920,
+      "scrollbarWidth": 0,
+      "scrollHeight": 1207,
+      "clientHeight": 1080,
+      "fontsStatus": "loaded",
+      "mainContainer": {
+        "id": "app-shell-container",
+        "tag": "div",
+        "className": "w-full max-w-[480px] min-h-[100vh] min-h-[100dvh] flex flex-",
+        "width": 480,
+        "height": 1207,
+        "left": 717,
+        "top": 0
+      },
+      "loadingWrapper": null,
+      "splashWrapper": null,
+      "atmosphere": {
+        "id": "",
+        "tag": "div",
+        "className": "fixed inset-0 pointer-events-none select-none overflow-hidde",
+        "width": 1914,
+        "height": 1080,
+        "left": 0,
+        "top": 0
+      }
+    },
+    "screenshot": "1920x1080_inicio_warm_100ms.png"
+  },
+  {
+    "session": "1920x1080_inicio_warm",
+    "viewport": "1920x1080",
+    "route": "/inicio",
+    "cache": "warm",
+    "timestamp": 300,
+    "metrics": {
+      "clientWidth": 1920,
+      "innerWidth": 1920,
+      "scrollbarWidth": 0,
+      "scrollHeight": 1282,
+      "clientHeight": 1080,
+      "fontsStatus": "loaded",
+      "mainContainer": {
+        "id": "app-shell-container",
+        "tag": "div",
+        "className": "w-full max-w-[480px] min-h-[100vh] min-h-[100dvh] flex flex-",
+        "width": 480,
+        "height": 1281.5,
+        "left": 717,
+        "top": 0
+      },
+      "loadingWrapper": null,
+      "splashWrapper": null,
+      "atmosphere": {
+        "id": "",
+        "tag": "div",
+        "className": "fixed inset-0 pointer-events-none select-none overflow-hidde",
+        "width": 1914,
+        "height": 1080,
+        "left": 0,
+        "top": 0
+      }
+    },
+    "screenshot": "1920x1080_inicio_warm_300ms.png"
+  },
+  {
+    "session": "1920x1080_inicio_warm",
+    "viewport": "1920x1080",
+    "route": "/inicio",
+    "cache": "warm",
+    "timestamp": 600,
+    "metrics": {
+      "clientWidth": 1920,
+      "innerWidth": 1920,
+      "scrollbarWidth": 0,
+      "scrollHeight": 1282,
+      "clientHeight": 1080,
+      "fontsStatus": "loaded",
+      "mainContainer": {
+        "id": "app-shell-container",
+        "tag": "div",
+        "className": "w-full max-w-[480px] min-h-[100vh] min-h-[100dvh] flex flex-",
+        "width": 480,
+        "height": 1281.5,
+        "left": 717,
+        "top": 0
+      },
+      "loadingWrapper": null,
+      "splashWrapper": null,
+      "atmosphere": {
+        "id": "",
+        "tag": "div",
+        "className": "fixed inset-0 pointer-events-none select-none overflow-hidde",
+        "width": 1914,
+        "height": 1080,
+        "left": 0,
+        "top": 0
+      }
+    },
+    "screenshot": "1920x1080_inicio_warm_600ms.png"
+  },
+  {
+    "session": "1920x1080_inicio_warm",
+    "viewport": "1920x1080",
+    "route": "/inicio",
+    "cache": "warm",
+    "timestamp": 1000,
+    "metrics": {
+      "clientWidth": 1920,
+      "innerWidth": 1920,
+      "scrollbarWidth": 0,
+      "scrollHeight": 1282,
+      "clientHeight": 1080,
+      "fontsStatus": "loaded",
+      "mainContainer": {
+        "id": "app-shell-container",
+        "tag": "div",
+        "className": "w-full max-w-[480px] min-h-[100vh] min-h-[100dvh] flex flex-",
+        "width": 480,
+        "height": 1281.5,
+        "left": 717,
+        "top": 0
+      },
+      "loadingWrapper": null,
+      "splashWrapper": null,
+      "atmosphere": {
+        "id": "",
+        "tag": "div",
+        "className": "fixed inset-0 pointer-events-none select-none overflow-hidde",
+        "width": 1914,
+        "height": 1080,
+        "left": 0,
+        "top": 0
+      }
+    },
+    "screenshot": "1920x1080_inicio_warm_1000ms.png"
+  },
+  {
+    "session": "1024x600_splash_cold",
+    "viewport": "1024x600",
+    "route": "/",
+    "cache": "cold",
+    "timestamp": 0,
+    "metrics": {
+      "clientWidth": 1024,
+      "innerWidth": 1024,
+      "scrollbarWidth": 0,
+      "scrollHeight": 600,
+      "clientHeight": 600,
+      "fontsStatus": "loading",
+      "mainContainer": {
+        "id": "app-shell-container",
+        "tag": "div",
+        "className": "w-full max-w-[480px] min-h-[100vh] min-h-[100dvh] flex flex-",
+        "width": 480,
+        "height": 600,
+        "left": 269,
+        "top": 0
+      },
+      "loadingWrapper": {
+        "id": "",
+        "tag": "div",
+        "className": "flex-1 flex flex-col items-center justify-center gap-4 z-10 ",
+        "width": 478,
+        "height": 600,
+        "left": 270,
+        "top": 0
+      },
+      "splashWrapper": null,
+      "atmosphere": {
+        "id": "",
+        "tag": "div",
+        "className": "fixed inset-0 pointer-events-none select-none overflow-hidde",
+        "width": 1018,
+        "height": 600,
+        "left": 0,
+        "top": 0
+      }
+    },
+    "screenshot": "1024x600_splash_cold_0ms.png"
+  },
+  {
+    "session": "1024x600_splash_cold",
+    "viewport": "1024x600",
+    "route": "/",
+    "cache": "cold",
+    "timestamp": 100,
+    "metrics": {
+      "clientWidth": 1024,
+      "innerWidth": 1024,
+      "scrollbarWidth": 0,
+      "scrollHeight": 600,
+      "clientHeight": 600,
+      "fontsStatus": "loaded",
+      "mainContainer": {
+        "id": "app-shell-container",
+        "tag": "div",
+        "className": "w-full max-w-[480px] min-h-[100vh] min-h-[100dvh] flex flex-",
+        "width": 480,
+        "height": 600,
+        "left": 269,
+        "top": 0
+      },
+      "loadingWrapper": null,
+      "splashWrapper": {
+        "id": "",
+        "tag": "div",
+        "className": "flex-1 flex flex-col items-center justify-center text-center",
+        "width": 320,
+        "height": 402,
+        "left": 349,
+        "top": 48.45
+      },
+      "atmosphere": {
+        "id": "",
+        "tag": "div",
+        "className": "fixed inset-0 pointer-events-none select-none overflow-hidde",
+        "width": 1018,
+        "height": 600,
+        "left": 0,
+        "top": 0
+      }
+    },
+    "screenshot": "1024x600_splash_cold_100ms.png"
+  },
+  {
+    "session": "1024x600_splash_cold",
+    "viewport": "1024x600",
+    "route": "/",
+    "cache": "cold",
+    "timestamp": 300,
+    "metrics": {
+      "clientWidth": 1024,
+      "innerWidth": 1024,
+      "scrollbarWidth": 0,
+      "scrollHeight": 600,
+      "clientHeight": 600,
+      "fontsStatus": "loaded",
+      "mainContainer": {
+        "id": "app-shell-container",
+        "tag": "div",
+        "className": "w-full max-w-[480px] min-h-[100vh] min-h-[100dvh] flex flex-",
+        "width": 480,
+        "height": 600,
+        "left": 269,
+        "top": 0
+      },
+      "loadingWrapper": null,
+      "splashWrapper": {
+        "id": "",
+        "tag": "div",
+        "className": "flex-1 flex flex-col items-center justify-center text-center",
+        "width": 320,
+        "height": 402,
+        "left": 349,
+        "top": 48
+      },
+      "atmosphere": {
+        "id": "",
+        "tag": "div",
+        "className": "fixed inset-0 pointer-events-none select-none overflow-hidde",
+        "width": 1018,
+        "height": 600,
+        "left": 0,
+        "top": 0
+      }
+    },
+    "screenshot": "1024x600_splash_cold_300ms.png"
+  },
+  {
+    "session": "1024x600_splash_cold",
+    "viewport": "1024x600",
+    "route": "/",
+    "cache": "cold",
+    "timestamp": 600,
+    "metrics": {
+      "clientWidth": 1024,
+      "innerWidth": 1024,
+      "scrollbarWidth": 0,
+      "scrollHeight": 600,
+      "clientHeight": 600,
+      "fontsStatus": "loaded",
+      "mainContainer": {
+        "id": "app-shell-container",
+        "tag": "div",
+        "className": "w-full max-w-[480px] min-h-[100vh] min-h-[100dvh] flex flex-",
+        "width": 480,
+        "height": 600,
+        "left": 269,
+        "top": 0
+      },
+      "loadingWrapper": null,
+      "splashWrapper": {
+        "id": "",
+        "tag": "div",
+        "className": "flex-1 flex flex-col items-center justify-center text-center",
+        "width": 320,
+        "height": 402,
+        "left": 349,
+        "top": 48
+      },
+      "atmosphere": {
+        "id": "",
+        "tag": "div",
+        "className": "fixed inset-0 pointer-events-none select-none overflow-hidde",
+        "width": 1018,
+        "height": 600,
+        "left": 0,
+        "top": 0
+      }
+    },
+    "screenshot": "1024x600_splash_cold_600ms.png"
+  },
+  {
+    "session": "1024x600_splash_cold",
+    "viewport": "1024x600",
+    "route": "/",
+    "cache": "cold",
+    "timestamp": 1000,
+    "metrics": {
+      "clientWidth": 1024,
+      "innerWidth": 1024,
+      "scrollbarWidth": 0,
+      "scrollHeight": 600,
+      "clientHeight": 600,
+      "fontsStatus": "loaded",
+      "mainContainer": {
+        "id": "app-shell-container",
+        "tag": "div",
+        "className": "w-full max-w-[480px] min-h-[100vh] min-h-[100dvh] flex flex-",
+        "width": 480,
+        "height": 600,
+        "left": 269,
+        "top": 0
+      },
+      "loadingWrapper": null,
+      "splashWrapper": {
+        "id": "",
+        "tag": "div",
+        "className": "flex-1 flex flex-col items-center justify-center text-center",
+        "width": 320,
+        "height": 402,
+        "left": 349,
+        "top": 48
+      },
+      "atmosphere": {
+        "id": "",
+        "tag": "div",
+        "className": "fixed inset-0 pointer-events-none select-none overflow-hidde",
+        "width": 1018,
+        "height": 600,
+        "left": 0,
+        "top": 0
+      }
+    },
+    "screenshot": "1024x600_splash_cold_1000ms.png"
+  },
+  {
+    "session": "1024x600_splash_warm",
+    "viewport": "1024x600",
+    "route": "/",
+    "cache": "warm",
+    "timestamp": 0,
+    "metrics": {
+      "clientWidth": 1024,
+      "innerWidth": 1024,
+      "scrollbarWidth": 0,
+      "scrollHeight": 600,
+      "clientHeight": 600,
+      "fontsStatus": "loading",
+      "mainContainer": {
+        "id": "app-shell-container",
+        "tag": "div",
+        "className": "w-full max-w-[480px] min-h-[100vh] min-h-[100dvh] flex flex-",
+        "width": 480,
+        "height": 600,
+        "left": 269,
+        "top": 0
+      },
+      "loadingWrapper": {
+        "id": "",
+        "tag": "div",
+        "className": "flex-1 flex flex-col items-center justify-center gap-4 z-10 ",
+        "width": 478,
+        "height": 600,
+        "left": 270,
+        "top": 0
+      },
+      "splashWrapper": null,
+      "atmosphere": {
+        "id": "",
+        "tag": "div",
+        "className": "fixed inset-0 pointer-events-none select-none overflow-hidde",
+        "width": 1018,
+        "height": 600,
+        "left": 0,
+        "top": 0
+      }
+    },
+    "screenshot": "1024x600_splash_warm_0ms.png"
+  },
+  {
+    "session": "1024x600_splash_warm",
+    "viewport": "1024x600",
+    "route": "/",
+    "cache": "warm",
+    "timestamp": 100,
+    "metrics": {
+      "clientWidth": 1024,
+      "innerWidth": 1024,
+      "scrollbarWidth": 0,
+      "scrollHeight": 600,
+      "clientHeight": 600,
+      "fontsStatus": "loaded",
+      "mainContainer": {
+        "id": "app-shell-container",
+        "tag": "div",
+        "className": "w-full max-w-[480px] min-h-[100vh] min-h-[100dvh] flex flex-",
+        "width": 480,
+        "height": 600,
+        "left": 269,
+        "top": 0
+      },
+      "loadingWrapper": null,
+      "splashWrapper": {
+        "id": "",
+        "tag": "div",
+        "className": "flex-1 flex flex-col items-center justify-center text-center",
+        "width": 320,
+        "height": 402,
+        "left": 349,
+        "top": 48.45
+      },
+      "atmosphere": {
+        "id": "",
+        "tag": "div",
+        "className": "fixed inset-0 pointer-events-none select-none overflow-hidde",
+        "width": 1018,
+        "height": 600,
+        "left": 0,
+        "top": 0
+      }
+    },
+    "screenshot": "1024x600_splash_warm_100ms.png"
+  },
+  {
+    "session": "1024x600_splash_warm",
+    "viewport": "1024x600",
+    "route": "/",
+    "cache": "warm",
+    "timestamp": 300,
+    "metrics": {
+      "clientWidth": 1024,
+      "innerWidth": 1024,
+      "scrollbarWidth": 0,
+      "scrollHeight": 600,
+      "clientHeight": 600,
+      "fontsStatus": "loaded",
+      "mainContainer": {
+        "id": "app-shell-container",
+        "tag": "div",
+        "className": "w-full max-w-[480px] min-h-[100vh] min-h-[100dvh] flex flex-",
+        "width": 480,
+        "height": 600,
+        "left": 269,
+        "top": 0
+      },
+      "loadingWrapper": null,
+      "splashWrapper": {
+        "id": "",
+        "tag": "div",
+        "className": "flex-1 flex flex-col items-center justify-center text-center",
+        "width": 320,
+        "height": 402,
+        "left": 349,
+        "top": 48
+      },
+      "atmosphere": {
+        "id": "",
+        "tag": "div",
+        "className": "fixed inset-0 pointer-events-none select-none overflow-hidde",
+        "width": 1018,
+        "height": 600,
+        "left": 0,
+        "top": 0
+      }
+    },
+    "screenshot": "1024x600_splash_warm_300ms.png"
+  },
+  {
+    "session": "1024x600_splash_warm",
+    "viewport": "1024x600",
+    "route": "/",
+    "cache": "warm",
+    "timestamp": 600,
+    "metrics": {
+      "clientWidth": 1024,
+      "innerWidth": 1024,
+      "scrollbarWidth": 0,
+      "scrollHeight": 600,
+      "clientHeight": 600,
+      "fontsStatus": "loaded",
+      "mainContainer": {
+        "id": "app-shell-container",
+        "tag": "div",
+        "className": "w-full max-w-[480px] min-h-[100vh] min-h-[100dvh] flex flex-",
+        "width": 480,
+        "height": 600,
+        "left": 269,
+        "top": 0
+      },
+      "loadingWrapper": null,
+      "splashWrapper": {
+        "id": "",
+        "tag": "div",
+        "className": "flex-1 flex flex-col items-center justify-center text-center",
+        "width": 320,
+        "height": 402,
+        "left": 349,
+        "top": 48
+      },
+      "atmosphere": {
+        "id": "",
+        "tag": "div",
+        "className": "fixed inset-0 pointer-events-none select-none overflow-hidde",
+        "width": 1018,
+        "height": 600,
+        "left": 0,
+        "top": 0
+      }
+    },
+    "screenshot": "1024x600_splash_warm_600ms.png"
+  },
+  {
+    "session": "1024x600_splash_warm",
+    "viewport": "1024x600",
+    "route": "/",
+    "cache": "warm",
+    "timestamp": 1000,
+    "metrics": {
+      "clientWidth": 1024,
+      "innerWidth": 1024,
+      "scrollbarWidth": 0,
+      "scrollHeight": 600,
+      "clientHeight": 600,
+      "fontsStatus": "loaded",
+      "mainContainer": {
+        "id": "app-shell-container",
+        "tag": "div",
+        "className": "w-full max-w-[480px] min-h-[100vh] min-h-[100dvh] flex flex-",
+        "width": 480,
+        "height": 600,
+        "left": 269,
+        "top": 0
+      },
+      "loadingWrapper": null,
+      "splashWrapper": {
+        "id": "",
+        "tag": "div",
+        "className": "flex-1 flex flex-col items-center justify-center text-center",
+        "width": 320,
+        "height": 402,
+        "left": 349,
+        "top": 48
+      },
+      "atmosphere": {
+        "id": "",
+        "tag": "div",
+        "className": "fixed inset-0 pointer-events-none select-none overflow-hidde",
+        "width": 1018,
+        "height": 600,
+        "left": 0,
+        "top": 0
+      }
+    },
+    "screenshot": "1024x600_splash_warm_1000ms.png"
+  },
+  {
+    "session": "1024x600_inicio_cold",
+    "viewport": "1024x600",
+    "route": "/inicio",
+    "cache": "cold",
+    "timestamp": 0,
+    "metrics": {
+      "clientWidth": 1024,
+      "innerWidth": 1024,
+      "scrollbarWidth": 0,
+      "scrollHeight": 600,
+      "clientHeight": 600,
+      "fontsStatus": "loading",
+      "mainContainer": {
+        "id": "app-shell-container",
+        "tag": "div",
+        "className": "w-full max-w-[480px] min-h-[100vh] min-h-[100dvh] flex flex-",
+        "width": 480,
+        "height": 600,
+        "left": 269,
+        "top": 0
+      },
+      "loadingWrapper": {
+        "id": "",
+        "tag": "div",
+        "className": "flex-1 flex flex-col items-center justify-center gap-4 z-10 ",
+        "width": 478,
+        "height": 600,
+        "left": 270,
+        "top": 0
+      },
+      "splashWrapper": null,
+      "atmosphere": {
+        "id": "",
+        "tag": "div",
+        "className": "fixed inset-0 pointer-events-none select-none overflow-hidde",
+        "width": 1018,
+        "height": 600,
+        "left": 0,
+        "top": 0
+      }
+    },
+    "screenshot": "1024x600_inicio_cold_0ms.png"
+  },
+  {
+    "session": "1024x600_inicio_cold",
+    "viewport": "1024x600",
+    "route": "/inicio",
+    "cache": "cold",
+    "timestamp": 100,
+    "metrics": {
+      "clientWidth": 1024,
+      "innerWidth": 1024,
+      "scrollbarWidth": 0,
+      "scrollHeight": 1207,
+      "clientHeight": 600,
+      "fontsStatus": "loaded",
+      "mainContainer": {
+        "id": "app-shell-container",
+        "tag": "div",
+        "className": "w-full max-w-[480px] min-h-[100vh] min-h-[100dvh] flex flex-",
+        "width": 480,
+        "height": 1207,
+        "left": 269,
+        "top": 0
+      },
+      "loadingWrapper": null,
+      "splashWrapper": null,
+      "atmosphere": {
+        "id": "",
+        "tag": "div",
+        "className": "fixed inset-0 pointer-events-none select-none overflow-hidde",
+        "width": 1018,
+        "height": 600,
+        "left": 0,
+        "top": 0
+      }
+    },
+    "screenshot": "1024x600_inicio_cold_100ms.png"
+  },
+  {
+    "session": "1024x600_inicio_cold",
+    "viewport": "1024x600",
+    "route": "/inicio",
+    "cache": "cold",
+    "timestamp": 300,
+    "metrics": {
+      "clientWidth": 1024,
+      "innerWidth": 1024,
+      "scrollbarWidth": 0,
+      "scrollHeight": 1282,
+      "clientHeight": 600,
+      "fontsStatus": "loaded",
+      "mainContainer": {
+        "id": "app-shell-container",
+        "tag": "div",
+        "className": "w-full max-w-[480px] min-h-[100vh] min-h-[100dvh] flex flex-",
+        "width": 480,
+        "height": 1281.5,
+        "left": 269,
+        "top": 0
+      },
+      "loadingWrapper": null,
+      "splashWrapper": null,
+      "atmosphere": {
+        "id": "",
+        "tag": "div",
+        "className": "fixed inset-0 pointer-events-none select-none overflow-hidde",
+        "width": 1018,
+        "height": 600,
+        "left": 0,
+        "top": 0
+      }
+    },
+    "screenshot": "1024x600_inicio_cold_300ms.png"
+  },
+  {
+    "session": "1024x600_inicio_cold",
+    "viewport": "1024x600",
+    "route": "/inicio",
+    "cache": "cold",
+    "timestamp": 600,
+    "metrics": {
+      "clientWidth": 1024,
+      "innerWidth": 1024,
+      "scrollbarWidth": 0,
+      "scrollHeight": 1282,
+      "clientHeight": 600,
+      "fontsStatus": "loaded",
+      "mainContainer": {
+        "id": "app-shell-container",
+        "tag": "div",
+        "className": "w-full max-w-[480px] min-h-[100vh] min-h-[100dvh] flex flex-",
+        "width": 480,
+        "height": 1281.5,
+        "left": 269,
+        "top": 0
+      },
+      "loadingWrapper": null,
+      "splashWrapper": null,
+      "atmosphere": {
+        "id": "",
+        "tag": "div",
+        "className": "fixed inset-0 pointer-events-none select-none overflow-hidde",
+        "width": 1018,
+        "height": 600,
+        "left": 0,
+        "top": 0
+      }
+    },
+    "screenshot": "1024x600_inicio_cold_600ms.png"
+  },
+  {
+    "session": "1024x600_inicio_cold",
+    "viewport": "1024x600",
+    "route": "/inicio",
+    "cache": "cold",
+    "timestamp": 1000,
+    "metrics": {
+      "clientWidth": 1024,
+      "innerWidth": 1024,
+      "scrollbarWidth": 0,
+      "scrollHeight": 1282,
+      "clientHeight": 600,
+      "fontsStatus": "loaded",
+      "mainContainer": {
+        "id": "app-shell-container",
+        "tag": "div",
+        "className": "w-full max-w-[480px] min-h-[100vh] min-h-[100dvh] flex flex-",
+        "width": 480,
+        "height": 1281.5,
+        "left": 269,
+        "top": 0
+      },
+      "loadingWrapper": null,
+      "splashWrapper": null,
+      "atmosphere": {
+        "id": "",
+        "tag": "div",
+        "className": "fixed inset-0 pointer-events-none select-none overflow-hidde",
+        "width": 1018,
+        "height": 600,
+        "left": 0,
+        "top": 0
+      }
+    },
+    "screenshot": "1024x600_inicio_cold_1000ms.png"
+  },
+  {
+    "session": "1024x600_inicio_warm",
+    "viewport": "1024x600",
+    "route": "/inicio",
+    "cache": "warm",
+    "timestamp": 0,
+    "metrics": {
+      "clientWidth": 1024,
+      "innerWidth": 1024,
+      "scrollbarWidth": 0,
+      "scrollHeight": 600,
+      "clientHeight": 600,
+      "fontsStatus": "loading",
+      "mainContainer": {
+        "id": "app-shell-container",
+        "tag": "div",
+        "className": "w-full max-w-[480px] min-h-[100vh] min-h-[100dvh] flex flex-",
+        "width": 480,
+        "height": 600,
+        "left": 269,
+        "top": 0
+      },
+      "loadingWrapper": {
+        "id": "",
+        "tag": "div",
+        "className": "flex-1 flex flex-col items-center justify-center gap-4 z-10 ",
+        "width": 478,
+        "height": 600,
+        "left": 270,
+        "top": 0
+      },
+      "splashWrapper": null,
+      "atmosphere": {
+        "id": "",
+        "tag": "div",
+        "className": "fixed inset-0 pointer-events-none select-none overflow-hidde",
+        "width": 1018,
+        "height": 600,
+        "left": 0,
+        "top": 0
+      }
+    },
+    "screenshot": "1024x600_inicio_warm_0ms.png"
+  },
+  {
+    "session": "1024x600_inicio_warm",
+    "viewport": "1024x600",
+    "route": "/inicio",
+    "cache": "warm",
+    "timestamp": 100,
+    "metrics": {
+      "clientWidth": 1024,
+      "innerWidth": 1024,
+      "scrollbarWidth": 0,
+      "scrollHeight": 1207,
+      "clientHeight": 600,
+      "fontsStatus": "loaded",
+      "mainContainer": {
+        "id": "app-shell-container",
+        "tag": "div",
+        "className": "w-full max-w-[480px] min-h-[100vh] min-h-[100dvh] flex flex-",
+        "width": 480,
+        "height": 1207,
+        "left": 269,
+        "top": 0
+      },
+      "loadingWrapper": null,
+      "splashWrapper": null,
+      "atmosphere": {
+        "id": "",
+        "tag": "div",
+        "className": "fixed inset-0 pointer-events-none select-none overflow-hidde",
+        "width": 1018,
+        "height": 600,
+        "left": 0,
+        "top": 0
+      }
+    },
+    "screenshot": "1024x600_inicio_warm_100ms.png"
+  },
+  {
+    "session": "1024x600_inicio_warm",
+    "viewport": "1024x600",
+    "route": "/inicio",
+    "cache": "warm",
+    "timestamp": 300,
+    "metrics": {
+      "clientWidth": 1024,
+      "innerWidth": 1024,
+      "scrollbarWidth": 0,
+      "scrollHeight": 1282,
+      "clientHeight": 600,
+      "fontsStatus": "loaded",
+      "mainContainer": {
+        "id": "app-shell-container",
+        "tag": "div",
+        "className": "w-full max-w-[480px] min-h-[100vh] min-h-[100dvh] flex flex-",
+        "width": 480,
+        "height": 1281.5,
+        "left": 269,
+        "top": 0
+      },
+      "loadingWrapper": null,
+      "splashWrapper": null,
+      "atmosphere": {
+        "id": "",
+        "tag": "div",
+        "className": "fixed inset-0 pointer-events-none select-none overflow-hidde",
+        "width": 1018,
+        "height": 600,
+        "left": 0,
+        "top": 0
+      }
+    },
+    "screenshot": "1024x600_inicio_warm_300ms.png"
+  },
+  {
+    "session": "1024x600_inicio_warm",
+    "viewport": "1024x600",
+    "route": "/inicio",
+    "cache": "warm",
+    "timestamp": 600,
+    "metrics": {
+      "clientWidth": 1024,
+      "innerWidth": 1024,
+      "scrollbarWidth": 0,
+      "scrollHeight": 1282,
+      "clientHeight": 600,
+      "fontsStatus": "loaded",
+      "mainContainer": {
+        "id": "app-shell-container",
+        "tag": "div",
+        "className": "w-full max-w-[480px] min-h-[100vh] min-h-[100dvh] flex flex-",
+        "width": 480,
+        "height": 1281.5,
+        "left": 269,
+        "top": 0
+      },
+      "loadingWrapper": null,
+      "splashWrapper": null,
+      "atmosphere": {
+        "id": "",
+        "tag": "div",
+        "className": "fixed inset-0 pointer-events-none select-none overflow-hidde",
+        "width": 1018,
+        "height": 600,
+        "left": 0,
+        "top": 0
+      }
+    },
+    "screenshot": "1024x600_inicio_warm_600ms.png"
+  },
+  {
+    "session": "1024x600_inicio_warm",
+    "viewport": "1024x600",
+    "route": "/inicio",
+    "cache": "warm",
+    "timestamp": 1000,
+    "metrics": {
+      "clientWidth": 1024,
+      "innerWidth": 1024,
+      "scrollbarWidth": 0,
+      "scrollHeight": 1282,
+      "clientHeight": 600,
+      "fontsStatus": "loaded",
+      "mainContainer": {
+        "id": "app-shell-container",
+        "tag": "div",
+        "className": "w-full max-w-[480px] min-h-[100vh] min-h-[100dvh] flex flex-",
+        "width": 480,
+        "height": 1281.5,
+        "left": 269,
+        "top": 0
+      },
+      "loadingWrapper": null,
+      "splashWrapper": null,
+      "atmosphere": {
+        "id": "",
+        "tag": "div",
+        "className": "fixed inset-0 pointer-events-none select-none overflow-hidde",
+        "width": 1018,
+        "height": 600,
+        "left": 0,
+        "top": 0
+      }
+    },
+    "screenshot": "1024x600_inicio_warm_1000ms.png"
+  },
+  {
+    "session": "390x844_splash_cold",
+    "viewport": "390x844",
+    "route": "/",
+    "cache": "cold",
+    "timestamp": 0,
+    "metrics": {
+      "clientWidth": 390,
+      "innerWidth": 390,
+      "scrollbarWidth": 0,
+      "scrollHeight": 844,
+      "clientHeight": 844,
+      "fontsStatus": "loading",
+      "mainContainer": {
+        "id": "app-shell-container",
+        "tag": "div",
+        "className": "w-full max-w-[480px] min-h-[100vh] min-h-[100dvh] flex flex-",
+        "width": 384,
+        "height": 844,
+        "left": 0,
+        "top": 0
+      },
+      "loadingWrapper": {
+        "id": "",
+        "tag": "div",
+        "className": "flex-1 flex flex-col items-center justify-center gap-4 z-10 ",
+        "width": 382,
+        "height": 844,
+        "left": 1,
+        "top": 0
+      },
+      "splashWrapper": null,
+      "atmosphere": {
+        "id": "",
+        "tag": "div",
+        "className": "fixed inset-0 pointer-events-none select-none overflow-hidde",
+        "width": 384,
+        "height": 844,
+        "left": 0,
+        "top": 0
+      }
+    },
+    "screenshot": "390x844_splash_cold_0ms.png"
+  },
+  {
+    "session": "390x844_splash_cold",
+    "viewport": "390x844",
+    "route": "/",
+    "cache": "cold",
+    "timestamp": 100,
+    "metrics": {
+      "clientWidth": 390,
+      "innerWidth": 390,
+      "scrollbarWidth": 0,
+      "scrollHeight": 844,
+      "clientHeight": 844,
+      "fontsStatus": "loaded",
+      "mainContainer": {
+        "id": "app-shell-container",
+        "tag": "div",
+        "className": "w-full max-w-[480px] min-h-[100vh] min-h-[100dvh] flex flex-",
+        "width": 384,
+        "height": 844,
+        "left": 0,
+        "top": 0
+      },
+      "loadingWrapper": null,
+      "splashWrapper": {
+        "id": "",
+        "tag": "div",
+        "className": "flex-1 flex flex-col items-center justify-center text-center",
+        "width": 320,
+        "height": 646,
+        "left": 32,
+        "top": 48.85
+      },
+      "atmosphere": {
+        "id": "",
+        "tag": "div",
+        "className": "fixed inset-0 pointer-events-none select-none overflow-hidde",
+        "width": 384,
+        "height": 844,
+        "left": 0,
+        "top": 0
+      }
+    },
+    "screenshot": "390x844_splash_cold_100ms.png"
+  },
+  {
+    "session": "390x844_splash_cold",
+    "viewport": "390x844",
+    "route": "/",
+    "cache": "cold",
+    "timestamp": 300,
+    "metrics": {
+      "clientWidth": 390,
+      "innerWidth": 390,
+      "scrollbarWidth": 0,
+      "scrollHeight": 844,
+      "clientHeight": 844,
+      "fontsStatus": "loaded",
+      "mainContainer": {
+        "id": "app-shell-container",
+        "tag": "div",
+        "className": "w-full max-w-[480px] min-h-[100vh] min-h-[100dvh] flex flex-",
+        "width": 384,
+        "height": 844,
+        "left": 0,
+        "top": 0
+      },
+      "loadingWrapper": null,
+      "splashWrapper": {
+        "id": "",
+        "tag": "div",
+        "className": "flex-1 flex flex-col items-center justify-center text-center",
+        "width": 320,
+        "height": 646,
+        "left": 32,
+        "top": 48
+      },
+      "atmosphere": {
+        "id": "",
+        "tag": "div",
+        "className": "fixed inset-0 pointer-events-none select-none overflow-hidde",
+        "width": 384,
+        "height": 844,
+        "left": 0,
+        "top": 0
+      }
+    },
+    "screenshot": "390x844_splash_cold_300ms.png"
+  },
+  {
+    "session": "390x844_splash_cold",
+    "viewport": "390x844",
+    "route": "/",
+    "cache": "cold",
+    "timestamp": 600,
+    "metrics": {
+      "clientWidth": 390,
+      "innerWidth": 390,
+      "scrollbarWidth": 0,
+      "scrollHeight": 844,
+      "clientHeight": 844,
+      "fontsStatus": "loaded",
+      "mainContainer": {
+        "id": "app-shell-container",
+        "tag": "div",
+        "className": "w-full max-w-[480px] min-h-[100vh] min-h-[100dvh] flex flex-",
+        "width": 384,
+        "height": 844,
+        "left": 0,
+        "top": 0
+      },
+      "loadingWrapper": null,
+      "splashWrapper": {
+        "id": "",
+        "tag": "div",
+        "className": "flex-1 flex flex-col items-center justify-center text-center",
+        "width": 320,
+        "height": 646,
+        "left": 32,
+        "top": 48
+      },
+      "atmosphere": {
+        "id": "",
+        "tag": "div",
+        "className": "fixed inset-0 pointer-events-none select-none overflow-hidde",
+        "width": 384,
+        "height": 844,
+        "left": 0,
+        "top": 0
+      }
+    },
+    "screenshot": "390x844_splash_cold_600ms.png"
+  },
+  {
+    "session": "390x844_splash_cold",
+    "viewport": "390x844",
+    "route": "/",
+    "cache": "cold",
+    "timestamp": 1000,
+    "metrics": {
+      "clientWidth": 390,
+      "innerWidth": 390,
+      "scrollbarWidth": 0,
+      "scrollHeight": 844,
+      "clientHeight": 844,
+      "fontsStatus": "loaded",
+      "mainContainer": {
+        "id": "app-shell-container",
+        "tag": "div",
+        "className": "w-full max-w-[480px] min-h-[100vh] min-h-[100dvh] flex flex-",
+        "width": 384,
+        "height": 844,
+        "left": 0,
+        "top": 0
+      },
+      "loadingWrapper": null,
+      "splashWrapper": {
+        "id": "",
+        "tag": "div",
+        "className": "flex-1 flex flex-col items-center justify-center text-center",
+        "width": 320,
+        "height": 646,
+        "left": 32,
+        "top": 48
+      },
+      "atmosphere": {
+        "id": "",
+        "tag": "div",
+        "className": "fixed inset-0 pointer-events-none select-none overflow-hidde",
+        "width": 384,
+        "height": 844,
+        "left": 0,
+        "top": 0
+      }
+    },
+    "screenshot": "390x844_splash_cold_1000ms.png"
+  },
+  {
+    "session": "390x844_splash_warm",
+    "viewport": "390x844",
+    "route": "/",
+    "cache": "warm",
+    "timestamp": 0,
+    "metrics": {
+      "clientWidth": 390,
+      "innerWidth": 390,
+      "scrollbarWidth": 0,
+      "scrollHeight": 844,
+      "clientHeight": 844,
+      "fontsStatus": "loading",
+      "mainContainer": {
+        "id": "app-shell-container",
+        "tag": "div",
+        "className": "w-full max-w-[480px] min-h-[100vh] min-h-[100dvh] flex flex-",
+        "width": 384,
+        "height": 844,
+        "left": 0,
+        "top": 0
+      },
+      "loadingWrapper": {
+        "id": "",
+        "tag": "div",
+        "className": "flex-1 flex flex-col items-center justify-center gap-4 z-10 ",
+        "width": 382,
+        "height": 844,
+        "left": 1,
+        "top": 0
+      },
+      "splashWrapper": null,
+      "atmosphere": {
+        "id": "",
+        "tag": "div",
+        "className": "fixed inset-0 pointer-events-none select-none overflow-hidde",
+        "width": 384,
+        "height": 844,
+        "left": 0,
+        "top": 0
+      }
+    },
+    "screenshot": "390x844_splash_warm_0ms.png"
+  },
+  {
+    "session": "390x844_splash_warm",
+    "viewport": "390x844",
+    "route": "/",
+    "cache": "warm",
+    "timestamp": 100,
+    "metrics": {
+      "clientWidth": 390,
+      "innerWidth": 390,
+      "scrollbarWidth": 0,
+      "scrollHeight": 844,
+      "clientHeight": 844,
+      "fontsStatus": "loaded",
+      "mainContainer": {
+        "id": "app-shell-container",
+        "tag": "div",
+        "className": "w-full max-w-[480px] min-h-[100vh] min-h-[100dvh] flex flex-",
+        "width": 384,
+        "height": 844,
+        "left": 0,
+        "top": 0
+      },
+      "loadingWrapper": null,
+      "splashWrapper": {
+        "id": "",
+        "tag": "div",
+        "className": "flex-1 flex flex-col items-center justify-center text-center",
+        "width": 320,
+        "height": 646,
+        "left": 32,
+        "top": 49.05
+      },
+      "atmosphere": {
+        "id": "",
+        "tag": "div",
+        "className": "fixed inset-0 pointer-events-none select-none overflow-hidde",
+        "width": 384,
+        "height": 844,
+        "left": 0,
+        "top": 0
+      }
+    },
+    "screenshot": "390x844_splash_warm_100ms.png"
+  },
+  {
+    "session": "390x844_splash_warm",
+    "viewport": "390x844",
+    "route": "/",
+    "cache": "warm",
+    "timestamp": 300,
+    "metrics": {
+      "clientWidth": 390,
+      "innerWidth": 390,
+      "scrollbarWidth": 0,
+      "scrollHeight": 844,
+      "clientHeight": 844,
+      "fontsStatus": "loaded",
+      "mainContainer": {
+        "id": "app-shell-container",
+        "tag": "div",
+        "className": "w-full max-w-[480px] min-h-[100vh] min-h-[100dvh] flex flex-",
+        "width": 384,
+        "height": 844,
+        "left": 0,
+        "top": 0
+      },
+      "loadingWrapper": null,
+      "splashWrapper": {
+        "id": "",
+        "tag": "div",
+        "className": "flex-1 flex flex-col items-center justify-center text-center",
+        "width": 320,
+        "height": 646,
+        "left": 32,
+        "top": 48
+      },
+      "atmosphere": {
+        "id": "",
+        "tag": "div",
+        "className": "fixed inset-0 pointer-events-none select-none overflow-hidde",
+        "width": 384,
+        "height": 844,
+        "left": 0,
+        "top": 0
+      }
+    },
+    "screenshot": "390x844_splash_warm_300ms.png"
+  },
+  {
+    "session": "390x844_splash_warm",
+    "viewport": "390x844",
+    "route": "/",
+    "cache": "warm",
+    "timestamp": 600,
+    "metrics": {
+      "clientWidth": 390,
+      "innerWidth": 390,
+      "scrollbarWidth": 0,
+      "scrollHeight": 844,
+      "clientHeight": 844,
+      "fontsStatus": "loaded",
+      "mainContainer": {
+        "id": "app-shell-container",
+        "tag": "div",
+        "className": "w-full max-w-[480px] min-h-[100vh] min-h-[100dvh] flex flex-",
+        "width": 384,
+        "height": 844,
+        "left": 0,
+        "top": 0
+      },
+      "loadingWrapper": null,
+      "splashWrapper": {
+        "id": "",
+        "tag": "div",
+        "className": "flex-1 flex flex-col items-center justify-center text-center",
+        "width": 320,
+        "height": 646,
+        "left": 32,
+        "top": 48
+      },
+      "atmosphere": {
+        "id": "",
+        "tag": "div",
+        "className": "fixed inset-0 pointer-events-none select-none overflow-hidde",
+        "width": 384,
+        "height": 844,
+        "left": 0,
+        "top": 0
+      }
+    },
+    "screenshot": "390x844_splash_warm_600ms.png"
+  },
+  {
+    "session": "390x844_splash_warm",
+    "viewport": "390x844",
+    "route": "/",
+    "cache": "warm",
+    "timestamp": 1000,
+    "metrics": {
+      "clientWidth": 390,
+      "innerWidth": 390,
+      "scrollbarWidth": 0,
+      "scrollHeight": 844,
+      "clientHeight": 844,
+      "fontsStatus": "loaded",
+      "mainContainer": {
+        "id": "app-shell-container",
+        "tag": "div",
+        "className": "w-full max-w-[480px] min-h-[100vh] min-h-[100dvh] flex flex-",
+        "width": 384,
+        "height": 844,
+        "left": 0,
+        "top": 0
+      },
+      "loadingWrapper": null,
+      "splashWrapper": {
+        "id": "",
+        "tag": "div",
+        "className": "flex-1 flex flex-col items-center justify-center text-center",
+        "width": 320,
+        "height": 646,
+        "left": 32,
+        "top": 48
+      },
+      "atmosphere": {
+        "id": "",
+        "tag": "div",
+        "className": "fixed inset-0 pointer-events-none select-none overflow-hidde",
+        "width": 384,
+        "height": 844,
+        "left": 0,
+        "top": 0
+      }
+    },
+    "screenshot": "390x844_splash_warm_1000ms.png"
+  },
+  {
+    "session": "390x844_inicio_cold",
+    "viewport": "390x844",
+    "route": "/inicio",
+    "cache": "cold",
+    "timestamp": 0,
+    "metrics": {
+      "clientWidth": 390,
+      "innerWidth": 390,
+      "scrollbarWidth": 0,
+      "scrollHeight": 844,
+      "clientHeight": 844,
+      "fontsStatus": "loading",
+      "mainContainer": {
+        "id": "app-shell-container",
+        "tag": "div",
+        "className": "w-full max-w-[480px] min-h-[100vh] min-h-[100dvh] flex flex-",
+        "width": 384,
+        "height": 844,
+        "left": 0,
+        "top": 0
+      },
+      "loadingWrapper": {
+        "id": "",
+        "tag": "div",
+        "className": "flex-1 flex flex-col items-center justify-center gap-4 z-10 ",
+        "width": 382,
+        "height": 844,
+        "left": 1,
+        "top": 0
+      },
+      "splashWrapper": null,
+      "atmosphere": {
+        "id": "",
+        "tag": "div",
+        "className": "fixed inset-0 pointer-events-none select-none overflow-hidde",
+        "width": 384,
+        "height": 844,
+        "left": 0,
+        "top": 0
+      }
+    },
+    "screenshot": "390x844_inicio_cold_0ms.png"
+  },
+  {
+    "session": "390x844_inicio_cold",
+    "viewport": "390x844",
+    "route": "/inicio",
+    "cache": "cold",
+    "timestamp": 100,
+    "metrics": {
+      "clientWidth": 390,
+      "innerWidth": 390,
+      "scrollbarWidth": 0,
+      "scrollHeight": 1207,
+      "clientHeight": 844,
+      "fontsStatus": "loaded",
+      "mainContainer": {
+        "id": "app-shell-container",
+        "tag": "div",
+        "className": "w-full max-w-[480px] min-h-[100vh] min-h-[100dvh] flex flex-",
+        "width": 384,
+        "height": 1207,
+        "left": 0,
+        "top": 0
+      },
+      "loadingWrapper": null,
+      "splashWrapper": null,
+      "atmosphere": {
+        "id": "",
+        "tag": "div",
+        "className": "fixed inset-0 pointer-events-none select-none overflow-hidde",
+        "width": 384,
+        "height": 844,
+        "left": 0,
+        "top": 0
+      }
+    },
+    "screenshot": "390x844_inicio_cold_100ms.png"
+  },
+  {
+    "session": "390x844_inicio_cold",
+    "viewport": "390x844",
+    "route": "/inicio",
+    "cache": "cold",
+    "timestamp": 300,
+    "metrics": {
+      "clientWidth": 390,
+      "innerWidth": 390,
+      "scrollbarWidth": 0,
+      "scrollHeight": 1207,
+      "clientHeight": 844,
+      "fontsStatus": "loaded",
+      "mainContainer": {
+        "id": "app-shell-container",
+        "tag": "div",
+        "className": "w-full max-w-[480px] min-h-[100vh] min-h-[100dvh] flex flex-",
+        "width": 384,
+        "height": 1207,
+        "left": 0,
+        "top": 0
+      },
+      "loadingWrapper": null,
+      "splashWrapper": null,
+      "atmosphere": {
+        "id": "",
+        "tag": "div",
+        "className": "fixed inset-0 pointer-events-none select-none overflow-hidde",
+        "width": 384,
+        "height": 844,
+        "left": 0,
+        "top": 0
+      }
+    },
+    "screenshot": "390x844_inicio_cold_300ms.png"
+  },
+  {
+    "session": "390x844_inicio_cold",
+    "viewport": "390x844",
+    "route": "/inicio",
+    "cache": "cold",
+    "timestamp": 600,
+    "metrics": {
+      "clientWidth": 390,
+      "innerWidth": 390,
+      "scrollbarWidth": 0,
+      "scrollHeight": 1282,
+      "clientHeight": 844,
+      "fontsStatus": "loaded",
+      "mainContainer": {
+        "id": "app-shell-container",
+        "tag": "div",
+        "className": "w-full max-w-[480px] min-h-[100vh] min-h-[100dvh] flex flex-",
+        "width": 384,
+        "height": 1281.5,
+        "left": 0,
+        "top": 0
+      },
+      "loadingWrapper": null,
+      "splashWrapper": null,
+      "atmosphere": {
+        "id": "",
+        "tag": "div",
+        "className": "fixed inset-0 pointer-events-none select-none overflow-hidde",
+        "width": 384,
+        "height": 844,
+        "left": 0,
+        "top": 0
+      }
+    },
+    "screenshot": "390x844_inicio_cold_600ms.png"
+  },
+  {
+    "session": "390x844_inicio_cold",
+    "viewport": "390x844",
+    "route": "/inicio",
+    "cache": "cold",
+    "timestamp": 1000,
+    "metrics": {
+      "clientWidth": 390,
+      "innerWidth": 390,
+      "scrollbarWidth": 0,
+      "scrollHeight": 1282,
+      "clientHeight": 844,
+      "fontsStatus": "loaded",
+      "mainContainer": {
+        "id": "app-shell-container",
+        "tag": "div",
+        "className": "w-full max-w-[480px] min-h-[100vh] min-h-[100dvh] flex flex-",
+        "width": 384,
+        "height": 1281.5,
+        "left": 0,
+        "top": 0
+      },
+      "loadingWrapper": null,
+      "splashWrapper": null,
+      "atmosphere": {
+        "id": "",
+        "tag": "div",
+        "className": "fixed inset-0 pointer-events-none select-none overflow-hidde",
+        "width": 384,
+        "height": 844,
+        "left": 0,
+        "top": 0
+      }
+    },
+    "screenshot": "390x844_inicio_cold_1000ms.png"
+  },
+  {
+    "session": "390x844_inicio_warm",
+    "viewport": "390x844",
+    "route": "/inicio",
+    "cache": "warm",
+    "timestamp": 0,
+    "metrics": {
+      "clientWidth": 390,
+      "innerWidth": 390,
+      "scrollbarWidth": 0,
+      "scrollHeight": 844,
+      "clientHeight": 844,
+      "fontsStatus": "loading",
+      "mainContainer": {
+        "id": "app-shell-container",
+        "tag": "div",
+        "className": "w-full max-w-[480px] min-h-[100vh] min-h-[100dvh] flex flex-",
+        "width": 384,
+        "height": 844,
+        "left": 0,
+        "top": 0
+      },
+      "loadingWrapper": {
+        "id": "",
+        "tag": "div",
+        "className": "flex-1 flex flex-col items-center justify-center gap-4 z-10 ",
+        "width": 382,
+        "height": 844,
+        "left": 1,
+        "top": 0
+      },
+      "splashWrapper": null,
+      "atmosphere": {
+        "id": "",
+        "tag": "div",
+        "className": "fixed inset-0 pointer-events-none select-none overflow-hidde",
+        "width": 384,
+        "height": 844,
+        "left": 0,
+        "top": 0
+      }
+    },
+    "screenshot": "390x844_inicio_warm_0ms.png"
+  },
+  {
+    "session": "390x844_inicio_warm",
+    "viewport": "390x844",
+    "route": "/inicio",
+    "cache": "warm",
+    "timestamp": 100,
+    "metrics": {
+      "clientWidth": 390,
+      "innerWidth": 390,
+      "scrollbarWidth": 0,
+      "scrollHeight": 1207,
+      "clientHeight": 844,
+      "fontsStatus": "loaded",
+      "mainContainer": {
+        "id": "app-shell-container",
+        "tag": "div",
+        "className": "w-full max-w-[480px] min-h-[100vh] min-h-[100dvh] flex flex-",
+        "width": 384,
+        "height": 1207,
+        "left": 0,
+        "top": 0
+      },
+      "loadingWrapper": null,
+      "splashWrapper": null,
+      "atmosphere": {
+        "id": "",
+        "tag": "div",
+        "className": "fixed inset-0 pointer-events-none select-none overflow-hidde",
+        "width": 384,
+        "height": 844,
+        "left": 0,
+        "top": 0
+      }
+    },
+    "screenshot": "390x844_inicio_warm_100ms.png"
+  },
+  {
+    "session": "390x844_inicio_warm",
+    "viewport": "390x844",
+    "route": "/inicio",
+    "cache": "warm",
+    "timestamp": 300,
+    "metrics": {
+      "clientWidth": 390,
+      "innerWidth": 390,
+      "scrollbarWidth": 0,
+      "scrollHeight": 1282,
+      "clientHeight": 844,
+      "fontsStatus": "loaded",
+      "mainContainer": {
+        "id": "app-shell-container",
+        "tag": "div",
+        "className": "w-full max-w-[480px] min-h-[100vh] min-h-[100dvh] flex flex-",
+        "width": 384,
+        "height": 1281.5,
+        "left": 0,
+        "top": 0
+      },
+      "loadingWrapper": null,
+      "splashWrapper": null,
+      "atmosphere": {
+        "id": "",
+        "tag": "div",
+        "className": "fixed inset-0 pointer-events-none select-none overflow-hidde",
+        "width": 384,
+        "height": 844,
+        "left": 0,
+        "top": 0
+      }
+    },
+    "screenshot": "390x844_inicio_warm_300ms.png"
+  },
+  {
+    "session": "390x844_inicio_warm",
+    "viewport": "390x844",
+    "route": "/inicio",
+    "cache": "warm",
+    "timestamp": 600,
+    "metrics": {
+      "clientWidth": 390,
+      "innerWidth": 390,
+      "scrollbarWidth": 0,
+      "scrollHeight": 1282,
+      "clientHeight": 844,
+      "fontsStatus": "loaded",
+      "mainContainer": {
+        "id": "app-shell-container",
+        "tag": "div",
+        "className": "w-full max-w-[480px] min-h-[100vh] min-h-[100dvh] flex flex-",
+        "width": 384,
+        "height": 1281.5,
+        "left": 0,
+        "top": 0
+      },
+      "loadingWrapper": null,
+      "splashWrapper": null,
+      "atmosphere": {
+        "id": "",
+        "tag": "div",
+        "className": "fixed inset-0 pointer-events-none select-none overflow-hidde",
+        "width": 384,
+        "height": 844,
+        "left": 0,
+        "top": 0
+      }
+    },
+    "screenshot": "390x844_inicio_warm_600ms.png"
+  },
+  {
+    "session": "390x844_inicio_warm",
+    "viewport": "390x844",
+    "route": "/inicio",
+    "cache": "warm",
+    "timestamp": 1000,
+    "metrics": {
+      "clientWidth": 390,
+      "innerWidth": 390,
+      "scrollbarWidth": 0,
+      "scrollHeight": 1282,
+      "clientHeight": 844,
+      "fontsStatus": "loaded",
+      "mainContainer": {
+        "id": "app-shell-container",
+        "tag": "div",
+        "className": "w-full max-w-[480px] min-h-[100vh] min-h-[100dvh] flex flex-",
+        "width": 384,
+        "height": 1281.5,
+        "left": 0,
+        "top": 0
+      },
+      "loadingWrapper": null,
+      "splashWrapper": null,
+      "atmosphere": {
+        "id": "",
+        "tag": "div",
+        "className": "fixed inset-0 pointer-events-none select-none overflow-hidde",
+        "width": 384,
+        "height": 844,
+        "left": 0,
+        "top": 0
+      }
+    },
+    "screenshot": "390x844_inicio_warm_1000ms.png"
+  }
+]

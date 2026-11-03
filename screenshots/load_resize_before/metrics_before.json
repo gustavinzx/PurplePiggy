@@ -1,0 +1,1530 @@
+[
+  {
+    "session": "1280x800_splash_cold",
+    "viewport": "1280x800",
+    "route": "/",
+    "cache": "cold",
+    "timestamp": 0,
+    "metrics": {
+      "clientWidth": 1280,
+      "innerWidth": 1280,
+      "scrollbarWidth": 0,
+      "scrollHeight": 800,
+      "clientHeight": 800,
+      "fontsStatus": "loading",
+      "mainContainer": {
+        "tag": "div",
+        "className": "relative min-h-screen w-full overflow-x-hidden ",
+        "width": 1280,
+        "height": 800,
+        "left": 0,
+        "top": 0
+      },
+      "loadingWrapper": {
+        "tag": "div",
+        "className": "flex flex-col items-center justify-center gap-4 z-",
+        "width": 1280,
+        "height": 164,
+        "left": 0,
+        "top": 0
+      },
+      "splashWrapper": null,
+      "atmosphere": {
+        "tag": "div",
+        "className": "fixed inset-0 pointer-events-none select-none over",
+        "width": 1280,
+        "height": 800,
+        "left": 0,
+        "top": 0
+      }
+    },
+    "screenshot": "1280x800_splash_cold_0ms.png"
+  },
+  {
+    "session": "1280x800_splash_cold",
+    "viewport": "1280x800",
+    "route": "/",
+    "cache": "cold",
+    "timestamp": 100,
+    "metrics": {
+      "clientWidth": 1280,
+      "innerWidth": 1280,
+      "scrollbarWidth": 0,
+      "scrollHeight": 800,
+      "clientHeight": 800,
+      "fontsStatus": "loaded",
+      "mainContainer": {
+        "tag": "div",
+        "className": "relative min-h-screen w-full flex flex-col items-c",
+        "width": 1280,
+        "height": 800,
+        "left": 0,
+        "top": 0
+      },
+      "loadingWrapper": null,
+      "splashWrapper": {
+        "tag": "div",
+        "className": "relative min-h-screen w-full flex flex-col items-c",
+        "width": 1280,
+        "height": 800,
+        "left": 0,
+        "top": 0
+      },
+      "atmosphere": {
+        "tag": "div",
+        "className": "fixed inset-0 pointer-events-none select-none over",
+        "width": 1280,
+        "height": 800,
+        "left": 0,
+        "top": 0
+      }
+    },
+    "screenshot": "1280x800_splash_cold_100ms.png"
+  },
+  {
+    "session": "1280x800_splash_cold",
+    "viewport": "1280x800",
+    "route": "/",
+    "cache": "cold",
+    "timestamp": 300,
+    "metrics": {
+      "clientWidth": 1280,
+      "innerWidth": 1280,
+      "scrollbarWidth": 0,
+      "scrollHeight": 800,
+      "clientHeight": 800,
+      "fontsStatus": "loaded",
+      "mainContainer": {
+        "tag": "div",
+        "className": "relative min-h-screen w-full flex flex-col items-c",
+        "width": 1280,
+        "height": 800,
+        "left": 0,
+        "top": 0
+      },
+      "loadingWrapper": null,
+      "splashWrapper": {
+        "tag": "div",
+        "className": "relative min-h-screen w-full flex flex-col items-c",
+        "width": 1280,
+        "height": 800,
+        "left": 0,
+        "top": 0
+      },
+      "atmosphere": {
+        "tag": "div",
+        "className": "fixed inset-0 pointer-events-none select-none over",
+        "width": 1280,
+        "height": 800,
+        "left": 0,
+        "top": 0
+      }
+    },
+    "screenshot": "1280x800_splash_cold_300ms.png"
+  },
+  {
+    "session": "1280x800_splash_cold",
+    "viewport": "1280x800",
+    "route": "/",
+    "cache": "cold",
+    "timestamp": 600,
+    "metrics": {
+      "clientWidth": 1280,
+      "innerWidth": 1280,
+      "scrollbarWidth": 0,
+      "scrollHeight": 800,
+      "clientHeight": 800,
+      "fontsStatus": "loaded",
+      "mainContainer": {
+        "tag": "div",
+        "className": "relative min-h-screen w-full flex flex-col items-c",
+        "width": 1280,
+        "height": 800,
+        "left": 0,
+        "top": 0
+      },
+      "loadingWrapper": null,
+      "splashWrapper": {
+        "tag": "div",
+        "className": "relative min-h-screen w-full flex flex-col items-c",
+        "width": 1280,
+        "height": 800,
+        "left": 0,
+        "top": 0
+      },
+      "atmosphere": {
+        "tag": "div",
+        "className": "fixed inset-0 pointer-events-none select-none over",
+        "width": 1280,
+        "height": 800,
+        "left": 0,
+        "top": 0
+      }
+    },
+    "screenshot": "1280x800_splash_cold_600ms.png"
+  },
+  {
+    "session": "1280x800_splash_cold",
+    "viewport": "1280x800",
+    "route": "/",
+    "cache": "cold",
+    "timestamp": 1000,
+    "metrics": {
+      "clientWidth": 1280,
+      "innerWidth": 1280,
+      "scrollbarWidth": 0,
+      "scrollHeight": 800,
+      "clientHeight": 800,
+      "fontsStatus": "loaded",
+      "mainContainer": {
+        "tag": "div",
+        "className": "relative min-h-screen w-full flex flex-col items-c",
+        "width": 1280,
+        "height": 800,
+        "left": 0,
+        "top": 0
+      },
+      "loadingWrapper": null,
+      "splashWrapper": {
+        "tag": "div",
+        "className": "relative min-h-screen w-full flex flex-col items-c",
+        "width": 1280,
+        "height": 800,
+        "left": 0,
+        "top": 0
+      },
+      "atmosphere": {
+        "tag": "div",
+        "className": "fixed inset-0 pointer-events-none select-none over",
+        "width": 1280,
+        "height": 800,
+        "left": 0,
+        "top": 0
+      }
+    },
+    "screenshot": "1280x800_splash_cold_1000ms.png"
+  },
+  {
+    "session": "1280x800_splash_warm",
+    "viewport": "1280x800",
+    "route": "/",
+    "cache": "warm",
+    "timestamp": 0,
+    "metrics": {
+      "clientWidth": 1280,
+      "innerWidth": 1280,
+      "scrollbarWidth": 0,
+      "scrollHeight": 800,
+      "clientHeight": 800,
+      "fontsStatus": "loading",
+      "mainContainer": {
+        "tag": "div",
+        "className": "relative min-h-screen w-full overflow-x-hidden ",
+        "width": 1280,
+        "height": 800,
+        "left": 0,
+        "top": 0
+      },
+      "loadingWrapper": {
+        "tag": "div",
+        "className": "flex flex-col items-center justify-center gap-4 z-",
+        "width": 1280,
+        "height": 164,
+        "left": 0,
+        "top": 0
+      },
+      "splashWrapper": null,
+      "atmosphere": {
+        "tag": "div",
+        "className": "fixed inset-0 pointer-events-none select-none over",
+        "width": 1280,
+        "height": 800,
+        "left": 0,
+        "top": 0
+      }
+    },
+    "screenshot": "1280x800_splash_warm_0ms.png"
+  },
+  {
+    "session": "1280x800_splash_warm",
+    "viewport": "1280x800",
+    "route": "/",
+    "cache": "warm",
+    "timestamp": 100,
+    "metrics": {
+      "clientWidth": 1280,
+      "innerWidth": 1280,
+      "scrollbarWidth": 0,
+      "scrollHeight": 800,
+      "clientHeight": 800,
+      "fontsStatus": "loaded",
+      "mainContainer": {
+        "tag": "div",
+        "className": "relative min-h-screen w-full flex flex-col items-c",
+        "width": 1280,
+        "height": 800,
+        "left": 0,
+        "top": 0
+      },
+      "loadingWrapper": null,
+      "splashWrapper": {
+        "tag": "div",
+        "className": "relative min-h-screen w-full flex flex-col items-c",
+        "width": 1280,
+        "height": 800,
+        "left": 0,
+        "top": 0
+      },
+      "atmosphere": {
+        "tag": "div",
+        "className": "fixed inset-0 pointer-events-none select-none over",
+        "width": 1280,
+        "height": 800,
+        "left": 0,
+        "top": 0
+      }
+    },
+    "screenshot": "1280x800_splash_warm_100ms.png"
+  },
+  {
+    "session": "1280x800_splash_warm",
+    "viewport": "1280x800",
+    "route": "/",
+    "cache": "warm",
+    "timestamp": 300,
+    "metrics": {
+      "clientWidth": 1280,
+      "innerWidth": 1280,
+      "scrollbarWidth": 0,
+      "scrollHeight": 800,
+      "clientHeight": 800,
+      "fontsStatus": "loaded",
+      "mainContainer": {
+        "tag": "div",
+        "className": "relative min-h-screen w-full flex flex-col items-c",
+        "width": 1280,
+        "height": 800,
+        "left": 0,
+        "top": 0
+      },
+      "loadingWrapper": null,
+      "splashWrapper": {
+        "tag": "div",
+        "className": "relative min-h-screen w-full flex flex-col items-c",
+        "width": 1280,
+        "height": 800,
+        "left": 0,
+        "top": 0
+      },
+      "atmosphere": {
+        "tag": "div",
+        "className": "fixed inset-0 pointer-events-none select-none over",
+        "width": 1280,
+        "height": 800,
+        "left": 0,
+        "top": 0
+      }
+    },
+    "screenshot": "1280x800_splash_warm_300ms.png"
+  },
+  {
+    "session": "1280x800_splash_warm",
+    "viewport": "1280x800",
+    "route": "/",
+    "cache": "warm",
+    "timestamp": 600,
+    "metrics": {
+      "clientWidth": 1280,
+      "innerWidth": 1280,
+      "scrollbarWidth": 0,
+      "scrollHeight": 800,
+      "clientHeight": 800,
+      "fontsStatus": "loaded",
+      "mainContainer": {
+        "tag": "div",
+        "className": "relative min-h-screen w-full flex flex-col items-c",
+        "width": 1280,
+        "height": 800,
+        "left": 0,
+        "top": 0
+      },
+      "loadingWrapper": null,
+      "splashWrapper": {
+        "tag": "div",
+        "className": "relative min-h-screen w-full flex flex-col items-c",
+        "width": 1280,
+        "height": 800,
+        "left": 0,
+        "top": 0
+      },
+      "atmosphere": {
+        "tag": "div",
+        "className": "fixed inset-0 pointer-events-none select-none over",
+        "width": 1280,
+        "height": 800,
+        "left": 0,
+        "top": 0
+      }
+    },
+    "screenshot": "1280x800_splash_warm_600ms.png"
+  },
+  {
+    "session": "1280x800_splash_warm",
+    "viewport": "1280x800",
+    "route": "/",
+    "cache": "warm",
+    "timestamp": 1000,
+    "metrics": {
+      "clientWidth": 1280,
+      "innerWidth": 1280,
+      "scrollbarWidth": 0,
+      "scrollHeight": 800,
+      "clientHeight": 800,
+      "fontsStatus": "loaded",
+      "mainContainer": {
+        "tag": "div",
+        "className": "relative min-h-screen w-full flex flex-col items-c",
+        "width": 1280,
+        "height": 800,
+        "left": 0,
+        "top": 0
+      },
+      "loadingWrapper": null,
+      "splashWrapper": {
+        "tag": "div",
+        "className": "relative min-h-screen w-full flex flex-col items-c",
+        "width": 1280,
+        "height": 800,
+        "left": 0,
+        "top": 0
+      },
+      "atmosphere": {
+        "tag": "div",
+        "className": "fixed inset-0 pointer-events-none select-none over",
+        "width": 1280,
+        "height": 800,
+        "left": 0,
+        "top": 0
+      }
+    },
+    "screenshot": "1280x800_splash_warm_1000ms.png"
+  },
+  {
+    "session": "1280x800_inicio_cold",
+    "viewport": "1280x800",
+    "route": "/inicio",
+    "cache": "cold",
+    "timestamp": 0,
+    "metrics": {
+      "clientWidth": 1280,
+      "innerWidth": 1280,
+      "scrollbarWidth": 0,
+      "scrollHeight": 800,
+      "clientHeight": 800,
+      "fontsStatus": "loading",
+      "mainContainer": {
+        "tag": "div",
+        "className": "relative min-h-screen w-full overflow-x-hidden ",
+        "width": 1280,
+        "height": 800,
+        "left": 0,
+        "top": 0
+      },
+      "loadingWrapper": {
+        "tag": "div",
+        "className": "flex flex-col items-center justify-center gap-4 z-",
+        "width": 1280,
+        "height": 164,
+        "left": 0,
+        "top": 0
+      },
+      "splashWrapper": null,
+      "atmosphere": {
+        "tag": "div",
+        "className": "fixed inset-0 pointer-events-none select-none over",
+        "width": 1280,
+        "height": 800,
+        "left": 0,
+        "top": 0
+      }
+    },
+    "screenshot": "1280x800_inicio_cold_0ms.png"
+  },
+  {
+    "session": "1280x800_inicio_cold",
+    "viewport": "1280x800",
+    "route": "/inicio",
+    "cache": "cold",
+    "timestamp": 100,
+    "metrics": {
+      "clientWidth": 1280,
+      "innerWidth": 1280,
+      "scrollbarWidth": 0,
+      "scrollHeight": 800,
+      "clientHeight": 800,
+      "fontsStatus": "loaded",
+      "mainContainer": {
+        "tag": "main",
+        "className": "flex-1 flex flex-col  px-6 py-6 justify-between bg",
+        "width": 478,
+        "height": 800,
+        "left": 401,
+        "top": 0
+      },
+      "loadingWrapper": null,
+      "splashWrapper": null,
+      "atmosphere": {
+        "tag": "svg",
+        "className": "[object SVGAnimatedString]",
+        "width": 24,
+        "height": 24,
+        "left": 425,
+        "top": 39.5
+      }
+    },
+    "screenshot": "1280x800_inicio_cold_100ms.png"
+  },
+  {
+    "session": "1280x800_inicio_cold",
+    "viewport": "1280x800",
+    "route": "/inicio",
+    "cache": "cold",
+    "timestamp": 300,
+    "metrics": {
+      "clientWidth": 1280,
+      "innerWidth": 1280,
+      "scrollbarWidth": 0,
+      "scrollHeight": 800,
+      "clientHeight": 800,
+      "fontsStatus": "loaded",
+      "mainContainer": {
+        "tag": "main",
+        "className": "flex-1 flex flex-col  px-6 py-6 justify-between bg",
+        "width": 478,
+        "height": 800,
+        "left": 401,
+        "top": 0
+      },
+      "loadingWrapper": null,
+      "splashWrapper": null,
+      "atmosphere": {
+        "tag": "svg",
+        "className": "[object SVGAnimatedString]",
+        "width": 24,
+        "height": 24,
+        "left": 425,
+        "top": 39.5
+      }
+    },
+    "screenshot": "1280x800_inicio_cold_300ms.png"
+  },
+  {
+    "session": "1280x800_inicio_cold",
+    "viewport": "1280x800",
+    "route": "/inicio",
+    "cache": "cold",
+    "timestamp": 600,
+    "metrics": {
+      "clientWidth": 1280,
+      "innerWidth": 1280,
+      "scrollbarWidth": 0,
+      "scrollHeight": 800,
+      "clientHeight": 800,
+      "fontsStatus": "loaded",
+      "mainContainer": {
+        "tag": "main",
+        "className": "flex-1 flex flex-col  px-6 py-6 justify-between bg",
+        "width": 478,
+        "height": 800,
+        "left": 401,
+        "top": 0
+      },
+      "loadingWrapper": null,
+      "splashWrapper": null,
+      "atmosphere": {
+        "tag": "svg",
+        "className": "[object SVGAnimatedString]",
+        "width": 24,
+        "height": 24,
+        "left": 425,
+        "top": 39.5
+      }
+    },
+    "screenshot": "1280x800_inicio_cold_600ms.png"
+  },
+  {
+    "session": "1280x800_inicio_cold",
+    "viewport": "1280x800",
+    "route": "/inicio",
+    "cache": "cold",
+    "timestamp": 1000,
+    "metrics": {
+      "clientWidth": 1280,
+      "innerWidth": 1280,
+      "scrollbarWidth": 0,
+      "scrollHeight": 800,
+      "clientHeight": 800,
+      "fontsStatus": "loaded",
+      "mainContainer": {
+        "tag": "main",
+        "className": "flex-1 flex flex-col  px-6 py-6 justify-between bg",
+        "width": 478,
+        "height": 800,
+        "left": 401,
+        "top": 0
+      },
+      "loadingWrapper": null,
+      "splashWrapper": null,
+      "atmosphere": {
+        "tag": "svg",
+        "className": "[object SVGAnimatedString]",
+        "width": 24,
+        "height": 24,
+        "left": 425,
+        "top": 39.5
+      }
+    },
+    "screenshot": "1280x800_inicio_cold_1000ms.png"
+  },
+  {
+    "session": "1280x800_inicio_warm",
+    "viewport": "1280x800",
+    "route": "/inicio",
+    "cache": "warm",
+    "timestamp": 0,
+    "metrics": {
+      "clientWidth": 1280,
+      "innerWidth": 1280,
+      "scrollbarWidth": 0,
+      "scrollHeight": 800,
+      "clientHeight": 800,
+      "fontsStatus": "loading",
+      "mainContainer": {
+        "tag": "div",
+        "className": "relative min-h-screen w-full overflow-x-hidden ",
+        "width": 1280,
+        "height": 800,
+        "left": 0,
+        "top": 0
+      },
+      "loadingWrapper": {
+        "tag": "div",
+        "className": "flex flex-col items-center justify-center gap-4 z-",
+        "width": 1280,
+        "height": 164,
+        "left": 0,
+        "top": 0
+      },
+      "splashWrapper": null,
+      "atmosphere": {
+        "tag": "div",
+        "className": "fixed inset-0 pointer-events-none select-none over",
+        "width": 1280,
+        "height": 800,
+        "left": 0,
+        "top": 0
+      }
+    },
+    "screenshot": "1280x800_inicio_warm_0ms.png"
+  },
+  {
+    "session": "1280x800_inicio_warm",
+    "viewport": "1280x800",
+    "route": "/inicio",
+    "cache": "warm",
+    "timestamp": 100,
+    "metrics": {
+      "clientWidth": 1280,
+      "innerWidth": 1280,
+      "scrollbarWidth": 0,
+      "scrollHeight": 1207,
+      "clientHeight": 800,
+      "fontsStatus": "loaded",
+      "mainContainer": {
+        "tag": "main",
+        "className": "flex-1 flex flex-col pb-24 relative px-5 pt-5 pb-2",
+        "width": 375.94,
+        "height": 1207,
+        "left": 452.03,
+        "top": 0
+      },
+      "loadingWrapper": null,
+      "splashWrapper": null,
+      "atmosphere": {
+        "tag": "div",
+        "className": "fixed inset-0 pointer-events-none select-none over",
+        "width": 1280,
+        "height": 800,
+        "left": 0,
+        "top": 0
+      }
+    },
+    "screenshot": "1280x800_inicio_warm_100ms.png"
+  },
+  {
+    "session": "1280x800_inicio_warm",
+    "viewport": "1280x800",
+    "route": "/inicio",
+    "cache": "warm",
+    "timestamp": 300,
+    "metrics": {
+      "clientWidth": 1280,
+      "innerWidth": 1280,
+      "scrollbarWidth": 0,
+      "scrollHeight": 1282,
+      "clientHeight": 800,
+      "fontsStatus": "loaded",
+      "mainContainer": {
+        "tag": "main",
+        "className": "flex-1 flex flex-col pb-24 relative px-5 pt-5 pb-2",
+        "width": 453.27,
+        "height": 1281.5,
+        "left": 413.36,
+        "top": 0
+      },
+      "loadingWrapper": null,
+      "splashWrapper": null,
+      "atmosphere": {
+        "tag": "div",
+        "className": "fixed inset-0 pointer-events-none select-none over",
+        "width": 1280,
+        "height": 800,
+        "left": 0,
+        "top": 0
+      }
+    },
+    "screenshot": "1280x800_inicio_warm_300ms.png"
+  },
+  {
+    "session": "1280x800_inicio_warm",
+    "viewport": "1280x800",
+    "route": "/inicio",
+    "cache": "warm",
+    "timestamp": 600,
+    "metrics": {
+      "clientWidth": 1280,
+      "innerWidth": 1280,
+      "scrollbarWidth": 0,
+      "scrollHeight": 1282,
+      "clientHeight": 800,
+      "fontsStatus": "loaded",
+      "mainContainer": {
+        "tag": "main",
+        "className": "flex-1 flex flex-col pb-24 relative px-5 pt-5 pb-2",
+        "width": 453.27,
+        "height": 1281.5,
+        "left": 413.36,
+        "top": 0
+      },
+      "loadingWrapper": null,
+      "splashWrapper": null,
+      "atmosphere": {
+        "tag": "div",
+        "className": "fixed inset-0 pointer-events-none select-none over",
+        "width": 1280,
+        "height": 800,
+        "left": 0,
+        "top": 0
+      }
+    },
+    "screenshot": "1280x800_inicio_warm_600ms.png"
+  },
+  {
+    "session": "1280x800_inicio_warm",
+    "viewport": "1280x800",
+    "route": "/inicio",
+    "cache": "warm",
+    "timestamp": 1000,
+    "metrics": {
+      "clientWidth": 1280,
+      "innerWidth": 1280,
+      "scrollbarWidth": 0,
+      "scrollHeight": 1282,
+      "clientHeight": 800,
+      "fontsStatus": "loaded",
+      "mainContainer": {
+        "tag": "main",
+        "className": "flex-1 flex flex-col pb-24 relative px-5 pt-5 pb-2",
+        "width": 453.27,
+        "height": 1281.5,
+        "left": 413.36,
+        "top": 0
+      },
+      "loadingWrapper": null,
+      "splashWrapper": null,
+      "atmosphere": {
+        "tag": "div",
+        "className": "fixed inset-0 pointer-events-none select-none over",
+        "width": 1280,
+        "height": 800,
+        "left": 0,
+        "top": 0
+      }
+    },
+    "screenshot": "1280x800_inicio_warm_1000ms.png"
+  },
+  {
+    "session": "1920x1080_splash_cold",
+    "viewport": "1920x1080",
+    "route": "/",
+    "cache": "cold",
+    "timestamp": 0,
+    "metrics": {
+      "clientWidth": 1920,
+      "innerWidth": 1920,
+      "scrollbarWidth": 0,
+      "scrollHeight": 1080,
+      "clientHeight": 1080,
+      "fontsStatus": "loading",
+      "mainContainer": {
+        "tag": "div",
+        "className": "relative min-h-screen w-full overflow-x-hidden ",
+        "width": 1920,
+        "height": 1080,
+        "left": 0,
+        "top": 0
+      },
+      "loadingWrapper": {
+        "tag": "div",
+        "className": "flex flex-col items-center justify-center gap-4 z-",
+        "width": 1920,
+        "height": 164,
+        "left": 0,
+        "top": 0
+      },
+      "splashWrapper": null,
+      "atmosphere": {
+        "tag": "div",
+        "className": "fixed inset-0 pointer-events-none select-none over",
+        "width": 1920,
+        "height": 1080,
+        "left": 0,
+        "top": 0
+      }
+    },
+    "screenshot": "1920x1080_splash_cold_0ms.png"
+  },
+  {
+    "session": "1920x1080_splash_cold",
+    "viewport": "1920x1080",
+    "route": "/",
+    "cache": "cold",
+    "timestamp": 100,
+    "metrics": {
+      "clientWidth": 1920,
+      "innerWidth": 1920,
+      "scrollbarWidth": 0,
+      "scrollHeight": 1080,
+      "clientHeight": 1080,
+      "fontsStatus": "loaded",
+      "mainContainer": {
+        "tag": "div",
+        "className": "relative min-h-screen w-full flex flex-col items-c",
+        "width": 1920,
+        "height": 1080,
+        "left": 0,
+        "top": 0
+      },
+      "loadingWrapper": null,
+      "splashWrapper": {
+        "tag": "div",
+        "className": "relative min-h-screen w-full flex flex-col items-c",
+        "width": 1920,
+        "height": 1080,
+        "left": 0,
+        "top": 0
+      },
+      "atmosphere": {
+        "tag": "div",
+        "className": "fixed inset-0 pointer-events-none select-none over",
+        "width": 1920,
+        "height": 1080,
+        "left": 0,
+        "top": 0
+      }
+    },
+    "screenshot": "1920x1080_splash_cold_100ms.png"
+  },
+  {
+    "session": "1920x1080_splash_cold",
+    "viewport": "1920x1080",
+    "route": "/",
+    "cache": "cold",
+    "timestamp": 300,
+    "metrics": {
+      "clientWidth": 1920,
+      "innerWidth": 1920,
+      "scrollbarWidth": 0,
+      "scrollHeight": 1080,
+      "clientHeight": 1080,
+      "fontsStatus": "loaded",
+      "mainContainer": {
+        "tag": "div",
+        "className": "relative min-h-screen w-full flex flex-col items-c",
+        "width": 1920,
+        "height": 1080,
+        "left": 0,
+        "top": 0
+      },
+      "loadingWrapper": null,
+      "splashWrapper": {
+        "tag": "div",
+        "className": "relative min-h-screen w-full flex flex-col items-c",
+        "width": 1920,
+        "height": 1080,
+        "left": 0,
+        "top": 0
+      },
+      "atmosphere": {
+        "tag": "div",
+        "className": "fixed inset-0 pointer-events-none select-none over",
+        "width": 1920,
+        "height": 1080,
+        "left": 0,
+        "top": 0
+      }
+    },
+    "screenshot": "1920x1080_splash_cold_300ms.png"
+  },
+  {
+    "session": "1920x1080_splash_cold",
+    "viewport": "1920x1080",
+    "route": "/",
+    "cache": "cold",
+    "timestamp": 600,
+    "metrics": {
+      "clientWidth": 1920,
+      "innerWidth": 1920,
+      "scrollbarWidth": 0,
+      "scrollHeight": 1080,
+      "clientHeight": 1080,
+      "fontsStatus": "loaded",
+      "mainContainer": {
+        "tag": "div",
+        "className": "relative min-h-screen w-full flex flex-col items-c",
+        "width": 1920,
+        "height": 1080,
+        "left": 0,
+        "top": 0
+      },
+      "loadingWrapper": null,
+      "splashWrapper": {
+        "tag": "div",
+        "className": "relative min-h-screen w-full flex flex-col items-c",
+        "width": 1920,
+        "height": 1080,
+        "left": 0,
+        "top": 0
+      },
+      "atmosphere": {
+        "tag": "div",
+        "className": "fixed inset-0 pointer-events-none select-none over",
+        "width": 1920,
+        "height": 1080,
+        "left": 0,
+        "top": 0
+      }
+    },
+    "screenshot": "1920x1080_splash_cold_600ms.png"
+  },
+  {
+    "session": "1920x1080_splash_cold",
+    "viewport": "1920x1080",
+    "route": "/",
+    "cache": "cold",
+    "timestamp": 1000,
+    "metrics": {
+      "clientWidth": 1920,
+      "innerWidth": 1920,
+      "scrollbarWidth": 0,
+      "scrollHeight": 1080,
+      "clientHeight": 1080,
+      "fontsStatus": "loaded",
+      "mainContainer": {
+        "tag": "div",
+        "className": "relative min-h-screen w-full flex flex-col items-c",
+        "width": 1920,
+        "height": 1080,
+        "left": 0,
+        "top": 0
+      },
+      "loadingWrapper": null,
+      "splashWrapper": {
+        "tag": "div",
+        "className": "relative min-h-screen w-full flex flex-col items-c",
+        "width": 1920,
+        "height": 1080,
+        "left": 0,
+        "top": 0
+      },
+      "atmosphere": {
+        "tag": "div",
+        "className": "fixed inset-0 pointer-events-none select-none over",
+        "width": 1920,
+        "height": 1080,
+        "left": 0,
+        "top": 0
+      }
+    },
+    "screenshot": "1920x1080_splash_cold_1000ms.png"
+  },
+  {
+    "session": "1920x1080_splash_warm",
+    "viewport": "1920x1080",
+    "route": "/",
+    "cache": "warm",
+    "timestamp": 0,
+    "metrics": {
+      "clientWidth": 1920,
+      "innerWidth": 1920,
+      "scrollbarWidth": 0,
+      "scrollHeight": 1080,
+      "clientHeight": 1080,
+      "fontsStatus": "loading",
+      "mainContainer": {
+        "tag": "div",
+        "className": "relative min-h-screen w-full overflow-x-hidden ",
+        "width": 1920,
+        "height": 1080,
+        "left": 0,
+        "top": 0
+      },
+      "loadingWrapper": {
+        "tag": "div",
+        "className": "flex flex-col items-center justify-center gap-4 z-",
+        "width": 1920,
+        "height": 164,
+        "left": 0,
+        "top": 0
+      },
+      "splashWrapper": null,
+      "atmosphere": {
+        "tag": "div",
+        "className": "fixed inset-0 pointer-events-none select-none over",
+        "width": 1920,
+        "height": 1080,
+        "left": 0,
+        "top": 0
+      }
+    },
+    "screenshot": "1920x1080_splash_warm_0ms.png"
+  },
+  {
+    "session": "1920x1080_splash_warm",
+    "viewport": "1920x1080",
+    "route": "/",
+    "cache": "warm",
+    "timestamp": 100,
+    "metrics": {
+      "clientWidth": 1920,
+      "innerWidth": 1920,
+      "scrollbarWidth": 0,
+      "scrollHeight": 1080,
+      "clientHeight": 1080,
+      "fontsStatus": "loaded",
+      "mainContainer": {
+        "tag": "div",
+        "className": "relative min-h-screen w-full flex flex-col items-c",
+        "width": 1920,
+        "height": 1080,
+        "left": 0,
+        "top": 0
+      },
+      "loadingWrapper": null,
+      "splashWrapper": {
+        "tag": "div",
+        "className": "relative min-h-screen w-full flex flex-col items-c",
+        "width": 1920,
+        "height": 1080,
+        "left": 0,
+        "top": 0
+      },
+      "atmosphere": {
+        "tag": "div",
+        "className": "fixed inset-0 pointer-events-none select-none over",
+        "width": 1920,
+        "height": 1080,
+        "left": 0,
+        "top": 0
+      }
+    },
+    "screenshot": "1920x1080_splash_warm_100ms.png"
+  },
+  {
+    "session": "1920x1080_splash_warm",
+    "viewport": "1920x1080",
+    "route": "/",
+    "cache": "warm",
+    "timestamp": 300,
+    "metrics": {
+      "clientWidth": 1920,
+      "innerWidth": 1920,
+      "scrollbarWidth": 0,
+      "scrollHeight": 1080,
+      "clientHeight": 1080,
+      "fontsStatus": "loaded",
+      "mainContainer": {
+        "tag": "div",
+        "className": "relative min-h-screen w-full flex flex-col items-c",
+        "width": 1920,
+        "height": 1080,
+        "left": 0,
+        "top": 0
+      },
+      "loadingWrapper": null,
+      "splashWrapper": {
+        "tag": "div",
+        "className": "relative min-h-screen w-full flex flex-col items-c",
+        "width": 1920,
+        "height": 1080,
+        "left": 0,
+        "top": 0
+      },
+      "atmosphere": {
+        "tag": "div",
+        "className": "fixed inset-0 pointer-events-none select-none over",
+        "width": 1920,
+        "height": 1080,
+        "left": 0,
+        "top": 0
+      }
+    },
+    "screenshot": "1920x1080_splash_warm_300ms.png"
+  },
+  {
+    "session": "1920x1080_splash_warm",
+    "viewport": "1920x1080",
+    "route": "/",
+    "cache": "warm",
+    "timestamp": 600,
+    "metrics": {
+      "clientWidth": 1920,
+      "innerWidth": 1920,
+      "scrollbarWidth": 0,
+      "scrollHeight": 1080,
+      "clientHeight": 1080,
+      "fontsStatus": "loaded",
+      "mainContainer": {
+        "tag": "div",
+        "className": "relative min-h-screen w-full flex flex-col items-c",
+        "width": 1920,
+        "height": 1080,
+        "left": 0,
+        "top": 0
+      },
+      "loadingWrapper": null,
+      "splashWrapper": {
+        "tag": "div",
+        "className": "relative min-h-screen w-full flex flex-col items-c",
+        "width": 1920,
+        "height": 1080,
+        "left": 0,
+        "top": 0
+      },
+      "atmosphere": {
+        "tag": "div",
+        "className": "fixed inset-0 pointer-events-none select-none over",
+        "width": 1920,
+        "height": 1080,
+        "left": 0,
+        "top": 0
+      }
+    },
+    "screenshot": "1920x1080_splash_warm_600ms.png"
+  },
+  {
+    "session": "1920x1080_splash_warm",
+    "viewport": "1920x1080",
+    "route": "/",
+    "cache": "warm",
+    "timestamp": 1000,
+    "metrics": {
+      "clientWidth": 1920,
+      "innerWidth": 1920,
+      "scrollbarWidth": 0,
+      "scrollHeight": 1080,
+      "clientHeight": 1080,
+      "fontsStatus": "loaded",
+      "mainContainer": {
+        "tag": "div",
+        "className": "relative min-h-screen w-full flex flex-col items-c",
+        "width": 1920,
+        "height": 1080,
+        "left": 0,
+        "top": 0
+      },
+      "loadingWrapper": null,
+      "splashWrapper": {
+        "tag": "div",
+        "className": "relative min-h-screen w-full flex flex-col items-c",
+        "width": 1920,
+        "height": 1080,
+        "left": 0,
+        "top": 0
+      },
+      "atmosphere": {
+        "tag": "div",
+        "className": "fixed inset-0 pointer-events-none select-none over",
+        "width": 1920,
+        "height": 1080,
+        "left": 0,
+        "top": 0
+      }
+    },
+    "screenshot": "1920x1080_splash_warm_1000ms.png"
+  },
+  {
+    "session": "1920x1080_inicio_cold",
+    "viewport": "1920x1080",
+    "route": "/inicio",
+    "cache": "cold",
+    "timestamp": 0,
+    "metrics": {
+      "clientWidth": 1920,
+      "innerWidth": 1920,
+      "scrollbarWidth": 0,
+      "scrollHeight": 1080,
+      "clientHeight": 1080,
+      "fontsStatus": "loading",
+      "mainContainer": {
+        "tag": "div",
+        "className": "relative min-h-screen w-full overflow-x-hidden ",
+        "width": 1920,
+        "height": 1080,
+        "left": 0,
+        "top": 0
+      },
+      "loadingWrapper": {
+        "tag": "div",
+        "className": "flex flex-col items-center justify-center gap-4 z-",
+        "width": 1920,
+        "height": 164,
+        "left": 0,
+        "top": 0
+      },
+      "splashWrapper": null,
+      "atmosphere": {
+        "tag": "div",
+        "className": "fixed inset-0 pointer-events-none select-none over",
+        "width": 1920,
+        "height": 1080,
+        "left": 0,
+        "top": 0
+      }
+    },
+    "screenshot": "1920x1080_inicio_cold_0ms.png"
+  },
+  {
+    "session": "1920x1080_inicio_cold",
+    "viewport": "1920x1080",
+    "route": "/inicio",
+    "cache": "cold",
+    "timestamp": 100,
+    "metrics": {
+      "clientWidth": 1920,
+      "innerWidth": 1920,
+      "scrollbarWidth": 0,
+      "scrollHeight": 1207,
+      "clientHeight": 1080,
+      "fontsStatus": "loaded",
+      "mainContainer": {
+        "tag": "main",
+        "className": "flex-1 flex flex-col pb-24 relative px-5 pt-5 pb-2",
+        "width": 375.94,
+        "height": 1207,
+        "left": 772.03,
+        "top": 0
+      },
+      "loadingWrapper": null,
+      "splashWrapper": null,
+      "atmosphere": {
+        "tag": "div",
+        "className": "fixed inset-0 pointer-events-none select-none over",
+        "width": 1920,
+        "height": 1080,
+        "left": 0,
+        "top": 0
+      }
+    },
+    "screenshot": "1920x1080_inicio_cold_100ms.png"
+  },
+  {
+    "session": "1920x1080_inicio_cold",
+    "viewport": "1920x1080",
+    "route": "/inicio",
+    "cache": "cold",
+    "timestamp": 300,
+    "metrics": {
+      "clientWidth": 1920,
+      "innerWidth": 1920,
+      "scrollbarWidth": 0,
+      "scrollHeight": 1282,
+      "clientHeight": 1080,
+      "fontsStatus": "loaded",
+      "mainContainer": {
+        "tag": "main",
+        "className": "flex-1 flex flex-col pb-24 relative px-5 pt-5 pb-2",
+        "width": 453.27,
+        "height": 1281.5,
+        "left": 733.36,
+        "top": 0
+      },
+      "loadingWrapper": null,
+      "splashWrapper": null,
+      "atmosphere": {
+        "tag": "div",
+        "className": "fixed inset-0 pointer-events-none select-none over",
+        "width": 1920,
+        "height": 1080,
+        "left": 0,
+        "top": 0
+      }
+    },
+    "screenshot": "1920x1080_inicio_cold_300ms.png"
+  },
+  {
+    "session": "1920x1080_inicio_cold",
+    "viewport": "1920x1080",
+    "route": "/inicio",
+    "cache": "cold",
+    "timestamp": 600,
+    "metrics": {
+      "clientWidth": 1920,
+      "innerWidth": 1920,
+      "scrollbarWidth": 0,
+      "scrollHeight": 1282,
+      "clientHeight": 1080,
+      "fontsStatus": "loaded",
+      "mainContainer": {
+        "tag": "main",
+        "className": "flex-1 flex flex-col pb-24 relative px-5 pt-5 pb-2",
+        "width": 453.27,
+        "height": 1281.5,
+        "left": 733.36,
+        "top": 0
+      },
+      "loadingWrapper": null,
+      "splashWrapper": null,
+      "atmosphere": {
+        "tag": "div",
+        "className": "fixed inset-0 pointer-events-none select-none over",
+        "width": 1920,
+        "height": 1080,
+        "left": 0,
+        "top": 0
+      }
+    },
+    "screenshot": "1920x1080_inicio_cold_600ms.png"
+  },
+  {
+    "session": "1920x1080_inicio_cold",
+    "viewport": "1920x1080",
+    "route": "/inicio",
+    "cache": "cold",
+    "timestamp": 1000,
+    "metrics": {
+      "clientWidth": 1920,
+      "innerWidth": 1920,
+      "scrollbarWidth": 0,
+      "scrollHeight": 1282,
+      "clientHeight": 1080,
+      "fontsStatus": "loaded",
+      "mainContainer": {
+        "tag": "main",
+        "className": "flex-1 flex flex-col pb-24 relative px-5 pt-5 pb-2",
+        "width": 453.27,
+        "height": 1281.5,
+        "left": 733.36,
+        "top": 0
+      },
+      "loadingWrapper": null,
+      "splashWrapper": null,
+      "atmosphere": {
+        "tag": "div",
+        "className": "fixed inset-0 pointer-events-none select-none over",
+        "width": 1920,
+        "height": 1080,
+        "left": 0,
+        "top": 0
+      }
+    },
+    "screenshot": "1920x1080_inicio_cold_1000ms.png"
+  },
+  {
+    "session": "1920x1080_inicio_warm",
+    "viewport": "1920x1080",
+    "route": "/inicio",
+    "cache": "warm",
+    "timestamp": 0,
+    "metrics": {
+      "clientWidth": 1920,
+      "innerWidth": 1920,
+      "scrollbarWidth": 0,
+      "scrollHeight": 1080,
+      "clientHeight": 1080,
+      "fontsStatus": "loading",
+      "mainContainer": {
+        "tag": "div",
+        "className": "relative min-h-screen w-full overflow-x-hidden ",
+        "width": 1920,
+        "height": 1080,
+        "left": 0,
+        "top": 0
+      },
+      "loadingWrapper": {
+        "tag": "div",
+        "className": "flex flex-col items-center justify-center gap-4 z-",
+        "width": 1920,
+        "height": 164,
+        "left": 0,
+        "top": 0
+      },
+      "splashWrapper": null,
+      "atmosphere": {
+        "tag": "div",
+        "className": "fixed inset-0 pointer-events-none select-none over",
+        "width": 1920,
+        "height": 1080,
+        "left": 0,
+        "top": 0
+      }
+    },
+    "screenshot": "1920x1080_inicio_warm_0ms.png"
+  },
+  {
+    "session": "1920x1080_inicio_warm",
+    "viewport": "1920x1080",
+    "route": "/inicio",
+    "cache": "warm",
+    "timestamp": 100,
+    "metrics": {
+      "clientWidth": 1920,
+      "innerWidth": 1920,
+      "scrollbarWidth": 0,
+      "scrollHeight": 1207,
+      "clientHeight": 1080,
+      "fontsStatus": "loaded",
+      "mainContainer": {
+        "tag": "main",
+        "className": "flex-1 flex flex-col pb-24 relative px-5 pt-5 pb-2",
+        "width": 375.94,
+        "height": 1207,
+        "left": 772.03,
+        "top": 0
+      },
+      "loadingWrapper": null,
+      "splashWrapper": null,
+      "atmosphere": {
+        "tag": "div",
+        "className": "fixed inset-0 pointer-events-none select-none over",
+        "width": 1920,
+        "height": 1080,
+        "left": 0,
+        "top": 0
+      }
+    },
+    "screenshot": "1920x1080_inicio_warm_100ms.png"
+  },
+  {
+    "session": "1920x1080_inicio_warm",
+    "viewport": "1920x1080",
+    "route": "/inicio",
+    "cache": "warm",
+    "timestamp": 300,
+    "metrics": {
+      "clientWidth": 1920,
+      "innerWidth": 1920,
+      "scrollbarWidth": 0,
+      "scrollHeight": 1282,
+      "clientHeight": 1080,
+      "fontsStatus": "loaded",
+      "mainContainer": {
+        "tag": "main",
+        "className": "flex-1 flex flex-col pb-24 relative px-5 pt-5 pb-2",
+        "width": 453.27,
+        "height": 1281.5,
+        "left": 733.36,
+        "top": 0
+      },
+      "loadingWrapper": null,
+      "splashWrapper": null,
+      "atmosphere": {
+        "tag": "div",
+        "className": "fixed inset-0 pointer-events-none select-none over",
+        "width": 1920,
+        "height": 1080,
+        "left": 0,
+        "top": 0
+      }
+    },
+    "screenshot": "1920x1080_inicio_warm_300ms.png"
+  },
+  {
+    "session": "1920x1080_inicio_warm",
+    "viewport": "1920x1080",
+    "route": "/inicio",
+    "cache": "warm",
+    "timestamp": 600,
+    "metrics": {
+      "clientWidth": 1920,
+      "innerWidth": 1920,
+      "scrollbarWidth": 0,
+      "scrollHeight": 1282,
+      "clientHeight": 1080,
+      "fontsStatus": "loaded",
+      "mainContainer": {
+        "tag": "main",
+        "className": "flex-1 flex flex-col pb-24 relative px-5 pt-5 pb-2",
+        "width": 453.27,
+        "height": 1281.5,
+        "left": 733.36,
+        "top": 0
+      },
+      "loadingWrapper": null,
+      "splashWrapper": null,
+      "atmosphere": {
+        "tag": "div",
+        "className": "fixed inset-0 pointer-events-none select-none over",
+        "width": 1920,
+        "height": 1080,
+        "left": 0,
+        "top": 0
+      }
+    },
+    "screenshot": "1920x1080_inicio_warm_600ms.png"
+  },
+  {
+    "session": "1920x1080_inicio_warm",
+    "viewport": "1920x1080",
+    "route": "/inicio",
+    "cache": "warm",
+    "timestamp": 1000,
+    "metrics": {
+      "clientWidth": 1920,
+      "innerWidth": 1920,
+      "scrollbarWidth": 0,
+      "scrollHeight": 1282,
+      "clientHeight": 1080,
+      "fontsStatus": "loaded",
+      "mainContainer": {
+        "tag": "main",
+        "className": "flex-1 flex flex-col pb-24 relative px-5 pt-5 pb-2",
+        "width": 453.27,
+        "height": 1281.5,
+        "left": 733.36,
+        "top": 0
+      },
+      "loadingWrapper": null,
+      "splashWrapper": null,
+      "atmosphere": {
+        "tag": "div",
+        "className": "fixed inset-0 pointer-events-none select-none over",
+        "width": 1920,
+        "height": 1080,
+        "left": 0,
+        "top": 0
+      }
+    },
+    "screenshot": "1920x1080_inicio_warm_1000ms.png"
+  }
+]

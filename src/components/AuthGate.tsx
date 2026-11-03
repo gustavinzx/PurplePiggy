@@ -1,7 +1,7 @@
 import React from 'react'
 import { Navigate, useLocation } from 'react-router-dom'
 import { useAuth } from '../context/AuthContext'
-import { Atmosphere } from './Atmosphere'
+import { AppShell } from './AppShell'
 import { Mascot } from './Mascot'
 
 export type AuthGateMode = 'protected' | 'publicOnly' | 'splash' | 'diagnostic' | 'neutral'
@@ -15,7 +15,7 @@ export interface AuthGateProps {
  * Gate de rotas unificado (AuthGate).
  * Só renderiza a rota alvo depois que a sessão E o perfil (incluindo diagnostic_done)
  * estiverem totalmente resolvidos.
- * Enquanto resolve, renderiza uma tela neutra de carregamento (<Atmosphere> + <Mascot pose="loading">).
+ * Enquanto resolve, renderiza uma tela neutra de carregamento (<AppShell> + <Mascot pose="loading">).
  * Redirecionamentos são atômicos via <Navigate replace /> ANTES da tela alvo montar,
  * eliminando qualquer flash de tela indevida.
  */
@@ -28,14 +28,14 @@ export const AuthGate: React.FC<AuthGateProps> = ({ children, mode = 'protected'
 
   if (isResolving) {
     return (
-      <Atmosphere>
-        <div className="flex flex-col items-center justify-center gap-4 z-10 select-none">
+      <AppShell showNav={false} variant="app">
+        <div className="flex-1 flex flex-col items-center justify-center gap-4 z-10 select-none">
           <Mascot size="lg" pose="loading" float priority alt="Carregando" />
           <p className="text-sm font-bold text-deep/70 tracking-wide animate-pulse">
             Carregando...
           </p>
         </div>
-      </Atmosphere>
+      </AppShell>
     )
   }
 
