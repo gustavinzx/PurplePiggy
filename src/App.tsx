@@ -17,6 +17,8 @@ import { BudgetPage } from './pages/BudgetPage'
 import { GoalsPage } from './pages/GoalsPage'
 import { LearnPage } from './pages/LearnPage'
 import { LessonPage } from './pages/LessonPage'
+import { GuidePage } from './pages/GuidePage'
+import { StudyGuidesPage } from './pages/StudyGuidesPage'
 import { SimulatorPage } from './pages/SimulatorPage'
 import { ProfilePage } from './pages/ProfilePage'
 import { OpenFinancePage } from './pages/OpenFinancePage'
@@ -173,6 +175,46 @@ export const App: React.FC = () => {
             element={
               <AuthGate mode="protected">
                 <LessonPage />
+              </AuthGate>
+            }
+          />
+          <Route
+            path="/aprender/trilha/:slug"
+            element={
+              <AuthGate mode="protected">
+                <LearnPage />
+              </AuthGate>
+            }
+          />
+          <Route
+            path="/aprender/trilha/:slug/nivel/:n"
+            element={
+              <AuthGate mode="protected">
+                <LessonPage />
+              </AuthGate>
+            }
+          />
+          <Route
+            path="/aprender/trilha/:slug/nivel/:n/guia"
+            element={
+              <AuthGate mode="protected">
+                <GuidePage />
+              </AuthGate>
+            }
+          />
+          <Route
+            path="/aprender/guias"
+            element={
+              <AuthGate mode="protected">
+                <StudyGuidesPage />
+              </AuthGate>
+            }
+          />
+          <Route
+            path="/aprender/guias/:slug"
+            element={
+              <AuthGate mode="protected">
+                <GuidePage />
               </AuthGate>
             }
           />

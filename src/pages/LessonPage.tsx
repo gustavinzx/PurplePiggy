@@ -1,449 +1,438 @@
+// src/pages/LessonPage.tsx
+// Experiência Gamificada de Lição Interativa (Prompts N10 e N11 com Linha 2)
 import React, { useState, useEffect } from 'react'
 import { useParams, useNavigate } from 'react-router-dom'
 import { supabase } from '../lib/supabase'
 import { useAuth } from '../context/AuthContext'
-import { AppShell } from '../components/AppShell'
-import { Mascot } from '../components/Mascot'
-import { Button } from '../components/Button'
-import { LESSON_QUIZZES } from '../lib/quizData'
 import {
-  ArrowLeft,
-  CheckCircle2,
-  ArrowRight,
-  Sparkles,
-  Zap,
-  HelpCircle,
-  ThumbsUp,
-  Award,
-  BookOpen,
-} from 'lucide-react'
-import { toast } from 'sonner'
+  QuizTopBar,
+  OptionCard,
+  FeedbackPanel,
+  ChunkyButton,
+} from '../features/learn/components'
+import { useQuizEngine } from '../features/learn/engine'
+import { learnService } from '../features/learn/services/learnService'
+import { LearnQuestion } from '../features/learn/questions'
+import { Mascot } from '../components/Mascot'
 import confetti from 'canvas-confetti'
-import type { Database } from '../types/database.types'
 
-type EducationalContent = Database['public']['Tables']['educational_contents']['Row']
+const OPTION_LETTERS = ['A', 'B', 'C', 'D']
 
 export const LessonPage: React.FC = () => {
-  const { trackSlug, lessonSlug } = useParams<{ trackSlug: string; lessonSlug: string }>()
+  const { slug, n, trackSlug, lessonSlug } = useParams<{
+    slug?: string
+    n?: string
+    trackSlug?: string
+    lessonSlug?: string
+  }>()
   const navigate = useNavigate()
   const { user } = useAuth()
 
-  const [lesson, setLesson] = useState<EducationalContent | null>(null)
-  const [trackLessons, setTrackLessons] = useState<EducationalContent[]>([])
-  const [allTracks, setAllTracks] = useState<{ track_slug: string; track_order: number; track_title: string }[]>([])
-  const [isCompleted, setIsCompleted] = useState(false)
   const [loading, setLoading] = useState(true)
-  const [saving, setSaving] = useState(false)
+  const [resolvedLessonSlug, setResolvedLessonSlug] = useState<string>('')
+  const [resolvedTrackSlug, setResolvedTrackSlug] = useState<string>('')
+  const [questions, setQuestions] = useState<LearnQuestion[]>([])
+  const [showExitDialog, setShowExitDialog] = useState(false)
 
-  // Desafio Piggy State
-  const [selectedOption, setSelectedOption] = useState<number | null>(null)
-  const [isAnswerChecked, setIsAnswerChecked] = useState(false)
-  const [isCorrect, setIsCorrect] = useState(false)
-  const [hasFiredConfetti, setHasFiredConfetti] = useState(false)
+  // Estados de Conclusão e Resumo do Nível (Prompt N11)
+  const [isLevelFinished, setIsLevelFinished] = useState(false)
+  const [completionResult, setCompletionResult] = useState<any>(null)
+  const [isTrackCompleted, setIsTrackCompleted] = useState(false)
 
+  // 1. Resolução da Trilha e Lição a partir dos parâmetros de rota
   useEffect(() => {
-    if (user && lessonSlug) {
-      loadLesson()
-    }
-  }, [user, lessonSlug])
-
-  const loadLesson = async () => {
-    if (!user) return
-    setLoading(true)
-    setSelectedOption(null)
-    setIsAnswerChecked(false)
-    setIsCorrect(false)
-    setHasFiredConfetti(false)
-
-    try {
-      // 1. Carregar lição atual
-      const { data: currentLesson } = await supabase
-        .from('educational_contents')
-        .select('*')
-        .eq('lesson_slug', lessonSlug!)
-        .single()
-
-      if (!currentLesson) {
-        toast.error('Lição não encontrada.')
-        navigate('/aprender')
-        return
-      }
-
-      setLesson(currentLesson)
-
-      // 2. Verificar se a usuária já concluiu esta lição no Supabase
-      const { data: progress } = await supabase
-        .from('educational_progress')
-        .select('id')
-        .eq('user_id', user.id)
-        .eq('content_id', currentLesson.id)
-        .maybeSingle()
-
-      const alreadyDone = Boolean(progress)
-      setIsCompleted(alreadyDone)
-
-      // Se já estava concluída, marca o quiz como acertado
-      if (alreadyDone) {
-        setIsAnswerChecked(true)
-        setIsCorrect(true)
-        const q = LESSON_QUIZZES[lessonSlug!]
-        if (q) setSelectedOption(q.correctIndex)
-      }
-
-      // 3. Carregar TODAS as lições da mesma trilha (ordenadas por lesson_order)
-      const { data: sameTrackLessons } = await supabase
-        .from('educational_contents')
-        .select('*')
-        .eq('track_slug', currentLesson.track_slug)
-        .order('lesson_order', { ascending: true })
-
-      setTrackLessons(sameTrackLessons || [])
-
-      // 4. Carregar lista de trilhas para permitir transição entre trilhas
-      const { data: allContents } = await supabase
-        .from('educational_contents')
-        .select('track_slug, track_order, track_title')
-        .order('track_order', { ascending: true })
-
-      if (allContents) {
-        const uniqueTracks: Record<string, { track_slug: string; track_order: number; track_title: string }> = {}
-        allContents.forEach((c) => {
-          if (!uniqueTracks[c.track_slug]) {
-            uniqueTracks[c.track_slug] = {
-              track_slug: c.track_slug,
-              track_order: c.track_order,
-              track_title: c.track_title,
-            }
-          }
-        })
-        setAllTracks(Object.values(uniqueTracks).sort((a, b) => a.track_order - b.track_order))
-      }
-    } finally {
-      setLoading(false)
-    }
-  }
-
-  const quiz = lessonSlug ? LESSON_QUIZZES[lessonSlug] : null
-
-  const handleSelectOption = (idx: number) => {
-    if (isCompleted) return
-    setSelectedOption(idx)
-    setIsAnswerChecked(false)
-  }
-
-  // Verifica a resposta e grava o progresso se acertou
-  const handleCheckAnswer = async () => {
-    if (selectedOption === null || !quiz || !user || !lesson) return
-
-    const correct = selectedOption === quiz.correctIndex
-    setIsAnswerChecked(true)
-    setIsCorrect(correct)
-
-    if (correct) {
-      if (!hasFiredConfetti && !isCompleted) {
-        setHasFiredConfetti(true)
-        confetti({
-          particleCount: 35,
-          spread: 45,
-          origin: { y: 0.65 },
-          colors: ['#B037F8', '#FF79A8', '#FEDA70'],
-        })
-      }
-
-      // Salvar progresso no Supabase
-      setSaving(true)
+    async function resolveRoute() {
+      setLoading(true)
       try {
-        await supabase
-          .from('educational_progress')
-          .upsert(
-            {
-              user_id: user.id,
-              content_id: lesson.id,
-            },
-            { onConflict: 'user_id,content_id' }
-          )
+        const targetTrack = slug || trackSlug || 'organizacao-financeira'
+        let targetLesson = lessonSlug || ''
 
-        setIsCompleted(true)
+        // Se a rota for /aprender/trilha/:slug/nivel/:n
+        if (!targetLesson && n) {
+          const levelNum = parseInt(n, 10) || 1
+          const { data: contents } = await supabase
+            .from('educational_contents')
+            .select('lesson_slug')
+            .eq('track_slug', targetTrack)
+            .order('lesson_order', { ascending: true })
 
-        // Atualizar streak diário e PiggyXP
-        const today = new Date().toISOString().split('T')[0]
-        const stored = localStorage.getItem('purplepiggy_streak')
-        let streak = 1
-        if (stored) {
-          try {
-            const parsed = JSON.parse(stored)
-            if (parsed.lastDate !== today) {
-              streak = (parsed.count || 0) + 1
-            } else {
-              streak = parsed.count || 1
-            }
-          } catch (_) {}
+          if (contents && contents[levelNum - 1]) {
+            targetLesson = contents[levelNum - 1].lesson_slug
+          } else if (contents && contents[0]) {
+            targetLesson = contents[0].lesson_slug
+          }
         }
-        localStorage.setItem('purplepiggy_streak', JSON.stringify({ count: streak, lastDate: today }))
-        toast.success('Resposta certa! Lição concluída e +10 PiggyXP! 💜')
+
+        if (!targetLesson) {
+          targetLesson = 'para-onde-vai-meu-dinheiro'
+        }
+
+        setResolvedTrackSlug(targetTrack)
+        setResolvedLessonSlug(targetLesson)
+
+        // Carrega as questões para a lição
+        const loadedQuestions = learnService.getQuestionsForLesson(targetLesson)
+        setQuestions(loadedQuestions)
       } catch (err) {
-        console.error('Erro ao salvar progresso:', err)
+        console.error('Erro ao resolver lição:', err)
       } finally {
-        setSaving(false)
+        setLoading(false)
       }
-    } else {
-      toast.info('Quase lá! Veja a explicação e tente novamente com calma.')
+    }
+
+    resolveRoute()
+  }, [slug, n, trackSlug, lessonSlug])
+
+  // Hook do Motor do Quiz (N8 / N10)
+  const {
+    state,
+    currentQuestion,
+    status,
+    currentAnswer,
+    validation,
+    hearts,
+    progressPercent,
+    canVerify,
+    selectAnswer,
+    verifyAnswer,
+    nextQuestion,
+  } = useQuizEngine({
+    questions,
+    lessonSlug: resolvedLessonSlug,
+    autoSubmitOnCompletion: false,
+  })
+
+  // Efeito ao atingir o estado 'completed' no motor
+  useEffect(() => {
+    if (status === 'completed' && !isLevelFinished) {
+      handleCompleteLesson()
+    }
+  }, [status, isLevelFinished])
+
+  const handleCompleteLesson = async () => {
+    try {
+      const apiResult = await learnService.completeLesson(resolvedLessonSlug)
+      setCompletionResult(apiResult)
+
+      // Registrar no educational_progress do Supabase para persistência
+      if (user) {
+        const { data: contentData } = await supabase
+          .from('educational_contents')
+          .select('id, track_slug')
+          .eq('lesson_slug', resolvedLessonSlug)
+          .maybeSingle()
+
+        if (contentData) {
+          await supabase
+            .from('educational_progress')
+            .upsert(
+              { user_id: user.id, content_id: contentData.id },
+              { onConflict: 'user_id,content_id' }
+            )
+
+          // Verificar se todas as lições da trilha foram concluídas
+          const { data: allLessons } = await supabase
+            .from('educational_contents')
+            .select('id')
+            .eq('track_slug', contentData.track_slug)
+
+          const { data: userProgress } = await supabase
+            .from('educational_progress')
+            .select('content_id')
+            .eq('user_id', user.id)
+
+          const doneIds = new Set(userProgress?.map((p) => p.content_id) || [])
+          const allDone = Boolean(
+            allLessons &&
+              allLessons.length > 0 &&
+              allLessons.every((l) => doneIds.has(l.id))
+          )
+          setIsTrackCompleted(allDone)
+        }
+      }
+
+      // Celebração com confete suave
+      confetti({
+        particleCount: 50,
+        spread: 70,
+        origin: { y: 0.5 },
+        colors: ['#7D2BD6', '#F5B83D', '#2FBF71'],
+      })
+
+      setIsLevelFinished(true)
+    } catch (err) {
+      console.error('Erro ao concluir lição:', err)
+      setIsLevelFinished(true)
     }
   }
 
-  // Navegação estrita e coerente para a próxima lição dentro da trilha
-  const currentIndex = trackLessons.findIndex((l) => l.id === lesson?.id)
-  const nextLessonInSameTrack =
-    currentIndex >= 0 && currentIndex < trackLessons.length - 1
-      ? trackLessons[currentIndex + 1]
-      : null
-
-  // Encontrar a próxima trilha caso esta seja a última lição da trilha atual
-  const currentTrackOrder = lesson?.track_order ?? 1
-  const nextTrack = allTracks.find((t) => t.track_order === currentTrackOrder + 1)
-
-  const handleNextStep = async () => {
-    if (nextLessonInSameTrack) {
-      // Avança para a próxima lição DA MESMA TRILHA
-      navigate(`/aprender/${lesson!.track_slug}/${nextLessonInSameTrack.lesson_slug}`)
-    } else if (nextTrack) {
-      // Busca a primeira lição da próxima trilha
-      const { data: firstLessonOfNextTrack } = await supabase
-        .from('educational_contents')
-        .select('lesson_slug')
-        .eq('track_slug', nextTrack.track_slug)
-        .order('lesson_order', { ascending: true })
-        .limit(1)
-        .single()
-
-      if (firstLessonOfNextTrack) {
-        toast.success(`Trilha concluída! Iniciando: ${nextTrack.track_title} 🎓`)
-        navigate(`/aprender/${nextTrack.track_slug}/${firstLessonOfNextTrack.lesson_slug}`)
-      } else {
-        navigate('/aprender')
-      }
-    } else {
-      toast.success('Você concluiu todas as trilhas disponíveis do PurplePiggy! Parabéns! 🏆')
-      navigate('/aprender')
+  // Três acertos seguidos disparam um confete discreto
+  useEffect(() => {
+    if (state.correctCount > 0 && state.correctCount % 3 === 0 && status === 'correct') {
+      confetti({
+        particleCount: 25,
+        spread: 40,
+        origin: { y: 0.7 },
+        colors: ['#2FBF71', '#F5B83D'],
+      })
     }
-  }
+  }, [state.correctCount, status])
 
-  if (loading || !lesson) {
+  if (loading) {
     return (
-      <AppShell showNav={false} className="px-5 py-6 justify-center items-center">
-        <p className="text-sm font-bold text-deep animate-pulse">Carregando conhecimento...</p>
-      </AppShell>
+      <div className="min-h-screen bg-[#FAF5FF] flex flex-col items-center justify-center p-6 text-center">
+        <div className="w-16 h-16 drop-shadow animate-bounce">
+          <Mascot pose="loading" className="w-full h-full object-contain" priority />
+        </div>
+        <p className="font-nunito font-bold text-sm text-purple-900 mt-4">
+          Preparando sua lição...
+        </p>
+      </div>
     )
   }
 
-  return (
-    <AppShell showNav={false} className="px-5 py-6 flex flex-col justify-between bg-white relative">
-      <div>
-        {/* Header com botão voltar e badge da trilha (Fiel ao Layout) */}
-        <div className="flex items-center justify-between mb-3">
-          <button
-            onClick={() => navigate('/aprender')}
-            className="p-2 -ml-2 rounded-full hover:bg-lilac/10 text-deep transition-colors"
-            aria-label="Voltar para aprender"
-          >
-            <ArrowLeft className="w-6 h-6" />
-          </button>
+  // TELA DE CONCLUSÃO DO NÍVEL (Prompt N11)
+  if (isLevelFinished) {
+    const isPerfect = state.mistakesCount === 0
+    return (
+      <div className="min-h-screen bg-[#FAF5FF] flex flex-col justify-between max-w-md mx-auto p-6 animate-fadeIn">
+        <div className="pt-8 text-center space-y-4">
+          {/* Mascote de Conclusão: troféu se acertou tudo de primeira, medalha caso contrário, diploma só se concluiu a trilha inteira */}
+          <div className="w-28 h-28 mx-auto drop-shadow-lg">
+            <Mascot
+              pose={
+                isTrackCompleted
+                  ? 'diploma'
+                  : isPerfect
+                  ? 'trophy'
+                  : 'medal'
+              }
+              className="w-full h-full object-contain"
+              priority
+            />
+          </div>
 
-          <div className="flex items-center gap-2">
-            <span className="text-[10px] font-extrabold text-textSec bg-bg px-2.5 py-1 rounded-full uppercase tracking-wider">
-              {lesson.track_title} · {currentIndex + 1}/{trackLessons.length}
+          <div>
+            <span className="text-xs font-black uppercase tracking-wider text-purple-600 bg-purple-100 px-3 py-1 rounded-full">
+              {isTrackCompleted ? 'TRILHA FINALIZADA' : 'NÍVEL CONCLUÍDO'}
             </span>
-            <span className="text-[10px] font-extrabold text-primary bg-primary/10 px-2.5 py-1 rounded-full uppercase tracking-wider">
-              {lesson.minutes} MIN
-            </span>
+            <h1 className="font-nunito font-black text-2xl sm:text-3xl text-[#3B0764] mt-2">
+              {isTrackCompleted
+                ? 'Trilha concluída! Parabéns!'
+                : isPerfect
+                ? 'Incrível! Tudo de primeira!'
+                : 'Muito bem! Você completou!'}
+            </h1>
+            <p className="font-nunito font-semibold text-sm text-gray-600 mt-1">
+              {isTrackCompleted
+                ? 'Você dominou todos os conceitos desta unidade.'
+                : 'Pequenos passos constantes constroem sua tranquilidade financeira.'}
+            </p>
+          </div>
+
+          {/* Cards de Conquista / Recompensas Reais */}
+          <div className="grid grid-cols-2 gap-3 pt-3">
+            <div className="bg-white p-4 rounded-2xl border border-purple-100 shadow-sm flex flex-col items-center text-center">
+              <img src="/assets/icons/icon-xp.png" alt="XP" className="w-8 h-8 object-contain mb-1" />
+              <span className="font-nunito font-black text-lg text-[#7D2BD6]">
+                +{completionResult?.xp_earned || 20} XP
+              </span>
+              <span className="font-nunito font-bold text-xs text-gray-500">Experiência</span>
+            </div>
+
+            <div className="bg-white p-4 rounded-2xl border border-amber-100 shadow-sm flex flex-col items-center text-center">
+              <img src="/assets/coins/coin-1.png" alt="Moedas" className="w-8 h-8 object-contain mb-1" />
+              <span className="font-nunito font-black text-lg text-[#B45309]">
+                +{completionResult?.coins_earned || 10} Moedas
+              </span>
+              <span className="font-nunito font-bold text-xs text-gray-500">Piggy Moedas</span>
+            </div>
+          </div>
+
+          {/* Ofensiva Piggy Streak Milestone */}
+          <div className="bg-gradient-to-r from-amber-50 to-orange-50 border border-amber-200 rounded-2xl p-4 flex items-center gap-3.5 shadow-sm text-left">
+            <img src="/assets/icons/icon-chama.png" alt="Ofensiva" className="w-10 h-10 object-contain flex-shrink-0" />
+            <div>
+              <div className="font-nunito font-black text-sm text-amber-900">
+                {completionResult?.current_streak || 1} dias de Ofensiva Piggy!
+              </div>
+              <p className="font-nunito text-xs text-amber-800/80 mt-0.5">
+                Pequenos passos também são conquistas. Continue amanhã!
+              </p>
+            </div>
           </div>
         </div>
 
-        {/* Título e Subtítulo (Fiel ao Layout Oficial) */}
-        <div className="mb-4">
-          <h1 className="text-2xl font-extrabold text-deep font-sans leading-tight mb-1">
-            {lesson.lesson_title}
+        {/* Botão de Retorno ao Mapa */}
+        <div className="pt-6 pb-2">
+          <ChunkyButton
+            variant="success"
+            size="lg"
+            className="w-full text-base font-black tracking-wide"
+            onClick={() => navigate(`/aprender/trilha/${resolvedTrackSlug}`)}
+          >
+            CONTINUAR PARA O MAPA
+          </ChunkyButton>
+        </div>
+      </div>
+    )
+  }
+
+  // TELA DE GAME OVER (Sem vidas restantes)
+  if (status === 'game_over') {
+    return (
+      <div className="min-h-screen bg-[#FAF5FF] flex flex-col justify-between max-w-md mx-auto p-6 animate-fadeIn">
+        <div className="pt-16 text-center space-y-4">
+          <div className="w-24 h-24 mx-auto drop-shadow">
+            <Mascot pose="retry" className="w-full h-full object-contain" priority />
+          </div>
+          <h1 className="font-nunito font-black text-2xl text-[#3B0764]">
+            Suas vidas acabaram por hoje!
           </h1>
-          <p className="text-xs font-semibold text-textSec leading-relaxed">
-            {lesson.summary}
+          <p className="font-nunito text-sm text-gray-600 max-w-xs mx-auto">
+            Não desanime! Errar faz parte do aprendizado. Respire fundo e tente novamente quando quiser.
           </p>
         </div>
-
-        {/* Mascote Oficial com a lâmpada amarela de ideias */}
-        <div className="flex justify-center my-3">
-          <Mascot size="lg" pose="idea" floating={true} />
+        <div className="pb-4">
+          <ChunkyButton
+            variant="primary"
+            size="lg"
+            className="w-full"
+            onClick={() => navigate(`/aprender/trilha/${resolvedTrackSlug}`)}
+          >
+            VOLTAR AO MAPA
+          </ChunkyButton>
         </div>
+      </div>
+    )
+  }
 
-        {/* Card de Conteúdo Principal (Layout do App) */}
-        <div className="bg-bg rounded-[22px] p-5 border border-lilac/15 text-xs text-deep/90 font-medium leading-relaxed flex flex-col gap-3 mb-4 shadow-xs">
-          {lesson.body_md.split('\n\n').map((paragraph, idx) => (
-            <p key={idx}>{paragraph}</p>
-          ))}
-        </div>
+  const currentQ = currentQuestion
+  const isAnswering = status === 'answering'
+  const isValidated = status === 'correct' || status === 'incorrect'
 
-        {/* Exemplo Prático */}
-        {lesson.example_md && (
-          <div className="bg-baby/50 rounded-[20px] p-4 border border-blue-100 mb-4 text-xs shadow-xs">
-            <span className="font-extrabold text-deep block mb-1">💡 Exemplo prático:</span>
-            <p className="font-semibold text-deep/80 leading-relaxed">
-              {lesson.example_md}
-            </p>
-          </div>
-        )}
+  return (
+    <div className="min-h-screen bg-[#FAF5FF] flex flex-col justify-between max-w-md mx-auto pb-6 relative">
+      {/* Top Bar da Lição com X, Barra de Progresso Elástica e Corações */}
+      <div className="p-4">
+        <QuizTopBar
+          progress={progressPercent}
+          hearts={hearts}
+          onClose={() => setShowExitDialog(true)}
+        />
+      </div>
 
-        {/* Dica Amiga da Mascote */}
-        {lesson.tip && (
-          <div className="bg-gold/20 rounded-[20px] p-4 border border-gold/40 mb-5 text-xs shadow-xs">
-            <span className="font-extrabold text-deep block mb-1">✨ Dica amiga:</span>
-            <p className="font-semibold text-deep/90 leading-relaxed">
-              {lesson.tip}
-            </p>
-          </div>
-        )}
-
-        {/* SEÇÃO INTERATIVA: Desafio Piggy (Completamente gamificado e sem bugs) */}
-        {quiz && (
-          <div className="bg-white rounded-[22px] p-5 border-2 border-primary/20 shadow-card mb-5 animate-fadeIn">
-            <div className="flex items-center justify-between mb-3">
-              <span className="text-xs font-extrabold text-primary flex items-center gap-1.5 uppercase tracking-wide">
-                <Zap className="w-4 h-4 text-gold fill-gold" />
-                Desafio Piggy · Teste rápido
-              </span>
-              <span className="text-[11px] font-bold text-deep/70 bg-bg px-2.5 py-0.5 rounded-full border border-lilac/15">
-                +10 PiggyXP
-              </span>
-            </div>
-
-            <h3 className="text-sm font-extrabold text-deep mb-3.5 leading-snug">
-              {quiz.question}
-            </h3>
-
-            {/* Opções de Resposta Interativas */}
-            <div className="flex flex-col gap-2.5 mb-3.5">
-              {quiz.options.map((opt, idx) => {
-                const isSelected = selectedOption === idx
-                let btnStyle = 'border-lilac/30 bg-bg text-deep hover:border-primary/50'
-
-                if (isAnswerChecked) {
-                  if (idx === quiz.correctIndex) {
-                    btnStyle = 'border-success bg-success/15 text-emerald-800 font-extrabold'
-                  } else if (isSelected) {
-                    btnStyle = 'border-danger/60 bg-danger/10 text-danger'
-                  }
-                } else if (isSelected) {
-                  btnStyle = 'border-primary bg-primary/10 text-primary font-bold shadow-xs'
-                }
-
-                return (
-                  <button
-                    key={idx}
-                    type="button"
-                    onClick={() => handleSelectOption(idx)}
-                    className={`w-full text-left p-3.5 rounded-2xl border-2 text-xs font-semibold transition-all flex items-center justify-between active:scale-[0.99] ${btnStyle}`}
-                  >
-                    <span className="flex-1 pr-2 leading-relaxed">{opt}</span>
-                    <div
-                      className={`w-5 h-5 rounded-full border-2 flex items-center justify-center shrink-0 ${
-                        isSelected ? 'border-primary bg-primary text-white' : 'border-lilac/40'
-                      }`}
-                    >
-                      {isSelected && <div className="w-2 h-2 rounded-full bg-white" />}
-                    </div>
-                  </button>
-                )
-              })}
-            </div>
-
-            {/* Ações e Feedback da Resposta */}
-            {!isAnswerChecked ? (
-              <Button
-                size="md"
-                fullWidth
-                disabled={selectedOption === null}
-                onClick={handleCheckAnswer}
-                loading={saving}
-              >
-                Confirmar resposta
-              </Button>
-            ) : (
-              <div
-                className={`p-4 rounded-2xl text-xs font-semibold flex flex-col gap-2.5 items-center text-center ${
-                  isCorrect
-                    ? 'bg-success/15 text-emerald-900 border border-success/30'
-                    : 'bg-gold/25 text-amber-950 border border-gold/50'
-                }`}
-              >
-                <Mascot size="md" pose={isCorrect ? 'diploma' : 'retry'} floating={true} />
-                <div className="font-extrabold flex items-center justify-center gap-1.5">
-                  {isCorrect ? (
-                    <>
-                      <CheckCircle2 className="w-4 h-4 text-success" />
-                      <span>Parabéns! Você dominou o conceito!</span>
-                    </>
-                  ) : (
-                    <>
-                      <HelpCircle className="w-4 h-4 text-amber-600" />
-                      <span>Dica da PurplePiggy:</span>
-                    </>
-                  )}
-                </div>
-                <p className="leading-relaxed text-deep/80">{quiz.explanation}</p>
-                {!isCorrect && (
-                  <button
-                    onClick={() => {
-                      setIsAnswerChecked(false)
-                      setSelectedOption(null)
-                    }}
-                    className="text-xs font-bold text-primary underline mt-1 self-start"
-                  >
-                    Tentar responder novamente
-                  </button>
+      {/* Área Central: Enunciado e Pergunta com Mascote Idea */}
+      <main className="flex-1 px-5 py-2 flex flex-col justify-center space-y-5">
+        {currentQ && (
+          <>
+            {/* Balão com Mascote Idea */}
+            <div className="flex items-start gap-3 bg-white p-4 rounded-3xl border border-purple-100 shadow-sm animate-fadeIn">
+              <div className="w-14 h-14 flex-shrink-0 drop-shadow">
+                <Mascot pose="idea" className="w-full h-full object-contain" priority />
+              </div>
+              <div className="flex-1 pt-1">
+                <h2 className="font-nunito font-extrabold text-base sm:text-lg text-[#3B0764] leading-snug">
+                  {currentQ.prompt}
+                </h2>
+                {currentQ.contextText && (
+                  <p className="font-nunito text-xs text-gray-500 mt-1 leading-relaxed">
+                    {currentQ.contextText}
+                  </p>
                 )}
               </div>
-            )}
+            </div>
+
+            {/* Renderização de Opções baseada na Tipologia */}
+            <div className="space-y-3 pt-2">
+              {'options' in currentQ &&
+                currentQ.options.map((optionText: string, idx: number) => {
+                  let cardState: 'idle' | 'selected' | 'correct' | 'incorrect' = 'idle'
+                  const isSelected = currentAnswer === idx
+
+                  if (isValidated) {
+                    if (idx === (currentQ as any).correctIndex) {
+                      cardState = 'correct'
+                    } else if (isSelected) {
+                      cardState = 'incorrect'
+                    }
+                  } else if (isSelected) {
+                    cardState = 'selected'
+                  }
+
+                  return (
+                    <OptionCard
+                      key={idx}
+                      label={OPTION_LETTERS[idx] || String(idx + 1)}
+                      text={optionText}
+                      state={cardState}
+                      disabled={isValidated}
+                      onClick={() => isAnswering && selectAnswer(idx)}
+                    />
+                  )
+                })}
+            </div>
+          </>
+        )}
+      </main>
+
+      {/* Rodapé: Botão "VERIFICAR" */}
+      <footer className="px-5 pt-3">
+        {isAnswering && (
+          <ChunkyButton
+            variant={canVerify ? 'primary' : 'neutral'}
+            size="lg"
+            className="w-full"
+            disabled={!canVerify}
+            onClick={() => verifyAnswer()}
+          >
+            VERIFICAR
+          </ChunkyButton>
+        )}
+      </footer>
+
+      {/* Painel de Feedback inferior quando validado */}
+      {isValidated && (
+        <FeedbackPanel
+          status={status === 'correct' ? 'correct' : 'incorrect'}
+          title={validation?.feedbackTitle}
+          explanation={validation?.explanation}
+          tip={currentQ?.tip}
+          onAction={() => nextQuestion()}
+        />
+      )}
+
+      {/* Diálogo de Saída da Lição */}
+      {showExitDialog && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm p-4 animate-fadeIn">
+          <div className="bg-white rounded-3xl p-6 max-w-xs w-full shadow-2xl text-center space-y-4">
+            <h3 className="font-nunito font-black text-xl text-[#3B0764]">
+              Sair da lição?
+            </h3>
+            <p className="font-nunito text-xs text-gray-600 leading-relaxed">
+              Se você sair agora, seu progresso desta tentativa não será salvo. Deseja realmente sair?
+            </p>
+            <div className="space-y-2 pt-2">
+              <ChunkyButton
+                variant="primary"
+                size="md"
+                className="w-full"
+                onClick={() => setShowExitDialog(false)}
+              >
+                CONTINUAR APRENDENDO
+              </ChunkyButton>
+              <button
+                type="button"
+                onClick={() => navigate(`/aprender/trilha/${resolvedTrackSlug}`)}
+                className="w-full py-2 font-nunito font-bold text-xs text-red-500 hover:text-red-700 transition-colors"
+              >
+                Sair mesmo assim
+              </button>
+            </div>
           </div>
-        )}
-      </div>
-
-      {/* Ações Inferiores (Fiel ao Layout Oficial) */}
-      <div className="flex flex-col gap-2.5 pt-2 pb-4">
-        {/* Botão de Concluir ou Avançar */}
-        {isCompleted ? (
-          <Button
-            size="lg"
-            fullWidth
-            onClick={handleNextStep}
-            icon={<ArrowRight className="w-5 h-5" />}
-          >
-            {nextLessonInSameTrack
-              ? 'Próxima lição da trilha →'
-              : nextTrack
-              ? `Concluir trilha e ir para ${nextTrack.track_title} →`
-              : 'Concluir trilha 🏆'}
-          </Button>
-        ) : (
-          <Button
-            size="lg"
-            fullWidth
-            loading={saving}
-            disabled={!isCorrect}
-            onClick={handleCheckAnswer}
-            icon={<CheckCircle2 className="w-5 h-5" />}
-          >
-            {isCorrect ? 'Concluir lição ✓' : 'Acerte o desafio para concluir'}
-          </Button>
-        )}
-
-        {/* Botão de Navegação secundária */}
-        <Button
-          size="md"
-          variant="outline"
-          fullWidth
-          onClick={() => navigate('/aprender')}
-        >
-          Voltar para as trilhas
-        </Button>
-      </div>
-    </AppShell>
+        </div>
+      )}
+    </div>
   )
 }
+export default LessonPage
