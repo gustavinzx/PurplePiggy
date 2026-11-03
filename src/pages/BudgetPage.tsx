@@ -4,6 +4,7 @@ import { useAuth } from '../context/AuthContext'
 import { AppShell } from '../components/AppShell'
 import { Button } from '../components/Button'
 import { Mascot } from '../components/Mascot'
+import { CategoryCircle } from '../components/CategoryIcon'
 import { getBudgetAlertStatus, suggestCategoryLimits } from '../lib/finance'
 import { formatCurrency, formatPercent } from '../lib/format'
 import {
@@ -335,12 +336,7 @@ export const BudgetPage: React.FC = () => {
               <div key={cat.id} className="flex flex-col gap-1.5">
                 <div className="flex items-center justify-between">
                   <div className="flex items-center gap-2.5">
-                    <div
-                      className="w-7 h-7 rounded-xl flex items-center justify-center text-white shrink-0"
-                      style={{ backgroundColor: cat.color }}
-                    >
-                      {getCategoryIcon(cat.icon)}
-                    </div>
+                    <CategoryCircle name={cat.slug || cat.icon || cat.name} size="sm" />
                     <div>
                       <div className="text-xs font-bold text-deep leading-tight">
                         {cat.name}

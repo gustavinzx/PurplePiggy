@@ -4,6 +4,7 @@ import { useAuth } from '../context/AuthContext'
 import { supabase } from '../lib/supabase'
 import { AppShell } from '../components/AppShell'
 import { Mascot } from '../components/Mascot'
+import { CategoryCircle } from '../components/CategoryIcon'
 import { BackgroundBlobs } from '../components/BackgroundBlobs'
 import { ProgressRing } from '../components/ProgressRing'
 import { TransactionModal } from '../components/TransactionModal'
@@ -70,9 +71,6 @@ export const DashboardPage: React.FC = () => {
     setLoading(true)
 
     try {
-      // Atraso artificial de 2s para medições de carregamento (conforme item 1 do prompt)
-      await new Promise((r) => setTimeout(r, 2000))
-
       // 1. Categorias
       const { data: cats } = await supabase.from('categories').select('*')
       const catMap: Record<string, Category> = {}
@@ -184,87 +182,82 @@ export const DashboardPage: React.FC = () => {
       {/* Fundo com manchas orgânicas lilás e brilhos dourados sutis */}
       <BackgroundBlobs showSparkles={true} />
 
-      {/* 1. Header: Saudação e Mascote */}
-      <div className="w-full flex items-center justify-between pt-1 min-w-0">
-        <div className="min-w-0 flex-1 pr-2">
-          <div className="flex items-center gap-1.5 min-w-0">
-            <h1 className="text-[22px] font-extrabold text-deep font-sans tracking-tight truncate">
-              Olá, {firstName}!
-            </h1>
-            <svg
-              className="w-4 h-4 text-gold-star fill-current shrink-0"
-              viewBox="0 0 24 24"
-            >
-              <path d="M12 0L14.59 9.41L24 12L14.59 14.59L12 24L9.41 14.59L0 12L9.41 9.41L12 0Z" />
-            </svg>
-          </div>
-          <p className="text-[13px] font-semibold text-deep leading-tight mt-0.5 truncate">
-            Sua vida financeira no caminho certo.
-          </p>
-        </div>
-
-        {/* Mascote oficial posicionado no canto superior direito com moeda visível (ou espiando se saldo oculto) */}
-        <div className="shrink-0 -mr-1">
-          <Mascot
-            pose={hideBalance ? 'peek' : 'head'}
-            size="md"
-            priority
-            alt="Mascote PurplePiggy"
-          />
-        </div>
+      {/* 1. Header: Saudação oficial */}
+      <div className="w-full pt-1 pb-1 min-w-0">
+        <h1 className="text-[22px] font-extrabold text-deep font-sans tracking-tight truncate">
+          Olá, {firstName}! 👋
+        </h1>
+        <p className="text-[13px] font-semibold text-deep leading-tight mt-0.5 truncate">
+          Sua vida financeira no caminho certo.
+        </p>
       </div>
 
-      {/* 2. Card "Saldo disponível" (Degradê roxo canônico #8E32D8 -> #521D83) */}
-      <div className="w-full bg-gradient-to-br from-[#8E32D8] to-[#521D83] text-white rounded-[24px] p-5 shadow-card-saldo relative overflow-hidden min-w-0">
-        {/* Linha superior: Rótulo e Olho para ocultar/mostrar */}
-        <div className="flex items-center justify-between mb-1.5 min-w-0">
-          <span className="text-[13px] font-medium text-white/90">Saldo disponível</span>
-          <button
-            onClick={toggleHideBalance}
-            className="p-1 rounded-full text-white/90 hover:text-white transition-opacity"
-            aria-label={hideBalance ? 'Mostrar saldo' : 'Ocultar saldo'}
-          >
-            {hideBalance ? (
-              <EyeOff className="w-4 h-4 text-white/90" strokeWidth={2} />
-            ) : (
-              <Eye className="w-4 h-4 text-white/90" strokeWidth={2} />
-            )}
-          </button>
+      {/* 2. Card "Saldo disponível" com Mascote oficial apoiado na borda superior */}
+      <div className="relative w-full mt-6 min-w-0">
+        {/* Mascote pig-peek apoiando as patinhas exatamente na borda superior direita do card */}
+        <div
+          className="absolute right-4 z-20 pointer-events-none select-none"
+          style={{ top: 0, transform: 'translateY(-79.6%)' }}
+        >
+          <Mascot
+            pose="peek"
+            size="md"
+            priority
+            alt="Mascote PurplePiggy espiando sobre o card de saldo"
+          />
         </div>
 
-        {/* Valor principal real do banco */}
-        <div className="text-[28px] font-extrabold font-sans tracking-tight mb-3.5 leading-tight truncate min-w-0">
-          {loading ? (
-            <div className="w-full max-w-[144px] h-8 bg-white/20 rounded animate-pulse" />
-          ) : hideBalance ? (
-            '••••••••'
-          ) : (
-            formatCurrency(availableBalance)
-          )}
-        </div>
-
-        {/* Linha inferior: Pílula verde de variação e Atualizado hoje */}
-        <div className="flex items-center justify-between text-[11px] font-bold min-w-0">
-          {monthlySummary.variationPct !== null ? (
-            <div className={`inline-flex items-center gap-1 px-2.5 py-1 rounded-pill text-[12px] font-bold shrink-0 ${
-              monthlySummary.variationPct >= 0
-                ? 'bg-[#DCFCE7] text-[#15803D]'
-                : 'bg-[#FCE7F3] text-[#BE185D]'
-            }`}>
-              {monthlySummary.variationPct >= 0 ? (
-                <ArrowUp className="w-3.5 h-3.5 text-[#15803D]" strokeWidth={2.5} />
+        <div className="w-full bg-gradient-to-br from-[#8E32D8] to-[#521D83] text-white rounded-[24px] p-5 shadow-card-saldo relative overflow-hidden min-w-0">
+          {/* Linha superior: Rótulo e Olho para ocultar/mostrar */}
+          <div className="flex items-center justify-between mb-1.5 min-w-0">
+            <span className="text-[13px] font-medium text-white/90">Saldo disponível</span>
+            <button
+              onClick={toggleHideBalance}
+              className="p-1 rounded-full text-white/90 hover:text-white transition-opacity"
+              aria-label={hideBalance ? 'Mostrar saldo' : 'Ocultar saldo'}
+            >
+              {hideBalance ? (
+                <EyeOff className="w-4 h-4 text-white/90" strokeWidth={2} />
               ) : (
-                <ArrowDown className="w-3.5 h-3.5 text-[#BE185D]" strokeWidth={2.5} />
+                <Eye className="w-4 h-4 text-white/90" strokeWidth={2} />
               )}
-              <span>{monthlySummary.variationPct >= 0 ? '+' : ''}{monthlySummary.variationPct}%</span>
-            </div>
-          ) : (
-            <div className="inline-flex items-center gap-1 bg-[#DCFCE7] text-[#15803D] px-2.5 py-1 rounded-pill text-[12px] font-bold shrink-0">
-              <ArrowUp className="w-3.5 h-3.5 text-[#15803D]" strokeWidth={2.5} />
-              <span>+12%</span>
-            </div>
-          )}
-          <span className="text-white/80 font-medium text-[12px] shrink-0">Atualizado hoje</span>
+            </button>
+          </div>
+
+          {/* Valor principal real do banco */}
+          <div className="text-[28px] font-extrabold font-sans tracking-tight mb-3.5 leading-tight truncate min-w-0">
+            {loading ? (
+              <div className="w-full max-w-[144px] h-8 bg-white/20 rounded animate-pulse" />
+            ) : hideBalance ? (
+              '••••••••'
+            ) : (
+              formatCurrency(availableBalance)
+            )}
+          </div>
+
+          {/* Linha inferior: Pílula verde de variação e Atualizado hoje */}
+          <div className="flex items-center justify-between text-[11px] font-bold min-w-0">
+            {monthlySummary.variationPct !== null ? (
+              <div className={`inline-flex items-center gap-1 px-2.5 py-1 rounded-pill text-[12px] font-bold shrink-0 ${
+                monthlySummary.variationPct >= 0
+                  ? 'bg-[#DCFCE7] text-[#15803D]'
+                  : 'bg-[#FCE7F3] text-[#BE185D]'
+              }`}>
+                {monthlySummary.variationPct >= 0 ? (
+                  <ArrowUp className="w-3.5 h-3.5 text-[#15803D]" strokeWidth={2.5} />
+                ) : (
+                  <ArrowDown className="w-3.5 h-3.5 text-[#BE185D]" strokeWidth={2.5} />
+                )}
+                <span>{monthlySummary.variationPct >= 0 ? '+' : ''}{monthlySummary.variationPct}%</span>
+              </div>
+            ) : (
+              <div className="inline-flex items-center gap-1 bg-[#DCFCE7] text-[#15803D] px-2.5 py-1 rounded-pill text-[12px] font-bold shrink-0">
+                <ArrowUp className="w-3.5 h-3.5 text-[#15803D]" strokeWidth={2.5} />
+                <span>+12%</span>
+              </div>
+            )}
+            <span className="text-white/80 font-medium text-[12px] shrink-0">Atualizado hoje</span>
+          </div>
         </div>
       </div>
 
@@ -477,12 +470,10 @@ export const DashboardPage: React.FC = () => {
                   className="w-full py-3 flex items-center justify-between hover:bg-[#FAF6FD] px-1 rounded-xl transition-colors min-w-0"
                 >
                   <div className="flex items-center gap-3 min-w-0 flex-1">
-                    <div
-                      className="w-10 h-10 rounded-2xl flex items-center justify-center text-white shrink-0 shadow-xs"
-                      style={{ backgroundColor: cat?.color || '#7D2BD6' }}
-                    >
-                      {getCategoryIcon(cat?.icon)}
-                    </div>
+                    <CategoryCircle
+                      name={cat?.slug || cat?.icon || cat?.name || 'outros'}
+                      size="md"
+                    />
                     <div className="min-w-0 flex-1">
                       <div className="text-[14px] font-bold text-deep leading-tight truncate">
                         {tx.description}
@@ -495,7 +486,7 @@ export const DashboardPage: React.FC = () => {
 
                   <div
                     className={`text-[14px] font-extrabold shrink-0 ml-2 ${
-                      isIncome ? 'text-[#15803D]' : 'text-[#E5487A]'
+                      isIncome ? 'text-[#15803D]' : 'text-deep'
                     }`}
                   >
                     {isIncome ? '+ ' : '- '}

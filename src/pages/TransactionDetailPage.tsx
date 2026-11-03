@@ -5,6 +5,7 @@ import { useAuth } from '../context/AuthContext'
 import { AppShell } from '../components/AppShell'
 import { Button } from '../components/Button'
 import { Mascot } from '../components/Mascot'
+import { CategoryCircle } from '../components/CategoryIcon'
 import { formatCurrency } from '../lib/format'
 import {
   ArrowLeft,
@@ -201,12 +202,11 @@ export const TransactionDetailPage: React.FC = () => {
 
         {/* Card Destaque (reproduzindo exatamente o layout) */}
         <div className="bg-bg rounded-[26px] p-6 flex flex-col items-center text-center mb-6 border border-lilac/15">
-          <div
-            className="w-16 h-16 rounded-2xl flex items-center justify-center text-white mb-3 shadow-sm"
-            style={{ backgroundColor: currentCat?.color || '#B037F8' }}
-          >
-            {getCategoryIcon(currentCat?.icon)}
-          </div>
+          <CategoryCircle
+            name={currentCat?.slug || currentCat?.icon || currentCat?.name || "outros"}
+            size="lg"
+            className="mb-3"
+          />
 
           <h2 className="text-xl font-extrabold text-deep font-sans mb-1">
             {description}
