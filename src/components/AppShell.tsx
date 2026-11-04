@@ -42,13 +42,11 @@ export const AppShell: React.FC<AppShellProps> = ({
       {/* Container Mobile Principal: coluna centralizada com altura 100dvh estrita */}
       <div
         id="app-shell-container"
-        className={`w-full max-w-[var(--app-max-width)] h-[100dvh] flex flex-col relative shadow-2xl overflow-hidden border-x border-lilac/10 mx-auto ${
+        className={`w-full max-w-full sm:max-w-[var(--app-max-width)] h-[100dvh] flex flex-col relative shadow-none sm:shadow-2xl overflow-hidden border-0 sm:border-x sm:border-lilac/10 mx-auto ${
           variant === 'splash' ? 'bg-transparent' : 'bg-bg'
         } ${containerClassName}`}
         style={{
           width: '100%',
-          maxWidth: 'var(--app-max-width)',
-          marginInline: 'auto',
           paddingTop: 'env(safe-area-inset-top, 0px)',
         }}
       >

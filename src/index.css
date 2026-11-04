@@ -65,6 +65,8 @@
 @layer base {
   html {
     scrollbar-gutter: stable;
+    -webkit-text-size-adjust: 100%;
+    text-size-adjust: 100%;
     overflow-x: clip;
     overscroll-behavior: none;
     height: 100%;
@@ -75,6 +77,8 @@
     overflow-x: clip;
     overscroll-behavior: none;
     touch-action: manipulation;
+    -webkit-text-size-adjust: 100%;
+    text-size-adjust: 100%;
     -webkit-tap-highlight-color: transparent;
     height: 100%;
     min-height: 100vh;

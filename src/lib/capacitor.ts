@@ -22,7 +22,7 @@ export async function initCapacitor(): Promise<void> {
 
     if (Capacitor.getPlatform() === 'android') {
       await StatusBar.setBackgroundColor({ color: '#F8F5FC' }).catch(() => {})
-      await StatusBar.setOverlaysWebView({ overlay: true }).catch(() => {})
+      await StatusBar.setOverlaysWebView({ overlay: false }).catch(() => {})
     }
 
     // 2. Teclado: rolagem suave para manter o campo focado visível acima do teclado
