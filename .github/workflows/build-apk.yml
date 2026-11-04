@@ -45,16 +45,17 @@ jobs:
           echo "Verified index.html in Android:"
           ls -la android/app/src/main/assets/public/index.html
 
-      - name: Accept Android SDK Licenses & Install Platform 36
+      - name: Accept Android SDK Licenses & Install Platform 35
         run: |
           yes | $ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager --licenses || true
-          $ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager "platforms;android-36" "build-tools;36.0.0" || true
+          $ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager "platforms;android-35" "build-tools;35.0.0" || true
 
       - name: Build Debug APK
         run: |
           cd android
           chmod +x gradlew
-          ./gradlew assembleDebug --no-daemon --stacktrace
+          ./gradlew assembleDebug --no-daemon --stacktrace > build.log 2>&1 || (echo "=== GRADLE FAILED - LAST 150 LINES ===" && tail -n 150 build.log && exit 1)
+          cat build.log | tail -n 50
 
       - name: Locate APK
         run: |
