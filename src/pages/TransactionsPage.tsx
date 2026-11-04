@@ -157,10 +157,10 @@ export const TransactionsPage: React.FC = () => {
         </p>
       </div>
 
-      {/* 2. Sequência de 3 Pílulas de Filtro (Período, Categoria e Tipo) com símbolos */}
-      <div className="w-full flex items-center gap-2 py-0.5 min-w-0 relative z-30">
+      {/* 2. Sequência de 3 Pílulas de Filtro (Período, Categoria e Tipo) distribuídas e centralizadas */}
+      <div className="w-full grid grid-cols-3 gap-2 py-0.5 min-w-0 relative z-30">
         {/* Pílula 1: Período com ícone */}
-        <div ref={periodRef} className="relative shrink-0">
+        <div ref={periodRef} className="relative w-full min-w-0">
           <button
             type="button"
             onClick={() => {
@@ -168,7 +168,7 @@ export const TransactionsPage: React.FC = () => {
               setCategoryOpen(false)
               setTypeOpen(false)
             }}
-            className="h-9 px-3 bg-white/95 hover:bg-white border border-[#E9D5FF] rounded-full text-[12px] font-extrabold text-deep flex items-center gap-1.5 shadow-xs transition-all active:scale-95"
+            className="w-full h-10 px-2 sm:px-3 bg-white/95 hover:bg-white border border-[#E9D5FF] rounded-full text-[12px] font-extrabold text-deep flex items-center justify-center gap-1 shadow-xs transition-all active:scale-95"
           >
             <Calendar className="w-3.5 h-3.5 text-[#8E32D8] shrink-0" strokeWidth={2.5} />
             <span>{periodLabels[period]}</span>
@@ -176,7 +176,7 @@ export const TransactionsPage: React.FC = () => {
           </button>
 
           {periodOpen && (
-            <div className="absolute left-0 top-10 z-40 min-w-[170px] bg-white border border-[#F0EBF8] rounded-2xl shadow-card py-1.5 animate-in fade-in zoom-in-95">
+            <div className="absolute left-0 top-11 z-40 min-w-[170px] bg-white border border-[#F0EBF8] rounded-2xl shadow-card py-1.5 animate-in fade-in zoom-in-95">
               <button
                 onClick={() => {
                   setPeriod('this_month')
@@ -218,7 +218,7 @@ export const TransactionsPage: React.FC = () => {
         </div>
 
         {/* Pílula 2: Categoria com ícone 3D oficial para cada tipo */}
-        <div ref={categoryRef} className="relative shrink-0">
+        <div ref={categoryRef} className="relative w-full min-w-0">
           <button
             type="button"
             onClick={() => {
@@ -226,7 +226,7 @@ export const TransactionsPage: React.FC = () => {
               setPeriodOpen(false)
               setTypeOpen(false)
             }}
-            className="h-9 px-3 bg-white/95 hover:bg-white border border-[#E9D5FF] rounded-full text-[12px] font-extrabold text-deep flex items-center gap-1.5 shadow-xs transition-all active:scale-95"
+            className="w-full h-10 px-2 sm:px-3 bg-white/95 hover:bg-white border border-[#E9D5FF] rounded-full text-[12px] font-extrabold text-deep flex items-center justify-center gap-1 shadow-xs transition-all active:scale-95"
           >
             {selectedCategory === 'all' ? (
               <Sparkles className="w-3.5 h-3.5 text-[#8E32D8] shrink-0" />
@@ -237,12 +237,12 @@ export const TransactionsPage: React.FC = () => {
                 className="w-4 h-4 shrink-0"
               />
             )}
-            <span className="max-w-[110px] truncate">{selectedCategoryName}</span>
+            <span className="truncate">{selectedCategoryName}</span>
             <ChevronDown className={`w-3.5 h-3.5 text-deep/70 transition-transform ${categoryOpen ? 'rotate-180' : ''}`} />
           </button>
 
           {categoryOpen && (
-            <div className="absolute left-0 top-10 z-40 min-w-[220px] max-h-64 overflow-y-auto bg-white border border-[#F0EBF8] rounded-2xl shadow-card py-1.5 animate-in fade-in zoom-in-95">
+            <div className="absolute left-1/2 -translate-x-1/2 top-11 z-40 w-[240px] max-h-64 overflow-y-auto bg-white border border-[#F0EBF8] rounded-2xl shadow-card py-1.5 animate-in fade-in zoom-in-95">
               <button
                 onClick={() => {
                   setSelectedCategory('all')
@@ -279,7 +279,7 @@ export const TransactionsPage: React.FC = () => {
         </div>
 
         {/* Pílula 3: Tipo (Todos, Despesas, Receitas) com símbolos */}
-        <div ref={typeRef} className="relative shrink-0">
+        <div ref={typeRef} className="relative w-full min-w-0">
           <button
             type="button"
             onClick={() => {
@@ -287,7 +287,7 @@ export const TransactionsPage: React.FC = () => {
               setPeriodOpen(false)
               setCategoryOpen(false)
             }}
-            className="h-9 px-3 bg-white/95 hover:bg-white border border-[#E9D5FF] rounded-full text-[12px] font-extrabold text-deep flex items-center gap-1.5 shadow-xs transition-all active:scale-95"
+            className="w-full h-10 px-2 sm:px-3 bg-white/95 hover:bg-white border border-[#E9D5FF] rounded-full text-[12px] font-extrabold text-deep flex items-center justify-center gap-1 shadow-xs transition-all active:scale-95"
           >
             {typeFilter === 'all' && (
               <Layers className="w-3.5 h-3.5 text-[#8E32D8] shrink-0" strokeWidth={2.5} />
@@ -313,7 +313,7 @@ export const TransactionsPage: React.FC = () => {
           </button>
 
           {typeOpen && (
-            <div className="absolute right-0 sm:left-0 top-10 z-40 min-w-[190px] bg-white border border-[#F0EBF8] rounded-2xl shadow-card py-1.5 animate-in fade-in zoom-in-95">
+            <div className="absolute right-0 top-11 z-40 min-w-[190px] bg-white border border-[#F0EBF8] rounded-2xl shadow-card py-1.5 animate-in fade-in zoom-in-95">
               <button
                 onClick={() => {
                   setTypeFilter('all')
