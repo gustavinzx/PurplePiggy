@@ -5,8 +5,8 @@ import { zodResolver } from '@hookform/resolvers/zod'
 import { z } from 'zod'
 import { useAuth } from '../context/AuthContext'
 import { Mascot } from '../components/Mascot'
-import { Button } from '../components/Button'
 import { AppShell } from '../components/AppShell'
+import { BackgroundBlobs } from '../components/BackgroundBlobs'
 import { ArrowLeft, Mail, Lock, Eye, EyeOff, Sparkles } from 'lucide-react'
 import { toast } from 'sonner'
 
@@ -58,49 +58,53 @@ export const LoginPage: React.FC = () => {
   }
 
   return (
-    <AppShell showNav={false} className="px-6 py-6 justify-between bg-white">
-      <div>
-        {/* Header com mascote no canto superior direito */}
-        <div className="flex items-center justify-between mb-2">
+    <AppShell variant="app" showNav={false} className="relative px-6 py-6 min-h-screen flex flex-col justify-between select-none">
+      <BackgroundBlobs showSparkles={true} />
+
+      <div className="relative z-10 w-full">
+        {/* Header com botão voltar e Mascote oficial no canto superior direito cortando a borda */}
+        <div className="relative flex items-center justify-between pt-1 mb-6">
           <button
             onClick={() => navigate('/')}
-            className="p-2 -ml-2 rounded-full hover:bg-lilac/10 text-deep transition-colors"
+            className="w-10 h-10 rounded-full bg-white/80 hover:bg-white text-deep shadow-xs flex items-center justify-center transition-all active:scale-95"
             aria-label="Voltar"
           >
-            <ArrowLeft className="w-6 h-6" />
+            <ArrowLeft className="w-5 h-5 text-[#581C87]" />
           </button>
-          <div className="-mr-2 -mt-2">
-            <Mascot size="sm" pose="welcome" />
+
+          {/* Mascote pig-head grande no canto superior direito conforme design/telas/04-login.png */}
+          <div className="absolute -top-3 -right-4 w-28 h-28 pointer-events-none drop-shadow-md z-10 select-none">
+            <Mascot pose="head" priority className="w-full h-full object-contain" />
           </div>
         </div>
 
         {/* Título e Subtítulo */}
-        <div className="mb-8">
-          <h1 className="text-2xl font-extrabold text-deep font-sans mb-1">
+        <div className="mb-8 max-w-[240px]">
+          <h1 className="text-[26px] font-extrabold text-[#33105D] font-sans leading-tight tracking-tight mb-1.5">
             Que bom ter você de volta!
           </h1>
-          <p className="text-sm font-semibold text-textSec">
+          <p className="text-[14px] font-bold text-[#581C87]/75 leading-snug">
             Entre para acompanhar sua evolução.
           </p>
         </div>
 
-        {/* Formulário */}
+        {/* Formulário com Caixas Altas, Espaçosas e Profissionais */}
         <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-4">
           {/* E-mail */}
           <div>
-            <div className="relative flex items-center">
-              <span className="absolute left-4 text-primary">
-                <Mail className="w-5 h-5" />
+            <div className="relative flex items-center shadow-[0_4px_16px_rgba(125,43,214,0.06)] rounded-full">
+              <span className="absolute left-4.5 text-[#8E32D8] pointer-events-none">
+                <Mail className="w-5 h-5" strokeWidth={2.2} />
               </span>
               <input
                 {...register('email')}
                 type="email"
                 placeholder="E-mail"
-                className="w-full h-13 pl-12 pr-4 bg-bg border border-lilac/30 rounded-2xl text-deep placeholder:text-textSec/60 font-semibold focus:outline-none focus:border-primary focus:ring-2 focus:ring-primary/20 transition-all text-sm"
+                className="w-full h-14 pl-14 pr-5 bg-white border border-[#E9D5FF]/80 rounded-full text-deep placeholder:text-[#581C87]/45 font-bold text-[15px] focus:outline-none focus:border-[#8E32D8] focus:ring-4 focus:ring-[#8E32D8]/10 transition-all"
               />
             </div>
             {errors.email && (
-              <p className="text-xs text-danger font-bold mt-1 ml-2">
+              <p className="text-xs text-danger font-extrabold mt-1.5 ml-4">
                 {errors.email.message}
               </p>
             )}
@@ -108,72 +112,75 @@ export const LoginPage: React.FC = () => {
 
           {/* Senha */}
           <div>
-            <div className="relative flex items-center">
-              <span className="absolute left-4 text-primary">
-                <Lock className="w-5 h-5" />
+            <div className="relative flex items-center shadow-[0_4px_16px_rgba(125,43,214,0.06)] rounded-full">
+              <span className="absolute left-4.5 text-[#8E32D8] pointer-events-none">
+                <Lock className="w-5 h-5" strokeWidth={2.2} />
               </span>
               <input
                 {...register('password')}
                 type={showPassword ? 'text' : 'password'}
                 placeholder="Senha"
-                className="w-full h-13 pl-12 pr-12 bg-bg border border-lilac/30 rounded-2xl text-deep placeholder:text-textSec/60 font-semibold focus:outline-none focus:border-primary focus:ring-2 focus:ring-primary/20 transition-all text-sm"
+                className="w-full h-14 pl-14 pr-12 bg-white border border-[#E9D5FF]/80 rounded-full text-deep placeholder:text-[#581C87]/45 font-bold text-[15px] focus:outline-none focus:border-[#8E32D8] focus:ring-4 focus:ring-[#8E32D8]/10 transition-all"
               />
               <button
                 type="button"
                 onClick={() => setShowPassword(!showPassword)}
-                className="absolute right-4 text-textSec hover:text-deep"
+                className="absolute right-4 p-1.5 rounded-full text-[#581C87]/60 hover:text-[#8E32D8] hover:bg-purple-50 transition-colors"
+                aria-label={showPassword ? 'Ocultar senha' : 'Ver senha'}
               >
                 {showPassword ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
               </button>
             </div>
             {errors.password && (
-              <p className="text-xs text-danger font-bold mt-1 ml-2">
+              <p className="text-xs text-danger font-extrabold mt-1.5 ml-4">
                 {errors.password.message}
               </p>
             )}
           </div>
 
           {/* Esqueci minha senha ? */}
-          <div className="text-right">
+          <div className="text-right pt-0.5">
             <Link
               to="/redefinir-senha"
-              className="text-xs font-bold text-deep/80 hover:text-primary transition-colors"
+              className="text-[13px] font-extrabold text-[#581C87] hover:text-[#8E32D8] transition-colors"
             >
               Esqueci minha senha ?
             </Link>
           </div>
 
+          {/* Botões Principais */}
           <div className="flex flex-col gap-3 mt-4">
-            <Button
+            <button
               type="submit"
-              size="lg"
-              fullWidth
-              loading={isSubmitting}
+              disabled={isSubmitting}
+              className="w-full h-14 rounded-full bg-gradient-to-r from-[#8E32D8] to-[#6C22BD] text-white font-extrabold text-[16px] shadow-btn-floating hover:opacity-95 active:scale-[0.98] transition-all flex items-center justify-center cursor-pointer"
             >
-              Entrar
-            </Button>
+              {isSubmitting ? (
+                <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin" />
+              ) : (
+                'Entrar'
+              )}
+            </button>
 
-            <Button
+            <button
               type="button"
-              variant="outline"
-              size="lg"
-              fullWidth
               onClick={() => navigate('/cadastrar')}
+              className="w-full h-14 rounded-full bg-white border-2 border-[#8E32D8] text-[#581C87] font-extrabold text-[15px] hover:bg-purple-50/60 active:scale-[0.98] transition-all shadow-xs flex items-center justify-center cursor-pointer"
             >
               Criar uma conta
-            </Button>
+            </button>
           </div>
         </form>
       </div>
 
       {/* Botão extra discreto de demonstração */}
-      <div className="pt-6 pb-2 text-center border-t border-lilac/10">
+      <div className="relative z-10 pt-6 pb-2 text-center">
         <button
           onClick={handleDemo}
           disabled={isDemoLoading}
-          className="text-xs font-bold text-textSec hover:text-primary transition-colors inline-flex items-center gap-1.5 py-1 px-3 rounded-full hover:bg-lilac/10"
+          className="text-xs font-bold text-[#581C87]/70 hover:text-[#8E32D8] transition-colors inline-flex items-center gap-1.5 py-1.5 px-4 rounded-full hover:bg-white/80 backdrop-blur-xs"
         >
-          <Sparkles className="w-3.5 h-3.5 text-gold" />
+          <Sparkles className="w-4 h-4 text-amber-500" />
           {isDemoLoading ? 'Preparando...' : 'Ver modo demonstração (Ana Oliveira)'}
         </button>
       </div>

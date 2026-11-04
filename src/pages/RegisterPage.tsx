@@ -4,9 +4,9 @@ import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { z } from 'zod'
 import { useAuth } from '../context/AuthContext'
-import { Button } from '../components/Button'
 import { Mascot } from '../components/Mascot'
 import { AppShell } from '../components/AppShell'
+import { BackgroundBlobs } from '../components/BackgroundBlobs'
 import { ArrowLeft, User, Mail, Lock, ShieldCheck, Eye, EyeOff } from 'lucide-react'
 import { toast } from 'sonner'
 
@@ -57,49 +57,53 @@ export const RegisterPage: React.FC = () => {
   }
 
   return (
-    <AppShell showNav={false} className="px-6 py-6 justify-between bg-white">
-      <div>
-        {/* Header com botão voltar */}
-        <div className="flex items-center justify-between mb-4">
+    <AppShell variant="app" showNav={false} className="relative px-6 py-6 min-h-screen flex flex-col justify-between select-none">
+      <BackgroundBlobs showSparkles={true} />
+
+      <div className="relative z-10 w-full">
+        {/* Header com botão voltar e Mascote oficial */}
+        <div className="relative flex items-center justify-between pt-1 mb-4">
           <button
             onClick={() => navigate(-1)}
-            className="p-2 -ml-2 rounded-full hover:bg-lilac/10 text-deep transition-colors"
+            className="w-10 h-10 rounded-full bg-white/80 hover:bg-white text-deep shadow-xs flex items-center justify-center transition-all active:scale-95"
             aria-label="Voltar"
           >
-            <ArrowLeft className="w-6 h-6" />
+            <ArrowLeft className="w-5 h-5 text-[#581C87]" />
           </button>
-          <div className="-mr-2 -mt-2">
-            <Mascot size="sm" pose="welcome" />
+
+          {/* Mascote pig-peek espiando na parte superior direita */}
+          <div className="absolute -top-3 -right-3 w-20 h-20 pointer-events-none drop-shadow-md z-10 select-none">
+            <Mascot pose="peek" priority className="w-full h-full object-contain" />
           </div>
         </div>
 
-        {/* Título */}
-        <div className="mb-6">
-          <h1 className="text-2xl font-extrabold text-deep font-sans mb-1">
+        {/* Título Centralizado fiel a design/telas/03-cadastro.png */}
+        <div className="mb-6 text-center">
+          <h1 className="text-[26px] font-extrabold text-[#33105D] font-sans leading-tight tracking-tight mb-1">
             Crie sua conta
           </h1>
-          <p className="text-sm font-semibold text-textSec">
-            Um novo começo para sua vida financeira.
+          <p className="text-[14px] font-bold text-[#581C87]/75 leading-tight">
+            Um novo começo para<br />sua vida financeira.
           </p>
         </div>
 
-        {/* Formulário */}
+        {/* Formulário com Caixas Altas, Espaçosas e Confortáveis */}
         <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-3.5">
           {/* Nome completo */}
           <div>
-            <div className="relative flex items-center">
-              <span className="absolute left-4 text-primary">
-                <User className="w-5 h-5" />
+            <div className="relative flex items-center shadow-[0_4px_16px_rgba(125,43,214,0.06)] rounded-full">
+              <span className="absolute left-4.5 text-[#8E32D8] pointer-events-none">
+                <User className="w-5 h-5" strokeWidth={2.2} />
               </span>
               <input
                 {...register('fullName')}
                 type="text"
                 placeholder="Nome completo"
-                className="w-full h-13 pl-12 pr-4 bg-bg border border-lilac/30 rounded-2xl text-deep placeholder:text-textSec/60 font-semibold focus:outline-none focus:border-primary focus:ring-2 focus:ring-primary/20 transition-all text-sm"
+                className="w-full h-14 pl-14 pr-5 bg-white border border-[#E9D5FF]/80 rounded-full text-deep placeholder:text-[#581C87]/45 font-bold text-[15px] focus:outline-none focus:border-[#8E32D8] focus:ring-4 focus:ring-[#8E32D8]/10 transition-all"
               />
             </div>
             {errors.fullName && (
-              <p className="text-xs text-danger font-bold mt-1 ml-2">
+              <p className="text-xs text-danger font-extrabold mt-1.5 ml-4">
                 {errors.fullName.message}
               </p>
             )}
@@ -107,19 +111,19 @@ export const RegisterPage: React.FC = () => {
 
           {/* E-mail */}
           <div>
-            <div className="relative flex items-center">
-              <span className="absolute left-4 text-primary">
-                <Mail className="w-5 h-5" />
+            <div className="relative flex items-center shadow-[0_4px_16px_rgba(125,43,214,0.06)] rounded-full">
+              <span className="absolute left-4.5 text-[#8E32D8] pointer-events-none">
+                <Mail className="w-5 h-5" strokeWidth={2.2} />
               </span>
               <input
                 {...register('email')}
                 type="email"
                 placeholder="E-mail"
-                className="w-full h-13 pl-12 pr-4 bg-bg border border-lilac/30 rounded-2xl text-deep placeholder:text-textSec/60 font-semibold focus:outline-none focus:border-primary focus:ring-2 focus:ring-primary/20 transition-all text-sm"
+                className="w-full h-14 pl-14 pr-5 bg-white border border-[#E9D5FF]/80 rounded-full text-deep placeholder:text-[#581C87]/45 font-bold text-[15px] focus:outline-none focus:border-[#8E32D8] focus:ring-4 focus:ring-[#8E32D8]/10 transition-all"
               />
             </div>
             {errors.email && (
-              <p className="text-xs text-danger font-bold mt-1 ml-2">
+              <p className="text-xs text-danger font-extrabold mt-1.5 ml-4">
                 {errors.email.message}
               </p>
             )}
@@ -127,26 +131,27 @@ export const RegisterPage: React.FC = () => {
 
           {/* Senha */}
           <div>
-            <div className="relative flex items-center">
-              <span className="absolute left-4 text-primary">
-                <Lock className="w-5 h-5" />
+            <div className="relative flex items-center shadow-[0_4px_16px_rgba(125,43,214,0.06)] rounded-full">
+              <span className="absolute left-4.5 text-[#8E32D8] pointer-events-none">
+                <Lock className="w-5 h-5" strokeWidth={2.2} />
               </span>
               <input
                 {...register('password')}
                 type={showPassword ? 'text' : 'password'}
                 placeholder="Senha"
-                className="w-full h-13 pl-12 pr-12 bg-bg border border-lilac/30 rounded-2xl text-deep placeholder:text-textSec/60 font-semibold focus:outline-none focus:border-primary focus:ring-2 focus:ring-primary/20 transition-all text-sm"
+                className="w-full h-14 pl-14 pr-12 bg-white border border-[#E9D5FF]/80 rounded-full text-deep placeholder:text-[#581C87]/45 font-bold text-[15px] focus:outline-none focus:border-[#8E32D8] focus:ring-4 focus:ring-[#8E32D8]/10 transition-all"
               />
               <button
                 type="button"
                 onClick={() => setShowPassword(!showPassword)}
-                className="absolute right-4 text-textSec hover:text-deep"
+                className="absolute right-4 p-1.5 rounded-full text-[#581C87]/60 hover:text-[#8E32D8] hover:bg-purple-50 transition-colors"
+                aria-label={showPassword ? 'Ocultar senha' : 'Ver senha'}
               >
                 {showPassword ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
               </button>
             </div>
             {errors.password && (
-              <p className="text-xs text-danger font-bold mt-1 ml-2">
+              <p className="text-xs text-danger font-extrabold mt-1.5 ml-4">
                 {errors.password.message}
               </p>
             )}
@@ -154,59 +159,64 @@ export const RegisterPage: React.FC = () => {
 
           {/* Confirmar senha */}
           <div>
-            <div className="relative flex items-center">
-              <span className="absolute left-4 text-primary">
-                <Lock className="w-5 h-5" />
+            <div className="relative flex items-center shadow-[0_4px_16px_rgba(125,43,214,0.06)] rounded-full">
+              <span className="absolute left-4.5 text-[#8E32D8] pointer-events-none">
+                <Lock className="w-5 h-5" strokeWidth={2.2} />
               </span>
               <input
                 {...register('confirmPassword')}
                 type={showConfirm ? 'text' : 'password'}
                 placeholder="Confirmar senha"
-                className="w-full h-13 pl-12 pr-12 bg-bg border border-lilac/30 rounded-2xl text-deep placeholder:text-textSec/60 font-semibold focus:outline-none focus:border-primary focus:ring-2 focus:ring-primary/20 transition-all text-sm"
+                className="w-full h-14 pl-14 pr-12 bg-white border border-[#E9D5FF]/80 rounded-full text-deep placeholder:text-[#581C87]/45 font-bold text-[15px] focus:outline-none focus:border-[#8E32D8] focus:ring-4 focus:ring-[#8E32D8]/10 transition-all"
               />
               <button
                 type="button"
                 onClick={() => setShowConfirm(!showConfirm)}
-                className="absolute right-4 text-textSec hover:text-deep"
+                className="absolute right-4 p-1.5 rounded-full text-[#581C87]/60 hover:text-[#8E32D8] hover:bg-purple-50 transition-colors"
+                aria-label={showConfirm ? 'Ocultar senha' : 'Ver senha'}
               >
                 {showConfirm ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
               </button>
             </div>
             {errors.confirmPassword && (
-              <p className="text-xs text-danger font-bold mt-1 ml-2">
+              <p className="text-xs text-danger font-extrabold mt-1.5 ml-4">
                 {errors.confirmPassword.message}
               </p>
             )}
           </div>
 
-          {/* Aviso com cadeado do layout */}
-          <div className="bg-gold/20 border border-gold/40 rounded-xl py-2 px-3 flex items-center gap-2 mt-1">
-            <span className="text-amber-600 bg-white p-1 rounded-full shadow-xs">
-              <ShieldCheck className="w-4 h-4" />
+          {/* Aviso com cadeado elegante do layout */}
+          <div className="bg-white/85 border border-purple-100/90 rounded-full py-3 px-4 flex items-center justify-center gap-2.5 shadow-xs mt-1 backdrop-blur-xs">
+            <span className="text-[#8E32D8] bg-[#F3E8FF] p-1 rounded-full shadow-xs">
+              <ShieldCheck className="w-4 h-4 text-[#8E32D8]" />
             </span>
-            <span className="text-xs font-bold text-deep/80">
+            <span className="text-xs font-extrabold text-[#581C87]">
               Seus dados são tratados com cuidado.
             </span>
           </div>
 
-          <div className="mt-4">
-            <Button
+          {/* Botão de envio */}
+          <div className="mt-3">
+            <button
               type="submit"
-              size="lg"
-              fullWidth
-              loading={isSubmitting}
+              disabled={isSubmitting}
+              className="w-full h-14 rounded-full bg-gradient-to-r from-[#8E32D8] to-[#6C22BD] text-white font-extrabold text-[16px] shadow-btn-floating hover:opacity-95 active:scale-[0.98] transition-all flex items-center justify-center cursor-pointer"
             >
-              Criar minha conta
-            </Button>
+              {isSubmitting ? (
+                <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin" />
+              ) : (
+                'Criar minha conta'
+              )}
+            </button>
           </div>
         </form>
       </div>
 
       {/* Rodapé */}
-      <div className="text-center pt-4 pb-2">
-        <p className="text-sm font-semibold text-textSec">
+      <div className="relative z-10 text-center pt-4 pb-2">
+        <p className="text-[13px] font-bold text-[#581C87]/75">
           Já tem conta?{' '}
-          <Link to="/entrar" className="text-primary font-bold hover:underline">
+          <Link to="/entrar" className="text-[#8E32D8] font-extrabold hover:underline">
             Entrar
           </Link>
         </p>
