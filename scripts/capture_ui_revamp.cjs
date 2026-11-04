@@ -1,6 +1,5 @@
 const { chromium } = require('playwright');
 const path = require('path');
-const fs = require('fs');
 
 const ARTIFACT_DIR = path.resolve('C:/Users/gsds0/.gemini/antigravity/brain/d45f2e7d-6bdb-42f1-9b1b-02a79f24bfca');
 
@@ -12,30 +11,40 @@ async function main() {
   });
   const page = await context.newPage();
 
-  // 1. Authenticate Demo
   console.log('Authenticating demo...');
-  await page.goto('http://127.0.0.1:5173/entrar', { waitUntil: 'networkidle' });
+  await page.goto('http://127.0.0.1:5173/entrar');
   const demoBtn = page.locator('text=Ver modo demonstração');
-  if (await demoBtn.isVisible()) {
-    await demoBtn.click();
-    await page.waitForTimeout(2500);
-  }
+  await demoBtn.click();
+  await page.waitForURL('**/inicio', { timeout: 10000 });
+  await page.waitForTimeout(2000);
 
-  const routes = [
-    { url: '/inicio', name: 'final_01_inicio_390x844.png' },
-    { url: '/gastos', name: 'final_02_gastos_390x844.png' },
-    { url: '/metas', name: 'final_03_metas_390x844.png' },
-    { url: '/aprender', name: 'final_04_aprender_390x844.png' },
-    { url: '/perfil', name: 'final_05_perfil_390x844.png' },
-  ];
+  // Início
+  console.log('Capturing Início...');
+  await page.screenshot({ path: path.join(ARTIFACT_DIR, 'final_01_inicio_390x844.png') });
 
-  for (const r of routes) {
-    console.log(`Capturing ${r.url}...`);
-    await page.goto(`http://127.0.0.1:5173${r.url}`, { waitUntil: 'networkidle' });
-    await page.waitForTimeout(1500);
-    const shotPath = path.join(ARTIFACT_DIR, r.name);
-    await page.screenshot({ path: shotPath, fullPage: false });
-  }
+  // Gastos
+  console.log('Capturing Gastos...');
+  await page.click('nav a:has-text("Gastos")');
+  await page.waitForTimeout(1500);
+  await page.screenshot({ path: path.join(ARTIFACT_DIR, 'final_02_gastos_390x844.png') });
+
+  // Metas
+  console.log('Capturing Metas...');
+  await page.click('nav a:has-text("Metas")');
+  await page.waitForTimeout(1500);
+  await page.screenshot({ path: path.join(ARTIFACT_DIR, 'final_03_metas_390x844.png') });
+
+  // Aprender
+  console.log('Capturing Aprender...');
+  await page.click('nav a:has-text("Aprender")');
+  await page.waitForTimeout(1500);
+  await page.screenshot({ path: path.join(ARTIFACT_DIR, 'final_04_aprender_390x844.png') });
+
+  // Perfil
+  console.log('Capturing Perfil...');
+  await page.click('nav a:has-text("Perfil")');
+  await page.waitForTimeout(1500);
+  await page.screenshot({ path: path.join(ARTIFACT_DIR, 'final_05_perfil_390x844.png') });
 
   await browser.close();
   console.log('All 5 screens captured successfully!');
