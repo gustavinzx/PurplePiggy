@@ -1,0 +1,107 @@
+[
+  {
+    "name": "01 - Splash",
+    "ref": "01-splash.png",
+    "font": "Nunito (OK)",
+    "width": "390px (OK)",
+    "status": "Auditada e Aprovada"
+  },
+  {
+    "name": "02 - Boas-Vindas",
+    "ref": "02-boas-vindas.png",
+    "font": "Nunito (OK)",
+    "width": "390px (OK)",
+    "status": "Auditada e Aprovada"
+  },
+  {
+    "name": "03 - Cadastro",
+    "ref": "03-cadastro.png",
+    "font": "Nunito (OK)",
+    "width": "390px (OK)",
+    "status": "Auditada e Aprovada"
+  },
+  {
+    "name": "04 - Login",
+    "ref": "04-login.png",
+    "font": "Nunito (OK)",
+    "width": "390px (OK)",
+    "status": "Auditada e Aprovada"
+  },
+  {
+    "name": "05 - Diagnóstico",
+    "ref": "05-diagnostico.png",
+    "font": "Nunito (OK)",
+    "width": "390px (OK)",
+    "status": "Auditada e Aprovada"
+  },
+  {
+    "name": "06 - Início",
+    "ref": "06-home.png",
+    "font": "Nunito (OK)",
+    "width": "390px (OK)",
+    "status": "Auditada e Aprovada"
+  },
+  {
+    "name": "07 - Gastos",
+    "ref": "07-gastos.png",
+    "font": "Nunito (OK)",
+    "width": "390px (OK)",
+    "status": "Auditada e Aprovada"
+  },
+  {
+    "name": "08 - Detalhe Transação",
+    "ref": "08-detalhe.png",
+    "font": "Nunito (OK)",
+    "width": "390px (OK)",
+    "status": "Auditada e Aprovada"
+  },
+  {
+    "name": "09 - Orçamento",
+    "ref": "09-orcamento.png",
+    "font": "Nunito (OK)",
+    "width": "390px (OK)",
+    "status": "Auditada e Aprovada"
+  },
+  {
+    "name": "10 - Metas",
+    "ref": "10-metas.png",
+    "font": "Nunito (OK)",
+    "width": "390px (OK)",
+    "status": "Auditada e Aprovada"
+  },
+  {
+    "name": "11 - Aprender (Desafio Piggy)",
+    "ref": "telas-extra/10-aprender.png",
+    "font": "Nunito (OK)",
+    "width": "390px (OK)",
+    "status": "Auditada e Aprovada"
+  },
+  {
+    "name": "12 - Lição Interativa",
+    "ref": "telas-extra/11-licao.png",
+    "font": "Nunito (OK)",
+    "width": "390px (OK)",
+    "status": "Auditada e Aprovada"
+  },
+  {
+    "name": "13 - Simulador de Compras",
+    "ref": "13-simulador.png",
+    "font": "Nunito (OK)",
+    "width": "390px (OK)",
+    "status": "Auditada e Aprovada"
+  },
+  {
+    "name": "14 - Perfil",
+    "ref": "14-perfil.png",
+    "font": "Nunito (OK)",
+    "width": "390px (OK)",
+    "status": "Auditada e Aprovada"
+  },
+  {
+    "name": "15 - Open Finance",
+    "ref": "15-open-finance.png",
+    "font": "Nunito (OK)",
+    "width": "390px (OK)",
+    "status": "Auditada e Aprovada"
+  }
+]
