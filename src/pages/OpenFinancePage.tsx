@@ -5,15 +5,15 @@ import { useAuth } from '../context/AuthContext'
 import { AppShell } from '../components/AppShell'
 import { Button } from '../components/Button'
 import { Mascot } from '../components/Mascot'
+import { openPluggyConnect } from '../lib/openFinance'
 import {
   ArrowLeft,
   Building2,
   CheckCircle2,
   ShieldCheck,
   Lock,
-  RotateCcw,
   Plus,
-  X,
+  RefreshCw,
 } from 'lucide-react'
 import { toast } from 'sonner'
 import type { Database } from '../types/database.types'
@@ -28,9 +28,12 @@ export const OpenFinancePage: React.FC = () => {
   const [connections, setConnections] = useState<BankConnection[]>([])
   const [consents, setConsents] = useState<OpenFinanceConsent[]>([])
   const [loading, setLoading] = useState(true)
+  const [connecting, setConnecting] = useState(false)
   const [isManaging, setIsManaging] = useState(false)
   const [isConnectingNew, setIsConnectingNew] = useState(false)
   const [newBankName, setNewBankName] = useState('Banco Exemplo')
+
+  const isPluggy = import.meta.env.VITE_OPEN_FINANCE_PROVIDER === 'pluggy'
 
   useEffect(() => {
     if (user) {
@@ -46,6 +49,7 @@ export const OpenFinancePage: React.FC = () => {
         .from('bank_connections')
         .select('*')
         .eq('user_id', user.id)
+        .order('created_at', { ascending: false })
 
       setConnections(conns || [])
 
@@ -53,6 +57,7 @@ export const OpenFinancePage: React.FC = () => {
         .from('open_finance_consents')
         .select('*')
         .eq('user_id', user.id)
+        .order('created_at', { ascending: false })
 
       setConsents(consentData || [])
     } finally {
@@ -79,6 +84,45 @@ export const OpenFinancePage: React.FC = () => {
       loadOpenFinanceData()
     } catch (err) {
       toast.error('Erro ao revogar consentimento.')
+    }
+  }
+
+  // Abertura do fluxo oficial: Pluggy Widget real ou Modal Demo
+  const handleStartConnect = async () => {
+    if (!user) return
+
+    if (isPluggy) {
+      setConnecting(true)
+      try {
+        await openPluggyConnect(user.id, {
+          onSuccess: (item) => {
+            setConnecting(false)
+            toast.success(
+              `Conta ${item.connector?.name || 'bancária'} conectada com sucesso via Open Finance! 💜`
+            )
+            loadOpenFinanceData()
+          },
+          onError: (error) => {
+            setConnecting(false)
+            console.warn('[OpenFinance] Erro Pluggy:', error)
+            toast.error(
+              'Não conseguimos concluir a conexão com a sua instituição agora. Seus dados continuam 100% seguros e você pode tentar novamente a qualquer momento.'
+            )
+          },
+          onClose: () => {
+            setConnecting(false)
+          },
+        })
+      } catch (err: any) {
+        setConnecting(false)
+        console.error('[OpenFinance] Falha ao abrir widget:', err)
+        toast.error(
+          err?.message ||
+            'Não foi possível iniciar a conexão segura com a Pluggy. Verifique a configuração da chave no backend.'
+        )
+      }
+    } else {
+      setIsConnectingNew(true)
     }
   }
 
@@ -162,6 +206,11 @@ export const OpenFinancePage: React.FC = () => {
                 <p className="text-xs font-semibold text-textSec">
                   {activeConnection.account_label || 'Conta corrente'}
                 </p>
+                {activeConnection.provider === 'pluggy' && (
+                  <span className="inline-block mt-1 text-[10px] font-extrabold text-[#8E32D8] bg-[#F3E8FF] px-2 py-0.5 rounded-full">
+                    Sincronizado via Pluggy
+                  </span>
+                )}
               </div>
             </div>
 
@@ -180,9 +229,27 @@ export const OpenFinancePage: React.FC = () => {
             <p className="text-xs font-bold text-textSec mb-3">
               Nenhuma instituição bancária conectada.
             </p>
-            <Button size="sm" onClick={() => setIsConnectingNew(true)}>
-              Conectar instituição demo
+            <Button
+              size="sm"
+              onClick={handleStartConnect}
+              disabled={connecting}
+            >
+              {connecting ? 'Iniciando Pluggy...' : isPluggy ? 'Conectar via Pluggy' : 'Conectar instituição demo'}
             </Button>
+          </div>
+        )}
+
+        {/* Botão de adicionar outra instituição se já houver uma ativa */}
+        {activeConnection && (
+          <div className="flex justify-end">
+            <button
+              onClick={handleStartConnect}
+              disabled={connecting}
+              className="text-xs font-bold text-primary hover:underline flex items-center gap-1"
+            >
+              <Plus className="w-3.5 h-3.5" />
+              <span>Conectar outra conta</span>
+            </button>
           </div>
         )}
 
@@ -257,7 +324,11 @@ export const OpenFinancePage: React.FC = () => {
       {/* Rodapé com aviso de transparência (Regra 10) */}
       <div className="pt-4 pb-2 text-center flex items-center justify-center gap-1.5 text-xs font-bold text-textSec">
         <Lock className="w-3.5 h-3.5" />
-        <span>Dados demonstrativos.</span>
+        <span>
+          {isPluggy
+            ? 'Ambiente Open Finance Pluggy ativo e regulado pelo Banco Central.'
+            : 'Dados demonstrativos.'}
+        </span>
       </div>
 
       {/* Modal: Gerenciar Consentimento */}
@@ -272,9 +343,9 @@ export const OpenFinancePage: React.FC = () => {
             </p>
 
             <div className="bg-bg rounded-2xl p-3 mb-4 text-xs font-bold text-deep flex flex-col gap-1.5">
-              <div>• Status: Ativo e seguro</div>
-              <div>• Prazo: Válido até Novembro/2027</div>
-              <div>• Finalidade: Apenas visualização de saldo e extrato</div>
+              <div>• Provedor: {activeConnection?.provider === 'pluggy' ? 'Pluggy (API Oficial)' : 'Demonstrativo'}</div>
+              <div>• Status: Ativo e criptografado de ponta a ponta</div>
+              <div>• Finalidade: Apenas leitura de saldo e extratos para organização</div>
             </div>
 
             <Button size="md" fullWidth onClick={() => setIsManaging(false)}>
@@ -284,7 +355,7 @@ export const OpenFinancePage: React.FC = () => {
         </div>
       )}
 
-      {/* Modal: Conectar Nova Instituição Demo */}
+      {/* Modal: Conectar Nova Instituição Demo (quando VITE_OPEN_FINANCE_PROVIDER !== 'pluggy') */}
       {isConnectingNew && (
         <div className="fixed inset-0 z-50 bg-deep/60 backdrop-blur-xs flex items-center justify-center p-4 animate-fadeIn">
           <div className="bg-white rounded-[26px] p-6 w-full max-w-sm shadow-2xl border border-lilac/20">
@@ -325,3 +396,5 @@ export const OpenFinancePage: React.FC = () => {
     </AppShell>
   )
 }
+
+export default OpenFinancePage
