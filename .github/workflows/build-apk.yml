@@ -21,9 +21,6 @@ jobs:
           distribution: 'temurin'
           java-version: '17'
 
-      - name: Setup Android SDK
-        uses: android-actions/setup-android@v3
-
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
@@ -40,9 +37,10 @@ jobs:
           VITE_SUPABASE_ANON_KEY: ${{ secrets.VITE_SUPABASE_ANON_KEY || 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InZpdWdyZnd4a2p6bnRxZ3Jsb255Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDIzOTM1MDMsImV4cCI6MjA1Nzk2OTUwM30.7g6x1m9BwM7n8bC3x0iR4K3F7lFj1yT7sV9Z9Q3e3gI' }}
           VITE_OPEN_FINANCE_PROVIDER: 'pluggy'
 
-      - name: Copy Assets to Android
+      - name: Copy Web Assets to Android
         run: |
           npm run cap:copy
+          echo "Assets in Android project:"
           ls -la android/app/src/main/assets/public
 
       - name: Setup Gradle
@@ -50,6 +48,7 @@ jobs:
 
       - name: Build Debug APK
         run: |
+          echo "y" | $ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager --licenses || true
           cd android
           chmod +x gradlew
           ./gradlew assembleDebug --no-daemon --stacktrace
