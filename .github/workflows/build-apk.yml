@@ -54,18 +54,16 @@ jobs:
         run: |
           cd android
           chmod +x gradlew
-          ./gradlew assembleDebug --no-daemon --stacktrace 2>&1 | tee ../gradle_output.log
+          ./gradlew assembleDebug --no-daemon --stacktrace
 
-      - name: Upload Build Log on Failure
-        if: failure()
-        uses: actions/upload-artifact@v4
-        with:
-          name: gradle-build-log
-          path: gradle_output.log
+      - name: Locate APK
+        run: |
+          echo "Finding all generated APKs:"
+          find android/app/build -name "*.apk" -ls
 
       - name: Upload APK Artifact
         uses: actions/upload-artifact@v4
         with:
           name: PurplePiggy-Android-APK
-          path: android/app/build/outputs/apk/debug/app-debug.apk
+          path: android/app/build/**/*.apk
           if-no-files-found: error
