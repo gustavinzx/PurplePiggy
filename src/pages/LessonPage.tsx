@@ -10,6 +10,10 @@ import {
   FeedbackPanel,
   ChunkyButton,
 } from '../features/learn/components'
+import { OrderPrioritiesView } from '../features/learn/components/questions/OrderPrioritiesView'
+import { ConceptMatchingView } from '../features/learn/components/questions/ConceptMatchingView'
+import { FillInTheBlankView } from '../features/learn/components/questions/FillInTheBlankView'
+import { ScenarioChoiceView } from '../features/learn/components/questions/ScenarioChoiceView'
 import { useQuizEngine } from '../features/learn/engine'
 import { learnService } from '../features/learn/services/learnService'
 import { LearnQuestion } from '../features/learn/questions'
@@ -343,34 +347,80 @@ export const LessonPage: React.FC = () => {
               </div>
             </div>
 
-            {/* Renderização de Opções baseada na Tipologia */}
+            {/* Renderização dinâmica por Tipologia de Questão */}
             <div className="space-y-3 pt-2">
-              {'options' in currentQ &&
-                currentQ.options.map((optionText: string, idx: number) => {
-                  let cardState: 'idle' | 'selected' | 'correct' | 'incorrect' = 'idle'
-                  const isSelected = currentAnswer === idx
+              {currentQ.typology === 'multiple_choice' && (
+                <div className="space-y-3">
+                  {currentQ.options.map((optionText: string, idx: number) => {
+                    let cardState: 'idle' | 'selected' | 'correct' | 'incorrect' = 'idle'
+                    const isSelected = currentAnswer === idx
 
-                  if (isValidated) {
-                    if (idx === (currentQ as any).correctIndex) {
-                      cardState = 'correct'
+                    if (isValidated) {
+                      if (idx === currentQ.correctIndex) {
+                        cardState = 'correct'
+                      } else if (isSelected) {
+                        cardState = 'incorrect'
+                      }
                     } else if (isSelected) {
-                      cardState = 'incorrect'
+                      cardState = 'selected'
                     }
-                  } else if (isSelected) {
-                    cardState = 'selected'
-                  }
 
-                  return (
-                    <OptionCard
-                      key={idx}
-                      label={OPTION_LETTERS[idx] || String(idx + 1)}
-                      text={optionText}
-                      state={cardState}
-                      disabled={isValidated}
-                      onClick={() => isAnswering && selectAnswer(idx)}
-                    />
-                  )
-                })}
+                    return (
+                      <OptionCard
+                        key={idx}
+                        label={OPTION_LETTERS[idx] || String(idx + 1)}
+                        text={optionText}
+                        state={cardState}
+                        disabled={isValidated}
+                        onClick={() => isAnswering && selectAnswer(idx)}
+                      />
+                    )
+                  })}
+                </div>
+              )}
+
+              {currentQ.typology === 'scenario_choice' && (
+                <ScenarioChoiceView
+                  question={currentQ}
+                  currentAnswer={typeof currentAnswer === 'number' ? currentAnswer : null}
+                  disabled={!isAnswering}
+                  isValidated={isValidated}
+                  onSelect={(idx) => isAnswering && selectAnswer(idx)}
+                />
+              )}
+
+              {currentQ.typology === 'order_priorities' && (
+                <OrderPrioritiesView
+                  key={currentQ.id}
+                  question={currentQ}
+                  disabled={!isAnswering}
+                  isValidated={isValidated}
+                  isCorrect={status === 'correct'}
+                  onAnswerChange={(orderedItems) => isAnswering && selectAnswer(orderedItems)}
+                />
+              )}
+
+              {currentQ.typology === 'concept_matching' && (
+                <ConceptMatchingView
+                  key={currentQ.id}
+                  question={currentQ}
+                  disabled={!isAnswering}
+                  isValidated={isValidated}
+                  isCorrect={status === 'correct'}
+                  onAnswerChange={(matches) => isAnswering && selectAnswer(matches)}
+                />
+              )}
+
+              {currentQ.typology === 'fill_in_the_blank' && (
+                <FillInTheBlankView
+                  key={currentQ.id}
+                  question={currentQ}
+                  disabled={!isAnswering}
+                  isValidated={isValidated}
+                  isCorrect={status === 'correct'}
+                  onAnswerChange={(word) => isAnswering && selectAnswer(word)}
+                />
+              )}
             </div>
           </>
         )}

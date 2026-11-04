@@ -92,7 +92,24 @@ export const LearnMap: React.FC<LearnMapProps> = ({
       layout.contentHeight - dimensions.height
     )
     containerRef.current.scrollTop = targetScroll
-  }, [trackSlug, layout?.scrolls, layout?.contentHeight, dimensions?.height])
+
+    // Reforço via rAF e timer curto para garantir no Android WebView
+    const rafId = requestAnimationFrame(() => {
+      if (containerRef.current) {
+        containerRef.current.scrollTop = targetScroll
+      }
+    })
+    const timerId = setTimeout(() => {
+      if (containerRef.current) {
+        containerRef.current.scrollTop = targetScroll
+      }
+    }, 60)
+
+    return () => {
+      cancelAnimationFrame(rafId)
+      clearTimeout(timerId)
+    }
+  }, [trackSlug, layout?.scrolls, layout?.contentHeight, dimensions?.height, layout?.currentCy])
 
   // Observador para exibir botão flutuante se o usuário rolar para longe do nó atual
   useEffect(() => {

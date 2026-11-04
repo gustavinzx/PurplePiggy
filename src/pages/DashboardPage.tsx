@@ -4,10 +4,12 @@ import { useAuth } from '../context/AuthContext'
 import { supabase } from '../lib/supabase'
 import { AppShell } from '../components/AppShell'
 import { Mascot } from '../components/Mascot'
+import { Decor } from '../components/Decor'
 import { CategoryCircle } from '../components/CategoryIcon'
 import { BackgroundBlobs } from '../components/BackgroundBlobs'
 import { ProgressRing } from '../components/ProgressRing'
 import { TransactionModal } from '../components/TransactionModal'
+import { toast } from 'sonner'
 import {
   calculateAvailableBalance,
   calculateMonthlySummary,
@@ -24,6 +26,7 @@ import {
   TrendingDown,
   Plus,
   Calculator,
+  Bell,
 } from 'lucide-react'
 import type { Database } from '../types/database.types'
 
@@ -145,17 +148,27 @@ export const DashboardPage: React.FC = () => {
       {/* Fundo com manchas orgânicas lilás e brilhos dourados sutis */}
       <BackgroundBlobs showSparkles={true} />
 
-      {/* 1. Header: Saudação oficial */}
-      <div className="w-full pt-1 pb-0 min-w-0 max-w-[240px]">
-        <h1 className="text-[22px] font-extrabold text-[#432171] font-nunito tracking-tight leading-tight truncate">
-          Olá, {firstName}! 👋
-        </h1>
-        <p className="text-[13px] font-bold text-[#7D6A9C] leading-tight mt-0.5 font-nunito">
-          Sua vida financeira no caminho certo.
-        </p>
+      {/* 1. Header: Saudação oficial + Botão de Notificação (Fiel à Imagem 3) */}
+      <div className="w-full pt-1 pb-0 flex items-center justify-between min-w-0">
+        <div className="min-w-0 flex-1">
+          <h1 className="text-[22px] font-extrabold text-[#432171] font-nunito tracking-tight leading-tight truncate">
+            Olá, {firstName}! 👋
+          </h1>
+          <p className="text-[13px] font-bold text-[#7D6A9C] leading-tight mt-0.5 font-nunito">
+            Sua vida financeira no caminho certo.
+          </p>
+        </div>
+        <button
+          type="button"
+          onClick={() => toast('Nenhuma notificação nova no momento.')}
+          aria-label="Notificações"
+          className="w-10 h-10 rounded-full bg-white shadow-card border border-lilac/20 flex items-center justify-center text-[#432171] hover:bg-[#F8F5FC] active:scale-95 transition-all shrink-0 ml-3 cursor-pointer"
+        >
+          <Bell className="w-4.5 h-4.5 text-[#432171]" />
+        </button>
       </div>
 
-      {/* 2. Card "Saldo disponível" com Mascote pig-peek apoiado diretamente na borda superior */}
+      {/* 2. Card "Saldo disponível" com Mascote apoiado diretamente na borda superior */}
       <div className="relative w-full mt-6 min-w-0">
         {/* Mascote PurplePiggy espiando com as patinhas apoiadas perfeitamente na borda do card */}
         <div
@@ -216,7 +229,7 @@ export const DashboardPage: React.FC = () => {
             ) : (
               <div className="inline-flex items-center gap-1 bg-[#DCFCE7] text-[#15803D] px-2.5 py-1 rounded-pill text-[12px] font-bold shrink-0">
                 <ArrowUp className="w-3.5 h-3.5 text-[#15803D]" strokeWidth={2.5} />
-                <span>+12%</span>
+                <span>+2,5%</span>
               </div>
             )}
             <span className="text-white/80 font-medium text-[12px] shrink-0">Atualizado hoje</span>
@@ -224,7 +237,7 @@ export const DashboardPage: React.FC = () => {
         </div>
       </div>
 
-      {/* 3. Dois Mini-Cards: Receitas e Despesas lado a lado fiel a design/telas/06-home.png */}
+      {/* 3. Dois Mini-Cards: Receitas e Despesas lado a lado fiel à Imagem 3 */}
       <div className="w-full grid grid-cols-2 gap-3 min-w-0">
         {/* Mini Card Receitas */}
         <div className="w-full bg-white rounded-[20px] p-3.5 border border-[#F0EBF8] shadow-card flex items-center gap-2.5 min-w-0">
@@ -241,7 +254,7 @@ export const DashboardPage: React.FC = () => {
 
         {/* Mini Card Despesas */}
         <div className="w-full bg-white rounded-[20px] p-3.5 border border-[#F0EBF8] shadow-card flex items-center gap-2.5 min-w-0">
-          <div className="w-9 h-9 rounded-xl bg-[#FEF3C7] text-[#D97706] flex items-center justify-center shrink-0">
+          <div className="w-9 h-9 rounded-xl bg-[#FCE7F3] text-[#BE185D] flex items-center justify-center shrink-0">
             <TrendingDown className="w-5 h-5" strokeWidth={2.2} />
           </div>
           <div className="flex flex-col min-w-0 flex-1">
@@ -253,173 +266,115 @@ export const DashboardPage: React.FC = () => {
         </div>
       </div>
 
-      {/* 4. Atalhos Rápidos Interativos (+ Gasto, + Receita, Simulador) */}
-      <div className="w-full grid grid-cols-3 gap-2.5 min-w-0">
-        <button
-          onClick={() => {
-            setModalType('expense')
-            setIsModalOpen(true)
-          }}
-          className="w-full bg-white hover:bg-[#FAF6FD] border border-[#F0EBF8] rounded-[18px] py-2.5 px-2 flex items-center justify-center gap-1.5 text-[12px] font-bold text-deep transition-all shadow-card hover:scale-[1.02] active:scale-95 min-w-0 cursor-pointer"
-        >
-          <div className="w-6 h-6 rounded-full bg-[#FCE7F3] text-[#BE185D] flex items-center justify-center shrink-0">
-            <Plus className="w-3.5 h-3.5" strokeWidth={2.5} />
-          </div>
-          <span className="truncate">+ Gasto</span>
-        </button>
-
-        <button
-          onClick={() => {
-            setModalType('income')
-            setIsModalOpen(true)
-          }}
-          className="w-full bg-white hover:bg-[#FAF6FD] border border-[#F0EBF8] rounded-[18px] py-2.5 px-2 flex items-center justify-center gap-1.5 text-[12px] font-bold text-deep transition-all shadow-card hover:scale-[1.02] active:scale-95 min-w-0 cursor-pointer"
-        >
-          <div className="w-6 h-6 rounded-full bg-[#DCFCE7] text-[#15803D] flex items-center justify-center shrink-0">
-            <Plus className="w-3.5 h-3.5" strokeWidth={2.5} />
-          </div>
-          <span className="truncate">+ Receita</span>
-        </button>
-
-        <button
-          onClick={() => navigate('/simulador')}
-          className="w-full bg-white hover:bg-[#FAF6FD] border border-[#F0EBF8] rounded-[18px] py-2.5 px-2 flex items-center justify-center gap-1.5 text-[12px] font-bold text-deep transition-all shadow-card hover:scale-[1.02] active:scale-95 min-w-0 cursor-pointer"
-        >
-          <div className="w-6 h-6 rounded-full bg-[#F3E8FF] text-[#7D2BD6] flex items-center justify-center shrink-0">
-            <Calculator className="w-3.5 h-3.5" strokeWidth={2.5} />
-          </div>
-          <span className="truncate">Simulador</span>
-        </button>
-      </div>
-
-      {/* 4. Card "Painel de gastos" com link Este mês > e barra segmentada multicolorida */}
-      <div className="w-full bg-white rounded-[24px] p-4.5 border border-[#F0EBF8] shadow-card min-w-0">
-        <div className="flex items-center justify-between mb-1 min-w-0">
-          <span className="text-[15px] font-extrabold text-deep">Painel de gastos</span>
-          <Link
-            to="/gastos"
-            className="text-[12px] font-extrabold text-deep hover:text-primary flex items-center gap-0.5 shrink-0"
-          >
-            <span>Este mês</span>
-            <ChevronRight className="w-3.5 h-3.5 text-deep" strokeWidth={2.5} />
-          </Link>
-        </div>
-
-        {/* Valor consolidado */}
-        <div className="text-[20px] font-extrabold text-deep mb-2.5 truncate min-w-0">
-          {formatCurrency(totalPainelGastos > 0 ? totalPainelGastos : 1420)}
-        </div>
-
-        {/* Barra empilhada multicolorida */}
-        <div className="w-full h-3 rounded-full bg-[#F0E7FA] overflow-hidden flex min-w-0">
-          {expenseCategories.length > 0 && totalPainelGastos > 0 ? (
-            expenseCategories.map(([catId, amount], idx) => {
-              const pct = (amount / totalPainelGastos) * 100
-              const color = segmentColors[idx % segmentColors.length]
-              return (
-                <div
-                  key={catId}
-                  className="h-full first:rounded-l-full last:rounded-r-full transition-all duration-500"
-                  style={{
-                    width: `${pct}%`,
-                    backgroundColor: color,
-                  }}
-                />
-              )
-            })
-          ) : (
-            <>
-              <div className="h-full w-[35%] bg-[#8E32D8] rounded-l-full" />
-              <div className="h-full w-[25%] bg-[#B037F8]" />
-              <div className="h-full w-[20%] bg-[#F5B83D]" />
-              <div className="h-full w-[20%] bg-[#2FBF71] rounded-r-full" />
-            </>
-          )}
-        </div>
-      </div>
-
-      {/* 5. Card "Reserva de emergência" fiel a design/telas/06-home.png */}
+      {/* 4. Card "Reserva de emergência" (Fiel à Imagem 3: com ícone de porquinho e barra cheia) */}
       <div
         onClick={() => navigate('/metas')}
         className="w-full bg-white rounded-[24px] p-4.5 border border-[#F0EBF8] shadow-card cursor-pointer hover:border-primary/20 transition-all min-w-0"
       >
-        <div className="flex items-center justify-between mb-1 min-w-0">
-          <span className="text-[14px] font-extrabold text-deep">Reserva de emergência</span>
-          <span className="text-[15px] font-extrabold text-deep shrink-0">{emergencyPct}%</span>
-        </div>
-        <div className="text-[13px] font-bold text-deep/75 truncate min-w-0">
-          {emergencyGoal
-            ? `${formatCurrency(emergencySaved)} de ${formatCurrency(emergencyTarget)}`
-            : 'R$ 6.000,00 de R$ 10.000,00'}
+        <div className="flex items-center justify-between mb-2 min-w-0">
+          <div className="flex items-center gap-2.5 min-w-0">
+            <div className="w-9 h-9 rounded-xl bg-[#F3E8FF] flex items-center justify-center shrink-0">
+              <Mascot pose="head" size="xs" />
+            </div>
+            <div className="min-w-0">
+              <span className="text-[14px] font-extrabold text-deep block leading-tight">Reserva de emergência</span>
+              <span className="text-[12px] font-bold text-[#7D6A9C] leading-tight block mt-0.5 truncate">
+                {emergencyGoal
+                  ? `${formatCurrency(emergencySaved)} de ${formatCurrency(emergencyTarget)}`
+                  : 'R$ 6.000,00 de R$ 10.000,00'}
+              </span>
+            </div>
+          </div>
+          <span className="text-[15px] font-extrabold text-deep shrink-0 ml-2">{emergencyPct}%</span>
         </div>
         {/* Barra de progresso da reserva de emergência */}
-        <div className="w-full h-2 rounded-full bg-[#F3E8FF] overflow-hidden mt-2.5">
+        <div className="w-full h-2.5 rounded-full bg-[#F3E8FF] overflow-hidden mt-2">
           <div
-            className="h-full rounded-full bg-gradient-to-r from-[#8E32D8] to-[#6C22BD] transition-all duration-500"
+            className="h-full rounded-full bg-gradient-to-r from-[#8E32D8] to-[#B037F8] transition-all duration-500"
             style={{ width: `${Math.min(emergencyPct, 100)}%` }}
           />
         </div>
       </div>
 
-      {/* 6. Card "Progresso das metas" com anéis circulares */}
-      <div className="w-full bg-white rounded-[24px] p-4.5 border border-[#F0EBF8] shadow-card min-w-0">
-        <div className="flex items-center justify-between mb-3.5 min-w-0">
-          <span className="text-[14px] font-extrabold text-deep">Progresso das metas</span>
+      {/* 5. Seção "Suas metas" com link Ver todas > (Fiel à Imagem 3: card horizontal com baú) */}
+      <div className="w-full min-w-0">
+        <div className="flex items-center justify-between mb-2 px-1 min-w-0">
+          <span className="text-[15px] font-extrabold text-deep font-nunito">Suas metas</span>
           <Link
             to="/metas"
-            className="text-[12px] font-extrabold text-deep hover:text-primary flex items-center gap-0.5 shrink-0"
+            className="text-[12px] font-extrabold text-[#7D2BD6] hover:text-[#5B21B6] flex items-center gap-0.5 shrink-0"
           >
             <span>Ver todas</span>
-            <ChevronRight className="w-3.5 h-3.5 text-deep" strokeWidth={2.5} />
+            <ChevronRight className="w-3.5 h-3.5" strokeWidth={2.5} />
           </Link>
         </div>
 
-        {loading ? (
-          <div className="w-full grid grid-cols-3 gap-2 min-w-0">
-            {[1, 2, 3].map((i) => (
-              <div key={i} className="w-full flex flex-col items-center text-center animate-pulse min-w-0">
-                <div className="w-[54px] h-[54px] rounded-full bg-lilac/30 shrink-0" />
-                <div className="w-12 h-2.5 bg-lilac/20 rounded mt-2" />
+        {displayGoals.length > 0 ? (
+          <div
+            onClick={() => navigate('/metas')}
+            className="w-full bg-white rounded-[22px] p-4 border border-[#F0EBF8] shadow-card flex items-center justify-between cursor-pointer hover:border-primary/20 transition-all min-w-0"
+          >
+            <div className="flex items-center gap-3 min-w-0 flex-1">
+              <div className="w-11 h-11 rounded-2xl bg-[#FEF3C7] flex items-center justify-center shrink-0 shadow-xs">
+                <img src="/assets/icons/icon-bau.png" alt="Baú de Metas" className="w-6 h-6 object-contain" />
               </div>
-            ))}
-          </div>
-        ) : displayGoals.length > 0 ? (
-          <div className="w-full grid grid-cols-3 gap-2 min-w-0">
-            {displayGoals.map((g) => {
-              const metrics = calculateGoalMetrics(g)
-              return (
-                <div key={g.id} className="w-full flex flex-col items-center text-center min-w-0">
-                  <ProgressRing progress={metrics.progressPct} size={54} strokeWidth={5} />
-                  <span className="text-[11px] font-extrabold text-deep mt-2 truncate w-full">
-                    {g.name}
-                  </span>
+              <div className="min-w-0 flex-1 pr-2">
+                <span className="text-[14px] font-extrabold text-deep block truncate">
+                  {displayGoals[0].name}
+                </span>
+                <span className="text-[12px] font-bold text-[#7D6A9C] block mt-0.5 truncate">
+                  {formatCurrency(displayGoals[0].saved_amount)} de {formatCurrency(displayGoals[0].target_amount)}
+                </span>
+                <div className="w-full h-2 rounded-full bg-[#F3E8FF] overflow-hidden mt-2">
+                  <div
+                    className="h-full rounded-full bg-gradient-to-r from-[#7D2BD6] to-[#CF91F6] transition-all duration-500"
+                    style={{
+                      width: `${Math.min(Math.round((displayGoals[0].saved_amount / displayGoals[0].target_amount) * 100), 100)}%`,
+                    }}
+                  />
                 </div>
-              )
-            })}
+              </div>
+            </div>
+            <span className="text-[12px] font-black text-[#15803D] bg-[#DCFCE7] px-2.5 py-1 rounded-full shrink-0">
+              {Math.min(Math.round((displayGoals[0].saved_amount / displayGoals[0].target_amount) * 100), 100)}%
+            </span>
           </div>
         ) : (
-          <div className="flex items-center justify-between py-1 min-w-0">
-            <span className="text-xs text-textSec font-medium truncate">Nenhuma meta criada ainda.</span>
-            <button
-              onClick={() => navigate('/metas')}
-              className="text-xs font-bold text-primary-dark hover:underline shrink-0 ml-2 cursor-pointer"
-            >
-              + Criar meta
-            </button>
+          <div
+            onClick={() => navigate('/metas')}
+            className="w-full bg-white rounded-[22px] p-4 border border-[#F0EBF8] shadow-card flex items-center justify-between cursor-pointer hover:border-primary/20 transition-all min-w-0"
+          >
+            <div className="flex items-center gap-3 min-w-0 flex-1">
+              <div className="w-11 h-11 rounded-2xl bg-[#FEF3C7] flex items-center justify-center shrink-0 shadow-xs">
+                <img src="/assets/icons/icon-bau.png" alt="Baú de Metas" className="w-6 h-6 object-contain" />
+              </div>
+              <div className="min-w-0 flex-1 pr-2">
+                <span className="text-[14px] font-extrabold text-deep block truncate">Viagem dos sonhos</span>
+                <span className="text-[12px] font-bold text-[#7D6A9C] block mt-0.5 truncate">
+                  R$ 1.750,00 de R$ 5.000,00
+                </span>
+                <div className="w-full h-2 rounded-full bg-[#F3E8FF] overflow-hidden mt-2">
+                  <div className="h-full rounded-full bg-gradient-to-r from-[#7D2BD6] to-[#CF91F6] w-[35%]" />
+                </div>
+              </div>
+            </div>
+            <span className="text-[12px] font-black text-[#15803D] bg-[#DCFCE7] px-2.5 py-1 rounded-full shrink-0">
+              35%
+            </span>
           </div>
         )}
       </div>
 
-      {/* 7. Transações Recentes reais */}
+      {/* 6. Transações Recentes reais (Fiel à Imagem 3) */}
       <div className="w-full bg-white rounded-[24px] p-4.5 border border-[#F0EBF8] shadow-card min-w-0">
         <div className="flex items-center justify-between mb-2 min-w-0">
           <span className="text-[14px] font-extrabold text-deep">Transações recentes</span>
           <Link
             to="/gastos"
-            className="text-[12px] font-extrabold text-deep hover:text-primary flex items-center gap-0.5 shrink-0"
+            className="text-[12px] font-extrabold text-[#7D2BD6] hover:text-[#5B21B6] flex items-center gap-0.5 shrink-0"
           >
             <span>Ver todas</span>
-            <ChevronRight className="w-3.5 h-3.5 text-deep" strokeWidth={2.5} />
+            <ChevronRight className="w-3.5 h-3.5" strokeWidth={2.5} />
           </Link>
         </div>
 

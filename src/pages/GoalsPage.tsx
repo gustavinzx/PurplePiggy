@@ -194,19 +194,24 @@ export const GoalsPage: React.FC = () => {
   }
 
   return (
-    <AppShell showNav={true} className="py-6 flex flex-col gap-4">
-      {/* Título da tela */}
-      <div className="w-full min-w-0">
-        <h1 className="text-xl font-extrabold text-deep font-sans mb-1">
-          Suas metas
-        </h1>
-        <p className="text-xs font-semibold text-textSec">
-          Pequenos passos, grandes conquistas.
-        </p>
+    <AppShell showNav={true} className="py-5 flex flex-col gap-4 font-nunito pb-24">
+      {/* Título da tela + Mascote com Troféu (Fiel à Imagem 3 Screen 3) */}
+      <div className="w-full flex items-center justify-between min-w-0 pt-1">
+        <div className="min-w-0 flex-1">
+          <h1 className="text-[22px] font-extrabold text-[#432171] font-nunito tracking-tight mb-0.5">
+            Suas metas
+          </h1>
+          <p className="text-[13px] font-bold text-[#7D6A9C]">
+            Pequenos passos, grandes conquistas.
+          </p>
+        </div>
+        <div className="w-16 h-16 shrink-0 -my-2 drop-shadow-sm">
+          <Mascot pose="trophy" size="sm" priority alt="Mascote comemorando metas" />
+        </div>
       </div>
 
-      {/* Lista de Metas (fiel ao layout oficial) */}
-      <div className="w-full flex flex-col gap-3.5 min-w-0">
+      {/* Lista de Metas (Fiel à Imagem 3 Screen 3) */}
+      <div className="w-full flex flex-col gap-3 min-w-0">
         {loading ? (
           [1, 2, 3].map((i) => (
             <div
@@ -225,35 +230,72 @@ export const GoalsPage: React.FC = () => {
             const goalContribs = contributions[g.id] || []
             const metrics = calculateGoalMetrics(g, goalContribs)
 
+            const remaining = Math.max(0, metrics.target - metrics.saved)
+            const renderGoalIcon = () => {
+              const nameLower = g.name.toLowerCase()
+              if (nameLower.includes('viagem') || nameLower.includes('voo') || nameLower.includes('férias')) {
+                return (
+                  <div className="w-11 h-11 rounded-2xl bg-[#DEEEFC] flex items-center justify-center text-[#2563EB] text-xl shrink-0 shadow-xs">
+                    ✈️
+                  </div>
+                )
+              }
+              if (nameLower.includes('note') || nameLower.includes('computador') || nameLower.includes('estudo')) {
+                return (
+                  <div className="w-11 h-11 rounded-2xl bg-[#EEDEFB] flex items-center justify-center text-[#7D2BD6] text-xl shrink-0 shadow-xs">
+                    💻
+                  </div>
+                )
+              }
+              if (nameLower.includes('academia') || nameLower.includes('saúde') || nameLower.includes('treino')) {
+                return (
+                  <div className="w-11 h-11 rounded-2xl bg-[#FCE7F3] flex items-center justify-center text-[#BE185D] text-xl shrink-0 shadow-xs">
+                    🏋️
+                  </div>
+                )
+              }
+              return (
+                <div className="w-11 h-11 rounded-2xl bg-[#FEF3C7] flex items-center justify-center text-[#D97706] text-xl shrink-0 shadow-xs">
+                  ⭐
+                </div>
+              )
+            }
+
             return (
               <div
                 key={g.id}
                 onClick={() => setSelectedGoal(g)}
-                className="w-full bg-white rounded-[22px] p-5 border border-lilac/15 shadow-card hover:border-primary/40 cursor-pointer transition-all flex items-center justify-between min-w-0"
+                className="w-full bg-white rounded-[22px] p-4 border border-lilac/15 shadow-card hover:border-primary/40 cursor-pointer transition-all flex items-center justify-between min-w-0"
               >
-                <div className="flex flex-col gap-1 pr-3">
-                  <div className="flex items-center gap-1.5 text-xs font-extrabold text-deep">
-                    <Star className="w-4 h-4 text-gold fill-gold" />
-                    <span>{g.name}</span>
-                  </div>
+                <div className="flex items-center gap-3 min-w-0 flex-1 pr-2">
+                  {renderGoalIcon()}
 
-                  <div className="text-sm font-extrabold text-deep">
-                    {formatCurrency(metrics.saved)}{' '}
-                    <span className="text-xs font-semibold text-textSec">
-                      de {formatCurrency(metrics.target)}
+                  <div className="flex flex-col min-w-0 flex-1">
+                    <span className="text-[14px] font-extrabold text-[#432171] leading-tight truncate">
+                      {g.name}
+                    </span>
+
+                    <span className="text-[12px] font-bold text-[#7D6A9C] leading-tight mt-0.5 truncate">
+                      {formatCurrency(metrics.saved)} de {formatCurrency(metrics.target)}
+                    </span>
+
+                    {/* Barra horizontal fina */}
+                    <div className="w-full h-1.5 rounded-full bg-[#F3E8FF] overflow-hidden mt-1.5">
+                      <div
+                        className="h-full rounded-full bg-gradient-to-r from-[#7D2BD6] to-[#CF91F6] transition-all duration-500"
+                        style={{ width: `${Math.min(metrics.progressPct, 100)}%` }}
+                      />
+                    </div>
+
+                    <span className="text-[10px] font-semibold text-[#7D6A9C] mt-1 truncate">
+                      {metrics.isCompleted ? '✓ Meta concluída!' : `Faltam ${formatCurrency(remaining)}`}
                     </span>
                   </div>
-
-                  {metrics.monthlyRequired && metrics.monthlyRequired > 0 && !metrics.isCompleted && (
-                    <div className="text-[10px] font-bold text-primary mt-1">
-                      Aporte sugerido: {formatCurrency(metrics.monthlyRequired)}/mês
-                    </div>
-                  )}
                 </div>
 
-                {/* Anel de progresso SVG do layout oficial */}
-                <div className="shrink-0">
-                  <ProgressRing progress={metrics.progressPct} size={64} strokeWidth={6} />
+                {/* Anel de progresso circular com porcentagem centralizada */}
+                <div className="shrink-0 flex items-center justify-center ml-1">
+                  <ProgressRing progress={metrics.progressPct} size={52} strokeWidth={5} />
                 </div>
               </div>
             )
@@ -270,17 +312,15 @@ export const GoalsPage: React.FC = () => {
         )}
       </div>
 
-      {/* Botão "+ Criar nova meta" */}
-      <div className="pt-2">
-        <Button
-          variant="outline"
-          size="lg"
-          fullWidth
-          icon={<Plus className="w-5 h-5" />}
+      {/* Botão "+ Criar nova meta" (Fiel à Imagem 3 Screen 3: pílula full-width vibrante) */}
+      <div className="w-full pt-1">
+        <button
           onClick={() => setIsCreateModalOpen(true)}
+          className="w-full py-3.5 px-5 rounded-full bg-gradient-to-r from-[#7D2BD6] via-[#8E2DE2] to-[#B037F8] hover:opacity-95 active:scale-98 text-white font-nunito font-extrabold text-sm shadow-md shadow-purple-600/25 flex items-center justify-center gap-2 transition-all cursor-pointer"
         >
-          Criar nova meta
-        </Button>
+          <Plus className="w-4.5 h-4.5 text-white" strokeWidth={3} />
+          <span>Criar nova meta</span>
+        </button>
       </div>
 
       {/* Modal: Detalhes e Ações da Meta Selecionada */}

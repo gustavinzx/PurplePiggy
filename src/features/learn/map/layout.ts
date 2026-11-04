@@ -2,7 +2,7 @@ export const MAP = {
   node: 56, current: 64,
   balloonW: 84, balloonH: 24, balloonGap: 6,
   mascot: 48, gap: 10, edge: 12, padBottom: 16,
-  minStep: 64, maxStep: 116, amp: 74,
+  minStep: 58, maxStep: 116, amp: 74,
 } as const;
 
 export interface Box { x: number; y: number; w: number; h: number }

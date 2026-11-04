@@ -133,22 +133,53 @@ export const LevelNode: React.FC<LevelNodeProps> = ({
   }
 
   return (
-    <button
-      type="button"
-      aria-label={ariaLabel}
-      onClick={onClick}
+    <div
       style={{
         width: `${size}px`,
         height: `${size}px`,
         ...style,
       }}
-      className={`absolute rounded-full flex items-center justify-center transition-all duration-150 select-none ${getNodeStyles()} ${
-        !isLocked
-          ? 'active:translate-y-[2px] active:border-b-[2px] cursor-pointer'
-          : 'active:scale-95'
-      } ${className}`}
+      className="absolute flex items-center justify-center select-none z-10"
     >
-      {renderContent()}
-    </button>
+      {/* Pedestal / Ilha flutuante 3D embaixo do nó (Fiel à Imagem 3 Screen 4) */}
+      <div
+        className="absolute -bottom-2 w-[124%] h-5 rounded-full bg-gradient-to-b from-[#EEDEFB] via-[#DFC6FF] to-[#C49BFA]/70 shadow-sm -z-10 pointer-events-none"
+        aria-hidden="true"
+      />
+
+      <button
+        type="button"
+        aria-label={ariaLabel}
+        onClick={onClick}
+        style={{
+          width: `${size}px`,
+          height: `${size}px`,
+        }}
+        className={`w-full h-full rounded-full flex items-center justify-center transition-all duration-150 select-none ${getNodeStyles()} ${
+          !isLocked
+            ? 'active:translate-y-[2px] active:border-b-[2px] cursor-pointer'
+            : 'active:scale-95'
+        } ${className}`}
+      >
+        {renderContent()}
+      </button>
+
+      {/* Badge ou etiqueta de status (Fiel à Imagem 3 Screen 4) */}
+      {isCurrent && (
+        <span className="absolute -bottom-5.5 bg-[#432171] text-white text-[9px] font-black uppercase tracking-wider px-2 py-0.5 rounded-full shadow-xs border border-purple-300 whitespace-nowrap pointer-events-none z-20">
+          Atual
+        </span>
+      )}
+      {isCompleted && (
+        <span className="absolute -bottom-5.5 bg-white text-[#15803D] text-[9px] font-black tracking-wider px-2 py-0.5 rounded-full shadow-xs border border-green-200 whitespace-nowrap pointer-events-none z-20 flex items-center gap-0.5">
+          ✓ Concluído
+        </span>
+      )}
+      {isLocked && !isChest && !isTrophy && (
+        <span className="absolute -bottom-5 bg-white/95 text-[#7D6A9C] text-[8px] font-bold px-1.5 py-0.5 rounded-full border border-purple-100 whitespace-nowrap pointer-events-none opacity-80">
+          Bloqueado
+        </span>
+      )}
+    </div>
   )
 }

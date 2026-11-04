@@ -173,14 +173,25 @@ export const TransactionsPage: React.FC = () => {
 
   return (
     <AppShell showNav={true} className="pt-4 pb-28 flex flex-col gap-4 select-none">
-      {/* 1. Título da tela (Fiel a design/telas/07-gastos.png) */}
-      <div className="w-full min-w-0 pt-1">
-        <h1 className="text-[22px] font-extrabold text-deep font-sans tracking-tight">
-          Seus gastos
-        </h1>
-        <p className="text-[13px] font-semibold text-deep leading-tight mt-0.5">
-          Acompanhe para onde seu dinheiro está indo.
-        </p>
+      {/* 1. Header com voltar e calendário (Fiel à Imagem 3 Screen 2) */}
+      <div className="w-full flex items-center justify-between min-w-0 pt-1">
+        <div className="min-w-0 flex-1">
+          <h1 className="text-[22px] font-extrabold text-[#432171] font-nunito tracking-tight leading-tight truncate">
+            Seus gastos
+          </h1>
+          <p className="text-[13px] font-bold text-[#7D6A9C] leading-tight mt-0.5 font-nunito">
+            Acompanhe e entenda para controlar melhor.
+          </p>
+        </div>
+        <button
+          type="button"
+          onClick={() => {
+            setPeriodOpen(!periodOpen);
+          }}
+          className="w-10 h-10 rounded-full bg-white shadow-card border border-lilac/20 flex items-center justify-center text-[#432171] hover:bg-[#F8F5FC] active:scale-95 transition-all shrink-0 ml-3 cursor-pointer"
+        >
+          <Calendar className="w-4.5 h-4.5 text-[#432171]" />
+        </button>
       </div>
 
       {/* 2. Sequência de 3 Pílulas de Filtro (Período, Categoria e Tipo) distribuídas e centralizadas */}
@@ -396,8 +407,8 @@ export const TransactionsPage: React.FC = () => {
           {formatCurrency(displayTotal)}
         </div>
 
-        {/* Gráfico de barras verticais dos últimos 6 meses */}
-        <div className="w-full flex items-end justify-between h-28 px-1 border-b border-[#E9D5FF]/60 pb-2">
+        {/* Gráfico de barras verticais com destaque (Fiel à Imagem 3 Screen 2) */}
+        <div className="w-full flex items-end justify-between h-32 px-1 border-b border-[#E9D5FF]/60 pb-2">
           {monthlyExpenses.map((m) => {
             const heightPct = m.value > 0 ? Math.max(Math.round((m.value / maxMonthVal) * 100), 8) : 6
             const isHighlight = m.isCurrentMonth
