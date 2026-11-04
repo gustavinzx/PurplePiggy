@@ -4,10 +4,20 @@ import { supabase } from '../lib/supabase'
 import { useAuth } from '../context/AuthContext'
 import { AppShell } from '../components/AppShell'
 import { Mascot } from '../components/Mascot'
-import { CategoryCircle } from '../components/CategoryIcon'
+import { CategoryCircle, CategoryIcon } from '../components/CategoryIcon'
 import { TransactionModal } from '../components/TransactionModal'
 import { formatCurrency } from '../lib/format'
-import { Plus, ChevronDown, ChevronRight } from 'lucide-react'
+import {
+  Plus,
+  ChevronDown,
+  ChevronRight,
+  Calendar,
+  Clock,
+  Sparkles,
+  Layers,
+  ArrowDown,
+  ArrowUp,
+} from 'lucide-react'
 import type { Database } from '../types/database.types'
 
 type Transaction = Database['public']['Tables']['transactions']['Row']
@@ -19,15 +29,19 @@ export const TransactionsPage: React.FC = () => {
   const [categories, setCategories] = useState<Record<string, Category>>({})
   const [loading, setLoading] = useState(true)
 
-  // Filtros fieis ao layout: Período ("Este mês") e Categoria ("Todas")
+  // Sequência completa de 3 filtros: Período, Categoria e Tipo
   const [period, setPeriod] = useState<'this_month' | 'last_month' | 'all'>('this_month')
   const [selectedCategory, setSelectedCategory] = useState<string>('all')
+  const [typeFilter, setTypeFilter] = useState<'all' | 'expense' | 'income'>('all')
 
-  // Estados dos menus dropdown personalizados (para substituir selects nativos de OS)
+  // Estados dos menus dropdown personalizados com animação e clique externo
   const [periodOpen, setPeriodOpen] = useState(false)
   const [categoryOpen, setCategoryOpen] = useState(false)
+  const [typeOpen, setTypeOpen] = useState(false)
+
   const periodRef = useRef<HTMLDivElement>(null)
   const categoryRef = useRef<HTMLDivElement>(null)
+  const typeRef = useRef<HTMLDivElement>(null)
 
   // Modal
   const [isModalOpen, setIsModalOpen] = useState(false)
@@ -46,6 +60,9 @@ export const TransactionsPage: React.FC = () => {
       }
       if (categoryRef.current && !categoryRef.current.contains(e.target as Node)) {
         setCategoryOpen(false)
+      }
+      if (typeRef.current && !typeRef.current.contains(e.target as Node)) {
+        setTypeOpen(false)
       }
     }
     document.addEventListener('mousedown', handleClickOutside)
@@ -81,16 +98,21 @@ export const TransactionsPage: React.FC = () => {
   const prevMonthStr = prevMonthDate.toISOString().slice(0, 7)
 
   const filtered = transactions.filter((t) => {
-    // Filtro de categoria
+    // 1. Filtro de categoria
     if (selectedCategory !== 'all' && t.category_id !== selectedCategory) {
       return false
     }
 
-    // Filtro de período
+    // 2. Filtro de período
     if (period === 'this_month') {
-      return t.occurred_on.startsWith(curMonthStr)
+      if (!t.occurred_on.startsWith(curMonthStr)) return false
     } else if (period === 'last_month') {
-      return t.occurred_on.startsWith(prevMonthStr)
+      if (!t.occurred_on.startsWith(prevMonthStr)) return false
+    }
+
+    // 3. Filtro de tipo (Todos, Despesas, Receitas)
+    if (typeFilter !== 'all' && t.type !== typeFilter) {
+      return false
     }
 
     return true
@@ -135,87 +157,105 @@ export const TransactionsPage: React.FC = () => {
         </p>
       </div>
 
-      {/* 2. Pílulas de Filtro ("Este mês ⌄" e "Todas ⌄") */}
-      <div className="w-full flex items-center gap-2.5 min-w-0">
-        {/* Pílula Período */}
-        <div ref={periodRef} className="relative">
+      {/* 2. Sequência de 3 Pílulas de Filtro (Período, Categoria e Tipo) com símbolos */}
+      <div className="w-full flex items-center gap-2 py-0.5 min-w-0 relative z-30">
+        {/* Pílula 1: Período com ícone */}
+        <div ref={periodRef} className="relative shrink-0">
           <button
             type="button"
             onClick={() => {
               setPeriodOpen(!periodOpen)
               setCategoryOpen(false)
+              setTypeOpen(false)
             }}
-            className="h-10 px-4 bg-white/90 hover:bg-white border border-[#E9D5FF] rounded-full text-[13px] font-extrabold text-deep flex items-center gap-1.5 shadow-xs transition-all active:scale-95"
+            className="h-9 px-3 bg-white/95 hover:bg-white border border-[#E9D5FF] rounded-full text-[12px] font-extrabold text-deep flex items-center gap-1.5 shadow-xs transition-all active:scale-95"
           >
+            <Calendar className="w-3.5 h-3.5 text-[#8E32D8] shrink-0" strokeWidth={2.5} />
             <span>{periodLabels[period]}</span>
-            <ChevronDown className={`w-4 h-4 text-deep transition-transform ${periodOpen ? 'rotate-180' : ''}`} />
+            <ChevronDown className={`w-3.5 h-3.5 text-deep/70 transition-transform ${periodOpen ? 'rotate-180' : ''}`} />
           </button>
 
           {periodOpen && (
-            <div className="absolute left-0 top-11 z-40 min-w-[160px] bg-white border border-[#F0EBF8] rounded-2xl shadow-card py-1.5 animate-in fade-in zoom-in-95">
+            <div className="absolute left-0 top-10 z-40 min-w-[170px] bg-white border border-[#F0EBF8] rounded-2xl shadow-card py-1.5 animate-in fade-in zoom-in-95">
               <button
                 onClick={() => {
                   setPeriod('this_month')
                   setPeriodOpen(false)
                 }}
-                className={`w-full text-left px-4 py-2 text-[13px] font-bold transition-colors ${
+                className={`w-full text-left px-3.5 py-2 text-[12px] font-bold flex items-center gap-2 transition-colors ${
                   period === 'this_month' ? 'text-[#8E32D8] bg-[#F8F5FC]' : 'text-deep hover:bg-[#FAF6FD]'
                 }`}
               >
-                Este mês
+                <Calendar className="w-3.5 h-3.5 text-[#8E32D8]" />
+                <span>Este mês</span>
               </button>
               <button
                 onClick={() => {
                   setPeriod('last_month')
                   setPeriodOpen(false)
                 }}
-                className={`w-full text-left px-4 py-2 text-[13px] font-bold transition-colors ${
+                className={`w-full text-left px-3.5 py-2 text-[12px] font-bold flex items-center gap-2 transition-colors ${
                   period === 'last_month' ? 'text-[#8E32D8] bg-[#F8F5FC]' : 'text-deep hover:bg-[#FAF6FD]'
                 }`}
               >
-                Mês anterior
+                <Calendar className="w-3.5 h-3.5 text-[#8E32D8]" />
+                <span>Mês anterior</span>
               </button>
               <button
                 onClick={() => {
                   setPeriod('all')
                   setPeriodOpen(false)
                 }}
-                className={`w-full text-left px-4 py-2 text-[13px] font-bold transition-colors ${
+                className={`w-full text-left px-3.5 py-2 text-[12px] font-bold flex items-center gap-2 transition-colors ${
                   period === 'all' ? 'text-[#8E32D8] bg-[#F8F5FC]' : 'text-deep hover:bg-[#FAF6FD]'
                 }`}
               >
-                Todo o histórico
+                <Clock className="w-3.5 h-3.5 text-[#8E32D8]" />
+                <span>Todo o histórico</span>
               </button>
             </div>
           )}
         </div>
 
-        {/* Pílula Categorias */}
-        <div ref={categoryRef} className="relative">
+        {/* Pílula 2: Categoria com ícone 3D oficial para cada tipo */}
+        <div ref={categoryRef} className="relative shrink-0">
           <button
             type="button"
             onClick={() => {
               setCategoryOpen(!categoryOpen)
               setPeriodOpen(false)
+              setTypeOpen(false)
             }}
-            className="h-10 px-4 bg-white/90 hover:bg-white border border-[#E9D5FF] rounded-full text-[13px] font-extrabold text-deep flex items-center gap-1.5 shadow-xs transition-all active:scale-95"
+            className="h-9 px-3 bg-white/95 hover:bg-white border border-[#E9D5FF] rounded-full text-[12px] font-extrabold text-deep flex items-center gap-1.5 shadow-xs transition-all active:scale-95"
           >
-            <span>{selectedCategoryName}</span>
-            <ChevronDown className={`w-4 h-4 text-deep transition-transform ${categoryOpen ? 'rotate-180' : ''}`} />
+            {selectedCategory === 'all' ? (
+              <Sparkles className="w-3.5 h-3.5 text-[#8E32D8] shrink-0" />
+            ) : (
+              <CategoryIcon
+                name={categories[selectedCategory]?.slug || categories[selectedCategory]?.name || 'outros'}
+                size="xs"
+                className="w-4 h-4 shrink-0"
+              />
+            )}
+            <span className="max-w-[110px] truncate">{selectedCategoryName}</span>
+            <ChevronDown className={`w-3.5 h-3.5 text-deep/70 transition-transform ${categoryOpen ? 'rotate-180' : ''}`} />
           </button>
 
           {categoryOpen && (
-            <div className="absolute left-0 top-11 z-40 min-w-[200px] max-h-64 overflow-y-auto bg-white border border-[#F0EBF8] rounded-2xl shadow-card py-1.5 animate-in fade-in zoom-in-95">
+            <div className="absolute left-0 top-10 z-40 min-w-[220px] max-h-64 overflow-y-auto bg-white border border-[#F0EBF8] rounded-2xl shadow-card py-1.5 animate-in fade-in zoom-in-95">
               <button
                 onClick={() => {
                   setSelectedCategory('all')
                   setCategoryOpen(false)
                 }}
-                className={`w-full text-left px-4 py-2 text-[13px] font-bold transition-colors ${
+                className={`w-full text-left px-3.5 py-2 text-[12px] font-bold flex items-center gap-2.5 transition-colors ${
                   selectedCategory === 'all' ? 'text-[#8E32D8] bg-[#F8F5FC]' : 'text-deep hover:bg-[#FAF6FD]'
                 }`}
               >
-                Todas as categorias
+                <div className="w-6 h-6 rounded-full bg-[#F3E8FF] flex items-center justify-center shrink-0">
+                  <Sparkles className="w-3.5 h-3.5 text-[#8E32D8]" />
+                </div>
+                <span>Todas as categorias</span>
               </button>
               {Object.values(categories).map((c) => (
                 <button
@@ -224,13 +264,98 @@ export const TransactionsPage: React.FC = () => {
                     setSelectedCategory(c.id)
                     setCategoryOpen(false)
                   }}
-                  className={`w-full text-left px-4 py-2 text-[13px] font-bold transition-colors ${
+                  className={`w-full text-left px-3.5 py-2 text-[12px] font-bold flex items-center gap-2.5 transition-colors ${
                     selectedCategory === c.id ? 'text-[#8E32D8] bg-[#F8F5FC]' : 'text-deep hover:bg-[#FAF6FD]'
                   }`}
                 >
-                  {c.name}
+                  <div className="w-6 h-6 rounded-full bg-[#F8F4FD] flex items-center justify-center shrink-0">
+                    <CategoryIcon name={c.slug || c.icon || c.name} size="xs" className="w-4 h-4" />
+                  </div>
+                  <span className="truncate">{c.name}</span>
                 </button>
               ))}
+            </div>
+          )}
+        </div>
+
+        {/* Pílula 3: Tipo (Todos, Despesas, Receitas) com símbolos */}
+        <div ref={typeRef} className="relative shrink-0">
+          <button
+            type="button"
+            onClick={() => {
+              setTypeOpen(!typeOpen)
+              setPeriodOpen(false)
+              setCategoryOpen(false)
+            }}
+            className="h-9 px-3 bg-white/95 hover:bg-white border border-[#E9D5FF] rounded-full text-[12px] font-extrabold text-deep flex items-center gap-1.5 shadow-xs transition-all active:scale-95"
+          >
+            {typeFilter === 'all' && (
+              <Layers className="w-3.5 h-3.5 text-[#8E32D8] shrink-0" strokeWidth={2.5} />
+            )}
+            {typeFilter === 'expense' && (
+              <div className="w-3.5 h-3.5 rounded-full bg-[#FCE7F3] text-[#BE185D] flex items-center justify-center shrink-0">
+                <ArrowDown className="w-2.5 h-2.5" strokeWidth={3} />
+              </div>
+            )}
+            {typeFilter === 'income' && (
+              <div className="w-3.5 h-3.5 rounded-full bg-[#DCFCE7] text-[#15803D] flex items-center justify-center shrink-0">
+                <ArrowUp className="w-2.5 h-2.5" strokeWidth={3} />
+              </div>
+            )}
+            <span>
+              {typeFilter === 'all'
+                ? 'Todos'
+                : typeFilter === 'expense'
+                ? 'Despesas'
+                : 'Receitas'}
+            </span>
+            <ChevronDown className={`w-3.5 h-3.5 text-deep/70 transition-transform ${typeOpen ? 'rotate-180' : ''}`} />
+          </button>
+
+          {typeOpen && (
+            <div className="absolute right-0 sm:left-0 top-10 z-40 min-w-[190px] bg-white border border-[#F0EBF8] rounded-2xl shadow-card py-1.5 animate-in fade-in zoom-in-95">
+              <button
+                onClick={() => {
+                  setTypeFilter('all')
+                  setTypeOpen(false)
+                }}
+                className={`w-full text-left px-3.5 py-2 text-[12px] font-bold flex items-center gap-2.5 transition-colors ${
+                  typeFilter === 'all' ? 'text-[#8E32D8] bg-[#F8F5FC]' : 'text-deep hover:bg-[#FAF6FD]'
+                }`}
+              >
+                <div className="w-6 h-6 rounded-full bg-[#F3E8FF] flex items-center justify-center shrink-0">
+                  <Layers className="w-3.5 h-3.5 text-[#8E32D8]" strokeWidth={2.5} />
+                </div>
+                <span>Todos os tipos</span>
+              </button>
+              <button
+                onClick={() => {
+                  setTypeFilter('expense')
+                  setTypeOpen(false)
+                }}
+                className={`w-full text-left px-3.5 py-2 text-[12px] font-bold flex items-center gap-2.5 transition-colors ${
+                  typeFilter === 'expense' ? 'text-[#8E32D8] bg-[#F8F5FC]' : 'text-deep hover:bg-[#FAF6FD]'
+                }`}
+              >
+                <div className="w-6 h-6 rounded-full bg-[#FCE7F3] text-[#BE185D] flex items-center justify-center shrink-0">
+                  <ArrowDown className="w-3 h-3" strokeWidth={2.5} />
+                </div>
+                <span>Apenas despesas</span>
+              </button>
+              <button
+                onClick={() => {
+                  setTypeFilter('income')
+                  setTypeOpen(false)
+                }}
+                className={`w-full text-left px-3.5 py-2 text-[12px] font-bold flex items-center gap-2.5 transition-colors ${
+                  typeFilter === 'income' ? 'text-[#8E32D8] bg-[#F8F5FC]' : 'text-deep hover:bg-[#FAF6FD]'
+                }`}
+              >
+                <div className="w-6 h-6 rounded-full bg-[#DCFCE7] text-[#15803D] flex items-center justify-center shrink-0">
+                  <ArrowUp className="w-3.5 h-3.5" strokeWidth={2.5} />
+                </div>
+                <span>Apenas receitas</span>
+              </button>
             </div>
           )}
         </div>
@@ -281,6 +406,7 @@ export const TransactionsPage: React.FC = () => {
             onClick={() => {
               setPeriod('all')
               setSelectedCategory('all')
+              setTypeFilter('all')
             }}
             className="text-[12px] font-extrabold text-deep hover:text-primary flex items-center gap-0.5 shrink-0"
           >
