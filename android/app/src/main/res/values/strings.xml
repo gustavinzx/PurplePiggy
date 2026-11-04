@@ -1,0 +1,7 @@
+<?xml version='1.0' encoding='utf-8'?>
+<resources>
+    <string name="app_name">PurplePiggy</string>
+    <string name="title_activity_main">PurplePiggy</string>
+    <string name="package_name">com.purplepiggy.app</string>
+    <string name="custom_url_scheme">com.purplepiggy.app</string>
+</resources>
