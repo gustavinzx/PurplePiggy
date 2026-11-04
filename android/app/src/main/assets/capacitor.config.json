@@ -1,5 +1,27 @@
 {
 	"appId": "com.purplepiggy.app",
 	"appName": "PurplePiggy",
-	"webDir": "dist"
+	"webDir": "dist",
+	"plugins": {
+		"StatusBar": {
+			"overlaysWebView": true,
+			"style": "LIGHT",
+			"backgroundColor": "#F8F5FC"
+		},
+		"Keyboard": {
+			"resize": "body",
+			"resizeOnFullScreen": true
+		},
+		"SplashScreen": {
+			"launchShowDuration": 1500,
+			"launchAutoHide": true,
+			"backgroundColor": "#8E32D8",
+			"androidSplashResourceName": "splash",
+			"androidScaleType": "CENTER_CROP",
+			"showSpinner": false
+		},
+		"App": {
+			"disableBackButtonHandler": false
+		}
+	}
 }

@@ -172,7 +172,11 @@ export const TransactionsPage: React.FC = () => {
       : categories[selectedCategory]?.name || 'Todas'
 
   return (
-    <AppShell showNav={true} className="pt-4 pb-28 flex flex-col gap-4 select-none">
+    <AppShell
+      showNav={true}
+      className="pt-4 flex flex-col gap-4 select-none"
+      contentStyle={{ paddingBottom: 'calc(var(--nav-h) + env(safe-area-inset-bottom, 0px) + 84px)' }}
+    >
       {/* 1. Título da tela (Fiel a design/telas/07-gastos.png) */}
       <div className="w-full min-w-0 pt-1">
         <h1 className="text-[22px] font-extrabold text-deep font-sans tracking-tight">
@@ -523,7 +527,12 @@ export const TransactionsPage: React.FC = () => {
       </div>
 
       {/* 5. Botão flutuante "+ Adicionar gasto" do layout */}
-      <div className="fixed bottom-20 left-1/2 -translate-x-1/2 z-30 w-full max-w-[var(--app-max-width,430px)] px-4 pointer-events-none">
+      <div
+        className="fixed left-1/2 -translate-x-1/2 z-30 w-full max-w-[var(--app-max-width)] px-4 pointer-events-none"
+        style={{
+          bottom: 'calc(var(--nav-h) + env(safe-area-inset-bottom, 0px) + 12px)',
+        }}
+      >
         <button
           onClick={() => setIsModalOpen(true)}
           className="w-full bg-gradient-to-r from-[#8E32D8] to-[#6C22BD] text-white font-extrabold text-[15px] py-3.5 px-6 rounded-full shadow-btn-floating flex items-center justify-center gap-2 hover:opacity-95 active:scale-95 transition-all pointer-events-auto"

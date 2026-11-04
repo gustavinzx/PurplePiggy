@@ -4,60 +4,78 @@ import { BottomNav } from './BottomNav'
 
 export interface AppShellProps {
   children: React.ReactNode
+  header?: React.ReactNode
   showNav?: boolean
   className?: string
   variant?: AtmosphereVariant
   plainAtmosphere?: boolean
   containerClassName?: string
+  contentClassName?: string
+  contentStyle?: React.CSSProperties
 }
 
 /**
- * AppShell unificado:
- * Garante largura constante (100% até var(--app-max-width)), alinhamento centralizado
- * e espaçamento horizontal padronizado (var(--screen-x)) em TODOS os estados (carregamento,
- * esqueleto, vazio, erro e dados).
+ * AppShell unificado para todas as telas do app:
+ * - Cabeçalho opcional fixo com respeito ao safe-area-inset-top
+ * - Área de conteúdo rolável isolada (só ela rola, mantendo topo e navegação perfeitamente ancorados)
+ * - Bottom nav fixa com altura (--nav-h = 64px) + safe-area-inset-bottom
+ * - Altura estrita de 100dvh que se adapta dinamicamente a diferentes alturas de tela Android
+ * - Publica paddingBottom: calc(var(--nav-h) + env(safe-area-inset-bottom, 0px) + 24px)
+ *   garantindo que nenhum card ou botão fique coberto pela navegação.
  */
 export const AppShell: React.FC<AppShellProps> = ({
   children,
+  header,
   showNav = true,
   className = '',
   variant = 'app',
   plainAtmosphere = false,
   containerClassName = '',
+  contentClassName = '',
+  contentStyle = {},
 }) => {
   return (
-    <div className="relative min-h-[100vh] min-h-[100dvh] w-full flex justify-center selection:bg-lilac selection:text-white">
+    <div className="relative h-[100dvh] w-full flex justify-center selection:bg-lilac selection:text-white overflow-hidden bg-bg">
       {/* Atmosphere de fundo cobrindo todo o viewport desktop */}
       <Atmosphere variant={variant} plain={plainAtmosphere} />
 
-      {/* Container Mobile Principal: coluna centralizada com largura fixa nos tokens */}
+      {/* Container Mobile Principal: coluna centralizada com altura 100dvh estrita */}
       <div
         id="app-shell-container"
-        className={`w-full max-w-[var(--app-max-width)] min-h-[100vh] min-h-[100dvh] flex flex-col relative shadow-2xl overflow-x-hidden border-x border-lilac/10 mx-auto ${
+        className={`w-full max-w-[var(--app-max-width)] h-[100dvh] flex flex-col relative shadow-2xl overflow-hidden border-x border-lilac/10 mx-auto ${
           variant === 'splash' ? 'bg-transparent' : 'bg-bg'
         } ${containerClassName}`}
         style={{
           width: '100%',
           maxWidth: 'var(--app-max-width)',
           marginInline: 'auto',
+          paddingTop: 'env(safe-area-inset-top, 0px)',
         }}
       >
-        {/* Conteúdo da Tela: largura 100%, nunca depende do conteúdo */}
+        {/* Cabeçalho opcional fixo */}
+        {header && (
+          <header className="w-full shrink-0 z-30 bg-bg/95 backdrop-blur-md">
+            {header}
+          </header>
+        )}
+
+        {/* Área de conteúdo rolável (só ela rola) */}
         <main
-          className={`flex-1 flex flex-col w-full min-w-0 ${className}`}
+          className={`flex-1 flex flex-col w-full min-w-0 overflow-y-auto overflow-x-hidden ${className} ${contentClassName}`}
           style={{
             width: '100%',
             minWidth: 0,
             paddingInline: 'var(--screen-x)',
             paddingBottom: showNav
-              ? 'calc(var(--nav-height) + env(safe-area-inset-bottom, 0px) + 16px)'
-              : undefined,
+              ? 'calc(var(--nav-h) + env(safe-area-inset-bottom, 0px) + 24px)'
+              : 'calc(env(safe-area-inset-bottom, 0px) + 24px)',
+            ...contentStyle,
           }}
         >
           {children}
         </main>
 
-        {/* Barra de Navegação Inferior */}
+        {/* Barra de Navegação Inferior Fixa */}
         {showNav && <BottomNav />}
       </div>
     </div>
