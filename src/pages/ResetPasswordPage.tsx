@@ -29,7 +29,7 @@ export const ResetPasswordPage: React.FC = () => {
       if (error) throw error
 
       setSent(true)
-      toast.success('Instruções enviadas para o seu e-mail! 📬')
+      toast.success('Instruções enviadas para o seu e-mail!')
     } catch (err: any) {
       toast.error('Não conseguimos enviar o e-mail. Confira o endereço informado.')
     } finally {

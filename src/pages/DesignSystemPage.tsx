@@ -60,13 +60,13 @@ export const DesignSystemPage: React.FC = () => {
             to="/design-system/atmosphere"
             className="text-xs font-bold text-primary bg-primary/10 hover:bg-primary/20 px-3 py-1.5 rounded-full inline-flex items-center gap-1.5 transition-colors"
           >
-            <span>🌌 Fundo & Atmosfera (Prompt 09)</span>
+            <span>Fundo & Atmosfera (Prompt 09)</span>
           </Link>
           <Link
             to="/design-system/mascot"
             className="text-xs font-bold text-primary bg-primary/10 hover:bg-primary/20 px-3 py-1.5 rounded-full inline-flex items-center gap-1.5 transition-colors"
           >
-            <span>🐷 Mascotes Oficiais (Prompt 07)</span>
+            <span>Mascotes Oficiais (Prompt 07)</span>
           </Link>
           <Link
             to="/design-system/learn"
@@ -82,7 +82,7 @@ export const DesignSystemPage: React.FC = () => {
       <section className="mb-8">
         <h2 className="text-xs uppercase tracking-wider font-extrabold text-textSec mb-3 flex items-center justify-between">
           <span>1. Cards (Prompt 11)</span>
-          <span className="text-[10px] text-primary lowercase font-mono">raio 24px · vidro suave</span>
+          <span className="text-[10px] text-primary lowercase font-sans font-bold">raio 24px · vidro suave</span>
         </h2>
 
         <div className="flex flex-col gap-3.5">
@@ -140,7 +140,7 @@ export const DesignSystemPage: React.FC = () => {
       <section className="mb-8">
         <h2 className="text-xs uppercase tracking-wider font-extrabold text-textSec mb-3 flex items-center justify-between">
           <span>2. Progresso (Prompt 11)</span>
-          <span className="text-[10px] text-primary lowercase font-mono">degradê dourado · anéis</span>
+          <span className="text-[10px] text-primary lowercase font-sans font-bold">degradê dourado · anéis</span>
         </h2>
 
         <div className="bg-white/90 backdrop-blur rounded-[22px] p-5 border border-lilac/20 shadow-card flex flex-col gap-4">
@@ -216,7 +216,7 @@ export const DesignSystemPage: React.FC = () => {
       <section className="mb-8">
         <h2 className="text-xs uppercase tracking-wider font-extrabold text-textSec mb-3 flex items-center justify-between">
           <span>3. Tiles de Categorias (Prompt 11)</span>
-          <span className="text-[10px] text-primary lowercase font-mono">rounded-2xl · lilás claro</span>
+          <span className="text-[10px] text-primary lowercase font-sans font-bold">rounded-2xl · lilás claro</span>
         </h2>
 
         <div className="bg-white/90 backdrop-blur rounded-[22px] p-5 border border-lilac/20 shadow-card">
@@ -247,7 +247,7 @@ export const DesignSystemPage: React.FC = () => {
       <section className="mb-8">
         <h2 className="text-xs uppercase tracking-wider font-extrabold text-textSec mb-3 flex items-center justify-between">
           <span>4. Chips dos 4 Ícones de Topo (Prompt 11)</span>
-          <span className="text-[10px] text-primary lowercase font-mono">cabeçalho oficial</span>
+          <span className="text-[10px] text-primary lowercase font-sans font-bold">cabeçalho oficial</span>
         </h2>
 
         <div className="grid grid-cols-4 gap-2">
@@ -262,7 +262,7 @@ export const DesignSystemPage: React.FC = () => {
       <section className="mb-8">
         <h2 className="text-xs uppercase tracking-wider font-extrabold text-textSec mb-3 flex items-center justify-between">
           <span>5. Navegação & Botão Flutuante (Prompt 11)</span>
-          <span className="text-[10px] text-primary lowercase font-mono">bottom nav · FAB</span>
+          <span className="text-[10px] text-primary lowercase font-sans font-bold">bottom nav · FAB</span>
         </h2>
 
         <div className="flex flex-col gap-4">
@@ -330,7 +330,7 @@ export const DesignSystemPage: React.FC = () => {
       <section className="mb-8">
         <h2 className="text-xs uppercase tracking-wider font-extrabold text-textSec mb-3 flex items-center justify-between">
           <span>7. Comparação Visual com o Layout Oficial</span>
-          <span className="text-[10px] text-primary lowercase font-mono">telas 06, 07, 09, 10</span>
+          <span className="text-[10px] text-primary lowercase font-sans font-bold">telas 06, 07, 09, 10</span>
         </h2>
 
         <div className="grid grid-cols-2 gap-3">

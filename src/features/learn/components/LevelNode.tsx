@@ -162,9 +162,9 @@ export const LevelNode: React.FC<LevelNodeProps> = ({
       {/* 3 Estrelas de Maestria douradas acima de nó concluído */}
       {isCompleted && (
         <div className="absolute -top-3 z-10 flex gap-0.5 pointer-events-none">
-          <span className="text-[#F5B83D] text-[10px] leading-none drop-shadow-sm font-bold">★</span>
-          <span className="text-[#F5B83D] text-[12px] -mt-1 leading-none drop-shadow-sm font-bold">★</span>
-          <span className="text-[#F5B83D] text-[10px] leading-none drop-shadow-sm font-bold">★</span>
+          <span className="text-[#F5B83D] text-[10px] leading-none drop-shadow-sm font-bold">•</span>
+          <span className="text-[#F5B83D] text-[12px] -mt-1 leading-none drop-shadow-sm font-bold">•</span>
+          <span className="text-[#F5B83D] text-[10px] leading-none drop-shadow-sm font-bold">•</span>
         </div>
       )}
 

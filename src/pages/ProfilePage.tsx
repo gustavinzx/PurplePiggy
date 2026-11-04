@@ -44,7 +44,7 @@ export const ProfilePage: React.FC = () => {
 
   const handleSignOut = async () => {
     await signOut()
-    toast.success('Você saiu da sua conta. Até breve! 💜')
+    toast.success('Você saiu da sua conta. Até breve!')
     navigate('/')
   }
 
@@ -55,7 +55,7 @@ export const ProfilePage: React.FC = () => {
     if (error) {
       toast.error('Erro ao restaurar dados demonstrativos.')
     } else {
-      toast.success('Dados demonstrativos de Ana Oliveira restaurados! ✨')
+      toast.success('Dados demonstrativos de Ana Oliveira restaurados!')
       navigate('/inicio')
     }
   }
@@ -77,7 +77,7 @@ export const ProfilePage: React.FC = () => {
 
       if (error) throw error
 
-      toast.success('Perfil atualizado com sucesso! ✓')
+      toast.success('Perfil atualizado com sucesso!')
       setIsEditModalOpen(false)
       refreshProfile()
     } catch (err) {
@@ -99,7 +99,7 @@ export const ProfilePage: React.FC = () => {
         })
         .eq('id', user.id)
 
-      toast.success('Preferências de notificação salvas! ✓')
+      toast.success('Preferências de notificação salvas!')
       setIsNotificationsModalOpen(false)
       refreshProfile()
     } catch (err) {
@@ -135,7 +135,7 @@ export const ProfilePage: React.FC = () => {
         .update({ avatar_url: publicUrlData.publicUrl })
         .eq('id', user.id)
 
-      toast.success('Foto de perfil atualizada! 📸')
+      toast.success('Foto de perfil atualizada!')
       refreshProfile()
     } catch (err) {
       toast.error('Erro ao enviar imagem.')
@@ -458,7 +458,7 @@ export const ProfilePage: React.FC = () => {
           <div className="bg-white rounded-[26px] p-6 w-full max-w-sm shadow-2xl border border-lilac/20 max-h-[85vh] overflow-y-auto">
             <div className="flex items-center justify-between pb-3 border-b border-lilac/15 mb-3">
               <h3 className="text-base font-extrabold text-deep font-sans">
-                Sobre o PurplePiggy 💜
+                Sobre o PurplePiggy
               </h3>
               <button
                 onClick={() => setIsAboutModalOpen(false)}
@@ -510,13 +510,13 @@ export const ProfilePage: React.FC = () => {
 
             <div className="flex flex-col gap-3 text-xs text-deep/85 leading-relaxed font-semibold">
               <p>
-                🔒 <strong>Seus dados são seus:</strong> Nós não vendemos suas informações, não exibimos anúncios comerciais e não oferecemos crédito rotativo.
+                <strong>Seus dados são seus:</strong> Nós não vendemos suas informações, não exibimos anúncios comerciais e não oferecemos crédito rotativo.
               </p>
               <p>
-                🛡️ <strong>Segurança em primeiro lugar:</strong> Todas as informações financeiras são protegidas por criptografia de ponta a ponta e políticas de Row Level Security (RLS) no banco de dados.
+                <strong>Segurança em primeiro lugar:</strong> Todas as informações financeiras são protegidas por criptografia de ponta a ponta e políticas de Row Level Security (RLS) no banco de dados.
               </p>
               <p>
-                📜 <strong>Conformidade LGPD:</strong> Você tem total autonomia para visualizar, editar ou solicitar a exclusão definitiva dos seus dados a qualquer momento.
+                <strong>Conformidade LGPD:</strong> Você tem total autonomia para visualizar, editar ou solicitar a exclusão definitiva dos seus dados a qualquer momento.
               </p>
             </div>
           </div>

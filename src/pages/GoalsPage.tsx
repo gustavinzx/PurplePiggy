@@ -109,7 +109,7 @@ export const GoalsPage: React.FC = () => {
 
       if (error) throw error
 
-      toast.success('Meta criada com sucesso! 🎯')
+      toast.success('Meta criada com sucesso!')
       setIsCreateModalOpen(false)
       setNewName('')
       setNewTarget('')
@@ -153,9 +153,9 @@ export const GoalsPage: React.FC = () => {
 
       if (isCompletedNow) {
         confetti({ particleCount: 100, spread: 70, origin: { y: 0.6 } })
-        toast.success('Parabéns! Você conquistou 100% da sua meta! 🏆💜')
+        toast.success('Parabéns! Você conquistou 100% da sua meta!')
       } else {
-        toast.success(kind === 'deposit' ? 'Aporte registrado! ✓' : 'Retirada registrada! ✓')
+        toast.success(kind === 'deposit' ? 'Aporte registrado!' : 'Retirada registrada!')
       }
 
       setIsDepositModalOpen(false)
@@ -336,7 +336,7 @@ export const GoalsPage: React.FC = () => {
 
                   {metrics.estimatedCompletionDate && !metrics.isCompleted && (
                     <div className="bg-baby/50 p-2.5 rounded-xl border border-blue-100 text-[11px] font-semibold text-deep">
-                      📅 Com base na média dos seus aportes, previsão de conclusão em:{' '}
+                      Com base na média dos seus aportes, previsão de conclusão em:{' '}
                       <strong>{formatDate(metrics.estimatedCompletionDate)}</strong>
                     </div>
                   )}
@@ -344,7 +344,7 @@ export const GoalsPage: React.FC = () => {
                   {metrics.isCompleted && (
                     <div className="bg-gold/20 p-4 rounded-xl border border-gold/40 text-xs font-extrabold text-deep text-center flex flex-col items-center gap-2">
                       <Mascot size="md" pose="trophy" floating={true} />
-                      <span>🏆 Meta 100% concluída! Orgulho da sua jornada!</span>
+                      <span>Meta 100% concluída! Orgulho da sua jornada!</span>
                     </div>
                   )}
 

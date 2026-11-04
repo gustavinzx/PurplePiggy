@@ -92,7 +92,7 @@ export const DesignSystemAtmospherePage: React.FC = () => {
           <div className="flex items-center gap-2 mb-2">
             <span className="w-2.5 h-2.5 rounded-full bg-primary animate-pulse" />
             <h2 className="text-sm font-extrabold text-deep">
-              Variante Ativa: <code className="text-primary font-mono text-xs">variant="{activeVariant}"</code>
+              Variante Ativa: <code className="text-primary font-sans font-bold text-xs">variant="{activeVariant}"</code>
             </h2>
           </div>
           <p className="text-xs font-semibold text-textSec leading-relaxed">

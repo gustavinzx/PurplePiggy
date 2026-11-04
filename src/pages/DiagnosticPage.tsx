@@ -381,7 +381,7 @@ export const DiagnosticPage: React.FC = () => {
             </div>
 
             <h2 className="text-xl font-extrabold text-deep font-sans mb-1">
-              Diagnóstico pronto! 💜
+              Diagnóstico pronto!
             </h2>
             <p className="text-xs font-bold text-textSec mb-4">
               Aqui está um raio-x acolhedor da sua realidade.
@@ -411,7 +411,7 @@ export const DiagnosticPage: React.FC = () => {
 
             {/* Mensagem Acolhedora Sem Culpa */}
             <div className="bg-baby/60 border border-blue-100 rounded-xl p-3 mb-5 text-xs text-deep font-semibold text-left">
-              💬 {evalResult.message}
+              {evalResult.message}
             </div>
 
             {feeling === 'in_debt' && (

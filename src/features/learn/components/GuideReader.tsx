@@ -31,7 +31,7 @@ export const GuideReader: React.FC<GuideReaderProps> = ({
   onBack,
   onComplete,
   onNextLesson,
-  completedButtonText = 'Concluir lição ✓',
+  completedButtonText = 'Concluir lição',
   nextButtonText = 'Iniciar Desafio →',
   className = '',
 }) => {

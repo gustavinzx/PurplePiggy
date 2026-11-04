@@ -121,7 +121,7 @@ export const GuidePage: React.FC = () => {
       onBack={handleBack}
       onComplete={handleComplete}
       onNextLesson={handleStartChallenge}
-      completedButtonText="Concluir lição ✓"
+      completedButtonText="Concluir lição"
       nextButtonText="Iniciar Desafio do Nível →"
     />
   )

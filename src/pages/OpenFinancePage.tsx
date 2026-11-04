@@ -98,7 +98,7 @@ export const OpenFinancePage: React.FC = () => {
           onSuccess: (item) => {
             setConnecting(false)
             toast.success(
-              `Conta ${item.connector?.name || 'bancária'} conectada com sucesso via Open Finance! 💜`
+              `Conta ${item.connector?.name || 'bancária'} conectada com sucesso via Open Finance!`
             )
             loadOpenFinanceData()
           },
@@ -155,7 +155,7 @@ export const OpenFinancePage: React.FC = () => {
         expires_at: expires.toISOString(),
       })
 
-      toast.success('Instituição conectada em modo demonstrativo! 🏦')
+      toast.success('Instituição conectada em modo demonstrativo!')
       setIsConnectingNew(false)
       loadOpenFinanceData()
     } catch (err) {

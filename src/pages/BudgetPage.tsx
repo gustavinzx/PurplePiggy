@@ -165,7 +165,7 @@ export const BudgetPage: React.FC = () => {
           { onConflict: 'user_id,month,category_id' }
         )
       }
-      toast.success('Limites sugeridos aplicados com sucesso! ✨')
+      toast.success('Limites sugeridos aplicados com sucesso!')
       setIsSuggestModalOpen(false)
       loadBudgetData()
     } catch (err) {
@@ -204,7 +204,7 @@ export const BudgetPage: React.FC = () => {
         )
       }
 
-      toast.success('Orçamento atualizado ✓')
+      toast.success('Orçamento atualizado')
       setIsAdjustModalOpen(false)
       loadBudgetData()
     } catch (err) {

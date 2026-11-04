@@ -121,7 +121,7 @@ export const SimulatorPage: React.FC = () => {
 
       if (error) throw error
 
-      toast.success(`Parabéns! R$ ${purchaseAmount} guardados na meta "${goal.name}"! 💜`)
+      toast.success(`Parabéns! R$ ${purchaseAmount} guardados na meta "${goal.name}"!`)
       navigate('/metas')
     } catch (err) {
       toast.error('Erro ao aplicar valor na meta.')
@@ -167,7 +167,7 @@ export const SimulatorPage: React.FC = () => {
               : 'text-deep/70 hover:text-deep hover:bg-[#FAF6FD]'
           }`}
         >
-          Horas de Trabalho ⏱️
+          Horas de Trabalho
         </button>
       </div>
 

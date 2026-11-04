@@ -114,7 +114,7 @@ export const TransactionDetailPage: React.FC = () => {
 
       if (error) throw error
 
-      toast.success('Lançamento atualizado ✓')
+      toast.success('Lançamento atualizado')
       navigate('/gastos')
     } catch (err) {
       console.error(err)

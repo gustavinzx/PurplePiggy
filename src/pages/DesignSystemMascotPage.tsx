@@ -95,7 +95,7 @@ export const DesignSystemMascotPage: React.FC = () => {
             2. Demonstração: Pose "Peek" sobre Card
           </h2>
           <p className="text-sm text-[#6C5B8B]">
-            O ponto <code className="bg-[#EEDEFB] text-[#7D2BD6] px-1.5 py-0.5 rounded font-mono text-xs">anchor_y: 0.796</code> apoia exatamente as patinhas sobre a borda superior do card, com z-index sobreposto.
+            O ponto <code className="bg-[#EEDEFB] text-[#7D2BD6] px-1.5 py-0.5 rounded font-sans font-bold text-xs">anchor_y: 0.796</code> apoia exatamente as patinhas sobre a borda superior do card, com z-index sobreposto.
           </p>
 
           <div className="pt-16 pb-4 flex justify-center">

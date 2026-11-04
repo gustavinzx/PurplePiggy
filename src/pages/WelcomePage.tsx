@@ -53,7 +53,7 @@ export const WelcomePage: React.FC = () => {
     if (error) {
       toast.error('Não foi possível iniciar o modo demonstração. Tente novamente.')
     } else {
-      toast.success('Bem-vinda ao modo demonstração de Ana Oliveira! 🎉')
+      toast.success('Bem-vinda ao modo demonstração de Ana Oliveira!')
       navigate('/inicio')
     }
   }
@@ -61,8 +61,8 @@ export const WelcomePage: React.FC = () => {
   return (
     <AppShell showNav={false} className="justify-between px-6 py-10 relative overflow-hidden bg-white">
       {/* Decorações */}
-      <div className="absolute top-10 right-8 text-gold text-lg">✦</div>
-      <div className="absolute top-20 left-6 text-lilac/50 text-sm">★</div>
+      <div className="absolute top-10 right-8 text-gold text-lg"></div>
+      <div className="absolute top-20 left-6 text-lilac/50 text-sm"></div>
       <div className="absolute bottom-40 right-10 text-gold/80 text-sm">●</div>
 
       {/* Título e Subtítulo */}

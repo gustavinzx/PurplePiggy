@@ -132,7 +132,7 @@ export const TransactionModal: React.FC<TransactionModalProps> = ({
       }
 
       setIsSuccess(true)
-      toast.success(type === 'expense' ? 'Gasto registrado com sucesso! ✓' : 'Receita registrada com sucesso! ✓')
+      toast.success(type === 'expense' ? 'Gasto registrado com sucesso!' : 'Receita registrada com sucesso!')
       setTimeout(() => {
         setIsSuccess(false)
         setDescription('')
