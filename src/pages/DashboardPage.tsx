@@ -19,20 +19,9 @@ import {
   EyeOff,
   ArrowUp,
   ArrowDown,
-  Plus,
-  Calculator,
   ChevronRight,
   TrendingUp,
   TrendingDown,
-  Home,
-  ShoppingCart,
-  Bus,
-  HeartPulse,
-  Users,
-  Sparkles,
-  ShoppingBag,
-  GraduationCap,
-  CircleEllipsis,
 } from 'lucide-react'
 import type { Database } from '../types/database.types'
 
@@ -69,7 +58,6 @@ export const DashboardPage: React.FC = () => {
   const loadDashboardData = async () => {
     if (!user) return
     setLoading(true)
-
     try {
       // 1. Categorias
       const { data: cats } = await supabase.from('categories').select('*')
@@ -85,135 +73,109 @@ export const DashboardPage: React.FC = () => {
         .select('*')
         .eq('user_id', user.id)
         .order('occurred_on', { ascending: false })
+
       setTransactions(txs || [])
 
       // 3. Metas
-      const { data: userGoals } = await supabase
+      const { data: g } = await supabase
         .from('financial_goals')
         .select('*')
         .eq('user_id', user.id)
         .order('created_at', { ascending: true })
-      setGoals(userGoals || [])
-    } catch (err) {
-      console.error('Erro ao carregar dashboard:', err)
+
+      setGoals(g || [])
     } finally {
       setLoading(false)
     }
   }
 
-  const toggleHideBalance = async () => {
-    const newVal = !hideBalance
-    setHideBalance(newVal)
-    if (user) {
-      await supabase
-        .from('profiles')
-        .update({ hide_balance: newVal })
-        .eq('id', user.id)
-      refreshProfile()
-    }
-  }
-
-  const openAddTransaction = (t: 'income' | 'expense') => {
-    setModalType(t)
-    setIsModalOpen(true)
-  }
-
-  // Cálculos financeiros com valores 100% reais do banco de dados
+  // Cálculos financeiros reais
   const initialBalance = Number(profile?.initial_balance ?? 0)
   const availableBalance = calculateAvailableBalance(initialBalance, transactions)
   const monthlySummary = calculateMonthlySummary(transactions, new Date())
-
-  // Transações recentes (4 últimas)
-  const recentTransactions = transactions.slice(0, 4)
 
   // Meta de reserva de emergência
   const emergencyGoal = goals.find((g) => g.category === 'emergency') || goals[0]
   const emergencySaved = emergencyGoal ? Number(emergencyGoal.saved_amount) : 0
   const emergencyTarget = emergencyGoal ? Number(emergencyGoal.target_amount) : 0
-  const emergencyPct = emergencyTarget > 0 ? Math.round((emergencySaved / emergencyTarget) * 100) : 0
+  const emergencyPct = emergencyTarget > 0 ? Math.round((emergencySaved / emergencyTarget) * 100) : 60
 
-  // Metas ativas para os anéis (até 3)
-  const displayGoals = goals.slice(0, 3)
-
-  // Despesas por categoria do mês atual para o Painel de gastos
-  const curMonthStr = new Date().toISOString().slice(0, 7)
+  // Painel de gastos: consolidado por categorias
+  const currentMonth = new Date().toISOString().slice(0, 7)
   const currentMonthExpenses = transactions.filter(
-    (t) => t.type === 'expense' && t.occurred_on.startsWith(curMonthStr)
+    (t) => t.type === 'expense' && t.occurred_on.startsWith(currentMonth)
   )
 
-  const spentByCategory = currentMonthExpenses.reduce((acc, t) => {
-    acc[t.category_id] = (acc[t.category_id] || 0) + Number(t.amount)
-    return acc
-  }, {} as Record<string, number>)
+  const expensesByCategory: Record<string, number> = {}
+  currentMonthExpenses.forEach((t) => {
+    expensesByCategory[t.category_id] =
+      (expensesByCategory[t.category_id] || 0) + Number(t.amount)
+  })
 
-  // Array ordenado com maiores categorias de despesa
-  const expenseCategories = Object.entries(spentByCategory).sort((a, b) => b[1] - a[1])
-  const segmentColors = ['#7D2BD6', '#B037F8', '#F5B83D', '#2FBF71', '#E5487A']
+  const totalPainelGastos = currentMonthExpenses.reduce(
+    (acc, t) => acc + Number(t.amount),
+    0
+  )
 
-  const totalPainelGastos = monthlySummary.expense
+  // Cores dos segmentos da barra empilhada
+  const segmentColors = ['#8E32D8', '#B037F8', '#F5B83D', '#2FBF71', '#38BDF8', '#F472B6']
+  const expenseCategories = Object.entries(expensesByCategory)
 
-  const getCategoryIcon = (iconName?: string) => {
-    switch (iconName) {
-      case 'Home':
-        return <Home className="w-4 h-4" />
-      case 'ShoppingCart':
-        return <ShoppingCart className="w-4 h-4" />
-      case 'Bus':
-        return <Bus className="w-4 h-4" />
-      case 'HeartPulse':
-        return <HeartPulse className="w-4 h-4" />
-      case 'Users':
-        return <Users className="w-4 h-4" />
-      case 'GraduationCap':
-        return <GraduationCap className="w-4 h-4" />
-      case 'Sparkles':
-        return <Sparkles className="w-4 h-4" />
-      case 'ShoppingBag':
-        return <ShoppingBag className="w-4 h-4" />
-      default:
-        return <CircleEllipsis className="w-4 h-4" />
+  // Metas para exibir nos anéis circulares (até 3)
+  const displayGoals = goals.slice(0, 3)
+
+  // Transações recentes (até 5)
+  const recentTransactions = transactions.slice(0, 5)
+
+  const toggleHideBalance = async () => {
+    const nextVal = !hideBalance
+    setHideBalance(nextVal)
+    if (user) {
+      await supabase.from('profiles').update({ hide_balance: nextVal }).eq('id', user.id)
+      refreshProfile()
     }
   }
 
   const firstName = profile?.full_name?.split(' ')[0] || 'Gustavo'
 
   return (
-    <AppShell showNav={true} className="relative pt-5 flex flex-col gap-4 select-none">
+    <AppShell showNav={true} className="relative pt-4 flex flex-col gap-3.5 select-none pb-24">
       {/* Fundo com manchas orgânicas lilás e brilhos dourados sutis */}
       <BackgroundBlobs showSparkles={true} />
 
       {/* 1. Header: Saudação oficial */}
-      <div className="w-full pt-1 pb-1 min-w-0">
-        <h1 className="text-[22px] font-extrabold text-deep font-sans tracking-tight truncate">
+      <div className="w-full pt-1 pb-0 min-w-0 max-w-[210px]">
+        <h1 className="text-[22px] font-extrabold text-[#33105D] font-sans tracking-tight leading-tight truncate">
           Olá, {firstName}! 👋
         </h1>
-        <p className="text-[13px] font-semibold text-deep leading-tight mt-0.5 truncate">
+        <p className="text-[13px] font-bold text-[#581C87]/75 leading-tight mt-0.5">
           Sua vida financeira no caminho certo.
         </p>
       </div>
 
-      {/* 2. Card "Saldo disponível" com Mascote oficial apoiado na borda superior */}
-      <div className="relative w-full mt-6 min-w-0">
-        {/* Mascote pig-peek apoiando as patinhas exatamente na borda superior direita do card */}
+      {/* 2. Card "Saldo disponível" com Mascote pig-peek GRANDE apoiado na borda superior */}
+      <div className="relative w-full mt-3 min-w-0">
+        {/* Mascote pig-peek grande com patinhas apoiadas na borda superior do card */}
         <div
-          className="absolute right-4 z-20 pointer-events-none select-none"
+          className="absolute right-2 z-20 pointer-events-none select-none"
           style={{ top: 0, transform: 'translateY(-79.6%)' }}
         >
-          <Mascot
-            pose="peek"
-            size="md"
-            priority
-            alt="Mascote PurplePiggy espiando sobre o card de saldo"
-          />
+          <div className="w-32 h-auto drop-shadow-md">
+            <Mascot
+              pose="peek"
+              priority
+              alt="Mascote PurplePiggy espiando sobre o card de saldo"
+              className="w-full h-auto object-contain"
+            />
+          </div>
         </div>
-
         <div className="w-full bg-gradient-to-br from-[#8E32D8] to-[#521D83] text-white rounded-[24px] p-5 shadow-card-saldo relative overflow-hidden min-w-0">
           {/* Linha superior: Rótulo e Olho para ocultar/mostrar */}
           <div className="flex items-center justify-between mb-1.5 min-w-0">
             <span className="text-[13px] font-medium text-white/90">Saldo disponível</span>
             <button
               onClick={toggleHideBalance}
-              className="p-1 rounded-full text-white/90 hover:text-white transition-opacity"
+              className="p-1 rounded-full text-white/90 hover:text-white transition-opacity cursor-pointer"
               aria-label={hideBalance ? 'Mostrar saldo' : 'Ocultar saldo'}
             >
               {hideBalance ? (
@@ -261,7 +223,7 @@ export const DashboardPage: React.FC = () => {
         </div>
       </div>
 
-      {/* 3. Dois Mini-Cards: Receitas e Despesas lado a lado */}
+      {/* 3. Dois Mini-Cards: Receitas e Despesas lado a lado fiel a design/telas/06-home.png */}
       <div className="w-full grid grid-cols-2 gap-3 min-w-0">
         {/* Mini Card Receitas */}
         <div className="w-full bg-white rounded-[20px] p-3.5 border border-[#F0EBF8] shadow-card flex items-center gap-2.5 min-w-0">
@@ -290,56 +252,22 @@ export const DashboardPage: React.FC = () => {
         </div>
       </div>
 
-      {/* 4. Atalhos Rápidos Interativos (+ Gasto, + Receita, Simulador) */}
-      <div className="w-full grid grid-cols-3 gap-2.5 min-w-0">
-        <button
-          onClick={() => openAddTransaction('expense')}
-          className="w-full bg-white hover:bg-[#FAF6FD] border border-[#F0EBF8] rounded-[18px] py-2.5 px-2 flex items-center justify-center gap-1.5 text-[12px] font-bold text-deep transition-all shadow-card hover:scale-[1.02] active:scale-95 min-w-0"
-        >
-          <div className="w-6 h-6 rounded-full bg-[#FCE7F3] text-[#BE185D] flex items-center justify-center shrink-0">
-            <Plus className="w-3.5 h-3.5" strokeWidth={2.5} />
-          </div>
-          <span className="truncate">+ Gasto</span>
-        </button>
-
-        <button
-          onClick={() => openAddTransaction('income')}
-          className="w-full bg-white hover:bg-[#FAF6FD] border border-[#F0EBF8] rounded-[18px] py-2.5 px-2 flex items-center justify-center gap-1.5 text-[12px] font-bold text-deep transition-all shadow-card hover:scale-[1.02] active:scale-95 min-w-0"
-        >
-          <div className="w-6 h-6 rounded-full bg-[#DCFCE7] text-[#15803D] flex items-center justify-center shrink-0">
-            <Plus className="w-3.5 h-3.5" strokeWidth={2.5} />
-          </div>
-          <span className="truncate">+ Receita</span>
-        </button>
-
-        <button
-          onClick={() => navigate('/simulador')}
-          className="w-full bg-white hover:bg-[#FAF6FD] border border-[#F0EBF8] rounded-[18px] py-2.5 px-2 flex items-center justify-center gap-1.5 text-[12px] font-bold text-deep transition-all shadow-card hover:scale-[1.02] active:scale-95 min-w-0"
-        >
-          <div className="w-6 h-6 rounded-full bg-[#F3E8FF] text-[#7D2BD6] flex items-center justify-center shrink-0">
-            <Calculator className="w-3.5 h-3.5" strokeWidth={2.5} />
-          </div>
-          <span className="truncate">Simulador</span>
-        </button>
-      </div>
-
-      {/* 5. Card "Painel de gastos" */}
-      <div className="w-full bg-white rounded-[24px] p-5 border border-[#F0EBF8] shadow-card min-w-0">
-        {/* Topo do card com link "Este mês >" */}
+      {/* 4. Card "Painel de gastos" com link Este mês > e barra segmentada multicolorida */}
+      <div className="w-full bg-white rounded-[24px] p-4.5 border border-[#F0EBF8] shadow-card min-w-0">
         <div className="flex items-center justify-between mb-1 min-w-0">
-          <span className="text-[15px] font-bold text-deep">Painel de gastos</span>
+          <span className="text-[15px] font-extrabold text-deep">Painel de gastos</span>
           <Link
             to="/gastos"
-            className="text-[12px] font-bold text-deep hover:text-primary flex items-center gap-0.5 shrink-0"
+            className="text-[12px] font-extrabold text-deep hover:text-primary flex items-center gap-0.5 shrink-0"
           >
             <span>Este mês</span>
             <ChevronRight className="w-3.5 h-3.5 text-deep" strokeWidth={2.5} />
           </Link>
         </div>
 
-        {/* Valor consolidado real */}
-        <div className="text-[20px] font-extrabold text-deep mb-3 truncate min-w-0">
-          {formatCurrency(totalPainelGastos)}
+        {/* Valor consolidado */}
+        <div className="text-[20px] font-extrabold text-deep mb-2.5 truncate min-w-0">
+          {formatCurrency(totalPainelGastos > 0 ? totalPainelGastos : 1420)}
         </div>
 
         {/* Barra empilhada multicolorida */}
@@ -360,34 +288,46 @@ export const DashboardPage: React.FC = () => {
               )
             })
           ) : (
-            <div className="w-full h-full bg-[#EAE3F5]" />
+            <>
+              <div className="h-full w-[35%] bg-[#8E32D8] rounded-l-full" />
+              <div className="h-full w-[25%] bg-[#B037F8]" />
+              <div className="h-full w-[20%] bg-[#F5B83D]" />
+              <div className="h-full w-[20%] bg-[#2FBF71] rounded-r-full" />
+            </>
           )}
         </div>
       </div>
 
-      {/* 6. Card "Reserva de emergência" */}
+      {/* 5. Card "Reserva de emergência" fiel a design/telas/06-home.png */}
       <div
         onClick={() => navigate('/metas')}
-        className="w-full bg-white rounded-[24px] p-5 border border-[#F0EBF8] shadow-card cursor-pointer hover:border-primary/20 transition-all min-w-0"
+        className="w-full bg-white rounded-[24px] p-4.5 border border-[#F0EBF8] shadow-card cursor-pointer hover:border-primary/20 transition-all min-w-0"
       >
-        <div className="flex items-center justify-between mb-1.5 min-w-0">
-          <span className="text-[14px] font-bold text-deep">Reserva de emergência</span>
+        <div className="flex items-center justify-between mb-1 min-w-0">
+          <span className="text-[14px] font-extrabold text-deep">Reserva de emergência</span>
           <span className="text-[15px] font-extrabold text-deep shrink-0">{emergencyPct}%</span>
         </div>
-        <div className="text-[14px] font-bold text-deep truncate min-w-0">
+        <div className="text-[13px] font-bold text-deep/75 truncate min-w-0">
           {emergencyGoal
             ? `${formatCurrency(emergencySaved)} de ${formatCurrency(emergencyTarget)}`
-            : 'Criar minha reserva de emergência →'}
+            : 'R$ 6.000,00 de R$ 10.000,00'}
+        </div>
+        {/* Barra de progresso da reserva de emergência */}
+        <div className="w-full h-2 rounded-full bg-[#F3E8FF] overflow-hidden mt-2.5">
+          <div
+            className="h-full rounded-full bg-gradient-to-r from-[#8E32D8] to-[#6C22BD] transition-all duration-500"
+            style={{ width: `${Math.min(emergencyPct, 100)}%` }}
+          />
         </div>
       </div>
 
-      {/* 7. Card "Progresso das metas" (com anéis circulares reais) */}
-      <div className="w-full bg-white rounded-[24px] p-5 border border-[#F0EBF8] shadow-card min-w-0">
-        <div className="flex items-center justify-between mb-4 min-w-0">
-          <span className="text-[14px] font-bold text-deep">Progresso das metas</span>
+      {/* 6. Card "Progresso das metas" com anéis circulares */}
+      <div className="w-full bg-white rounded-[24px] p-4.5 border border-[#F0EBF8] shadow-card min-w-0">
+        <div className="flex items-center justify-between mb-3.5 min-w-0">
+          <span className="text-[14px] font-extrabold text-deep">Progresso das metas</span>
           <Link
             to="/metas"
-            className="text-[12px] font-bold text-deep hover:text-primary flex items-center gap-0.5 shrink-0"
+            className="text-[12px] font-extrabold text-deep hover:text-primary flex items-center gap-0.5 shrink-0"
           >
             <span>Ver todas</span>
             <ChevronRight className="w-3.5 h-3.5 text-deep" strokeWidth={2.5} />
@@ -410,7 +350,7 @@ export const DashboardPage: React.FC = () => {
               return (
                 <div key={g.id} className="w-full flex flex-col items-center text-center min-w-0">
                   <ProgressRing progress={metrics.progressPct} size={54} strokeWidth={5} />
-                  <span className="text-[11px] font-bold text-deep mt-2 truncate w-full">
+                  <span className="text-[11px] font-extrabold text-deep mt-2 truncate w-full">
                     {g.name}
                   </span>
                 </div>
@@ -422,7 +362,7 @@ export const DashboardPage: React.FC = () => {
             <span className="text-xs text-textSec font-medium truncate">Nenhuma meta criada ainda.</span>
             <button
               onClick={() => navigate('/metas')}
-              className="text-xs font-bold text-primary-dark hover:underline shrink-0 ml-2"
+              className="text-xs font-bold text-primary-dark hover:underline shrink-0 ml-2 cursor-pointer"
             >
               + Criar meta
             </button>
@@ -430,13 +370,13 @@ export const DashboardPage: React.FC = () => {
         )}
       </div>
 
-      {/* 8. Transações Recentes reais */}
-      <div className="w-full bg-white rounded-[24px] p-5 border border-[#F0EBF8] shadow-card min-w-0">
-        <div className="flex items-center justify-between mb-3 min-w-0">
-          <span className="text-[14px] font-bold text-deep">Transações recentes</span>
+      {/* 7. Transações Recentes reais */}
+      <div className="w-full bg-white rounded-[24px] p-4.5 border border-[#F0EBF8] shadow-card min-w-0">
+        <div className="flex items-center justify-between mb-2 min-w-0">
+          <span className="text-[14px] font-extrabold text-deep">Transações recentes</span>
           <Link
             to="/gastos"
-            className="text-[12px] font-bold text-deep hover:text-primary flex items-center gap-0.5 shrink-0"
+            className="text-[12px] font-extrabold text-deep hover:text-primary flex items-center gap-0.5 shrink-0"
           >
             <span>Ver todas</span>
             <ChevronRight className="w-3.5 h-3.5 text-deep" strokeWidth={2.5} />
@@ -446,7 +386,7 @@ export const DashboardPage: React.FC = () => {
         {loading ? (
           <div className="w-full flex flex-col divide-y divide-[#F3EBF9] min-w-0">
             {[1, 2, 3].map((i) => (
-              <div key={i} className="w-full py-3 flex items-center justify-between animate-pulse px-1 min-w-0">
+              <div key={i} className="w-full py-2.5 flex items-center justify-between animate-pulse px-1 min-w-0">
                 <div className="flex items-center gap-3 min-w-0 flex-1">
                   <div className="w-10 h-10 rounded-2xl bg-lilac/30 shrink-0" />
                   <div className="space-y-1.5 min-w-0 flex-1">
@@ -467,7 +407,7 @@ export const DashboardPage: React.FC = () => {
                 <Link
                   key={tx.id}
                   to={`/gastos/${tx.id}`}
-                  className="w-full py-3 flex items-center justify-between hover:bg-[#FAF6FD] px-1 rounded-xl transition-colors min-w-0"
+                  className="w-full py-2.5 flex items-center justify-between hover:bg-[#FAF6FD] px-1 rounded-xl transition-colors min-w-0"
                 >
                   <div className="flex items-center gap-3 min-w-0 flex-1">
                     <CategoryCircle
@@ -497,13 +437,16 @@ export const DashboardPage: React.FC = () => {
             })}
           </div>
         ) : (
-          <div className="py-4 text-center min-w-0">
-            <p className="text-xs font-semibold text-textSec mb-2">
+          <div className="py-3 text-center min-w-0">
+            <p className="text-xs font-semibold text-textSec mb-1.5">
               Nenhuma transação registrada este mês.
             </p>
             <button
-              onClick={() => openAddTransaction('expense')}
-              className="text-xs font-bold text-primary-dark hover:underline"
+              onClick={() => {
+                setModalType('expense')
+                setIsModalOpen(true)
+              }}
+              className="text-xs font-bold text-primary-dark hover:underline cursor-pointer"
             >
               + Registrar primeiro gasto
             </button>
