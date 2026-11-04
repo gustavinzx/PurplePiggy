@@ -146,32 +146,31 @@ export const DashboardPage: React.FC = () => {
       <BackgroundBlobs showSparkles={true} />
 
       {/* 1. Header: Saudação oficial */}
-      <div className="w-full pt-1 pb-0 min-w-0 max-w-[210px]">
-        <h1 className="text-[22px] font-extrabold text-[#33105D] font-sans tracking-tight leading-tight truncate">
+      <div className="w-full pt-1 pb-0 min-w-0 max-w-[240px]">
+        <h1 className="text-[22px] font-extrabold text-[#432171] font-nunito tracking-tight leading-tight truncate">
           Olá, {firstName}! 👋
         </h1>
-        <p className="text-[13px] font-bold text-[#581C87]/75 leading-tight mt-0.5">
+        <p className="text-[13px] font-bold text-[#7D6A9C] leading-tight mt-0.5 font-nunito">
           Sua vida financeira no caminho certo.
         </p>
       </div>
 
-      {/* 2. Card "Saldo disponível" com Mascote pig-peek GRANDE apoiado na borda superior */}
-      <div className="relative w-full mt-3 min-w-0">
-        {/* Mascote pig-peek grande com patinhas apoiadas na borda superior do card */}
+      {/* 2. Card "Saldo disponível" com Mascote pig-peek apoiado diretamente na borda superior */}
+      <div className="relative w-full mt-6 min-w-0">
+        {/* Mascote PurplePiggy espiando com as patinhas apoiadas perfeitamente na borda do card */}
         <div
-          className="absolute right-2 z-20 pointer-events-none select-none"
-          style={{ top: 0, transform: 'translateY(-79.6%)' }}
+          className="absolute right-3 z-20 pointer-events-none select-none"
+          style={{ bottom: 'calc(100% - 22px)' }}
         >
-          <div className="w-32 h-auto drop-shadow-md">
-            <Mascot
-              pose="peek"
-              priority
-              alt="Mascote PurplePiggy espiando sobre o card de saldo"
-              className="w-full h-auto object-contain"
-            />
-          </div>
+          <Mascot
+            pose="peek"
+            size="lg"
+            priority
+            alt="Mascote PurplePiggy apoiado sobre o card de saldo"
+            className="w-28 h-28 object-contain drop-shadow-md"
+          />
         </div>
-        <div className="w-full bg-gradient-to-br from-[#8E32D8] to-[#521D83] text-white rounded-[24px] p-5 shadow-card-saldo relative overflow-hidden min-w-0">
+        <div className="w-full bg-gradient-to-br from-[#8E32D8] via-[#7D2BD6] to-[#521D83] text-white rounded-[24px] p-5 shadow-card-saldo relative overflow-hidden min-w-0">
           {/* Linha superior: Rótulo e Olho para ocultar/mostrar */}
           <div className="flex items-center justify-between mb-1.5 min-w-0">
             <span className="text-[13px] font-medium text-white/90">Saldo disponível</span>

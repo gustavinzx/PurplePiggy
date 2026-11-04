@@ -188,6 +188,81 @@ export const LearnMap: React.FC<LearnMapProps> = ({
             minHeight: '100%',
           }}
         >
+          {/* Fundo Ambiência Temática PurplePiggy: Blobs orgânicos e Trilha Sinuosa */}
+          <div className="absolute inset-0 pointer-events-none overflow-hidden select-none -z-0" aria-hidden="true">
+            {/* Mancha suave lilás próxima ao nó atual */}
+            <div
+              className="absolute w-64 h-64 rounded-full bg-[#EEDEFB]/65 blur-3xl"
+              style={{
+                left: `${(layout.nodes[currentIndex]?.cx || dimensions?.width || 360) / 2 - 128}px`,
+                top: `${layout.currentCy - 128}px`,
+              }}
+            />
+            {/* Mancha dourada suave próxima ao Baú e Troféu no topo */}
+            <div
+              className="absolute w-56 h-56 rounded-full bg-[#FEDA70]/20 blur-3xl"
+              style={{
+                left: '20%',
+                top: '60px',
+              }}
+            />
+            {/* Mancha azul bebê suave na base */}
+            <div
+              className="absolute w-60 h-60 rounded-full bg-[#DEEEFC]/70 blur-3xl"
+              style={{
+                right: '-40px',
+                bottom: '40px',
+              }}
+            />
+
+            {/* Trilha/Caminho Sinuoso em SVG conectando os centros dos nós */}
+            {layout.nodes.length > 1 && (
+              <svg
+                className="absolute inset-0 w-full h-full pointer-events-none"
+                style={{ width: `${dimensions?.width || 360}px`, height: `${layout.contentHeight}px` }}
+              >
+                {/* 1. Trilha de fundo larga (halo suave azul-bebê / lilás) */}
+                <path
+                  d={(() => {
+                    const sorted = [...layout.nodes].sort((a, b) => a.cy - b.cy)
+                    let d = `M ${sorted[0].cx} ${sorted[0].cy}`
+                    for (let i = 0; i < sorted.length - 1; i++) {
+                      const c = sorted[i]
+                      const n = sorted[i + 1]
+                      const midY = (c.cy + n.cy) / 2
+                      d += ` C ${c.cx} ${midY}, ${n.cx} ${midY}, ${n.cx} ${n.cy}`
+                    }
+                    return d
+                  })()}
+                  fill="none"
+                  stroke="#DEEEFC"
+                  strokeWidth="12"
+                  strokeLinecap="round"
+                  opacity="0.6"
+                />
+                {/* 2. Linha da trilha pontilhada estilizada roxa/lilás */}
+                <path
+                  d={(() => {
+                    const sorted = [...layout.nodes].sort((a, b) => a.cy - b.cy)
+                    let d = `M ${sorted[0].cx} ${sorted[0].cy}`
+                    for (let i = 0; i < sorted.length - 1; i++) {
+                      const c = sorted[i]
+                      const n = sorted[i + 1]
+                      const midY = (c.cy + n.cy) / 2
+                      d += ` C ${c.cx} ${midY}, ${n.cx} ${midY}, ${n.cx} ${n.cy}`
+                    }
+                    return d
+                  })()}
+                  fill="none"
+                  stroke="#B037F8"
+                  strokeWidth="4"
+                  strokeDasharray="8 8"
+                  strokeLinecap="round"
+                  opacity="0.45"
+                />
+              </svg>
+            )}
+          </div>
           {/* Balão "Começar!" com caixa exata devolvida pela geometria pura */}
           <div
             className="absolute z-20 flex flex-col items-center justify-center animate-bounce-subtle pointer-events-none"

@@ -143,33 +143,35 @@ export const ProfilePage: React.FC = () => {
   }
 
   return (
-    <AppShell showNav={true} className="py-6 flex flex-col gap-5">
+    <AppShell showNav={true} className="py-5 flex flex-col gap-4 font-nunito">
       {/* Título da tela */}
-      <div className="w-full min-w-0">
-        <h1 className="text-xl font-extrabold text-deep font-sans mb-1">
+      <div className="w-full min-w-0 pt-1">
+        <h1 className="text-[22px] font-extrabold text-[#432171] font-nunito tracking-tight mb-0.5">
           Seu perfil
         </h1>
-        <p className="text-xs font-semibold text-textSec">
+        <p className="text-[13px] font-bold text-[#7D6A9C]">
           Personalize sua experiência PurplePiggy.
         </p>
       </div>
 
       {/* Card de Perfil da Usuária (Layout oficial) */}
-      <div className="w-full bg-white rounded-[24px] p-5 border border-lilac/15 shadow-card flex items-center justify-between min-w-0">
-        <div className="flex items-center gap-3.5">
-          <div className="relative">
-            <div className="w-14 h-14 rounded-full bg-lilac/30 border-2 border-primary/40 flex items-center justify-center overflow-hidden">
-              {profile?.avatar_url ? (
-                <img
-                  src={profile.avatar_url}
-                  alt={profile.full_name}
-                  className="w-full h-full object-cover"
-                />
-              ) : (
-                <Mascot pose="head" size="xs" alt="Avatar" />
-              )}
+      <div className="w-full bg-white rounded-[24px] p-4.5 border border-lilac/15 shadow-card flex items-center justify-between min-w-0">
+        <div className="flex items-center gap-3.5 min-w-0">
+          <div className="relative shrink-0">
+            <div className="w-14 h-14 rounded-full bg-gradient-to-tr from-[#7D2BD6] via-[#B037F8] to-[#CF91F6] p-0.5 flex items-center justify-center shadow-xs">
+              <div className="w-full h-full rounded-full bg-white flex items-center justify-center overflow-hidden">
+                {profile?.avatar_url ? (
+                  <img
+                    src={profile.avatar_url}
+                    alt={profile.full_name}
+                    className="w-full h-full object-cover"
+                  />
+                ) : (
+                  <Mascot pose="head" size="xs" alt="Avatar" />
+                )}
+              </div>
             </div>
-            <label className="absolute -bottom-1 -right-1 bg-primary text-white p-1 rounded-full cursor-pointer hover:brightness-110 shadow-xs">
+            <label className="absolute -bottom-1 -right-1 bg-[#7D2BD6] text-white p-1 rounded-full cursor-pointer hover:bg-[#6D28C9] shadow-xs transition-colors">
               <Camera className="w-3 h-3" />
               <input
                 type="file"
@@ -180,16 +182,17 @@ export const ProfilePage: React.FC = () => {
             </label>
           </div>
 
-          <div>
-            <h2 className="text-base font-extrabold text-deep font-sans leading-tight">
+          <div className="min-w-0">
+            <h2 className="text-base font-extrabold text-[#432171] font-nunito leading-tight truncate">
               {profile?.full_name || 'Ana Oliveira'}
             </h2>
-            <p className="text-xs font-semibold text-textSec mt-0.5">
+            <p className="text-xs font-semibold text-[#7D6A9C] mt-0.5 truncate">
               {profile?.email || 'ana@email.com'}
             </p>
           </div>
         </div>
 
+        {/* Botão Secundário na cor rosa oficial da marca (#FF79A8) */}
         <button
           onClick={() => {
             setEditName(profile?.full_name || '')
@@ -197,118 +200,135 @@ export const ProfilePage: React.FC = () => {
             setEditInitialBalance(profile?.initial_balance?.toString() || '0')
             setIsEditModalOpen(true)
           }}
-          className="text-xs font-bold text-primary bg-primary/10 hover:bg-primary/20 px-3 py-1.5 rounded-full transition-colors"
+          className="text-xs font-bold text-white bg-[#FF79A8] hover:bg-[#FF6096] active:scale-95 px-3.5 py-1.5 rounded-full shadow-xs transition-all shrink-0 cursor-pointer"
         >
           Editar
         </button>
       </div>
 
       {/* Card de Conquistas & Medalhas do Usuário */}
-      <div className="bg-white rounded-[22px] p-4 border border-lilac/15 shadow-card flex items-center justify-between">
-        <div className="flex items-center gap-3">
-          <Mascot size="sm" pose="medal" />
-          <div>
-            <h3 className="text-xs font-extrabold text-deep">Conquistas & Evolução</h3>
-            <p className="text-[11px] font-semibold text-textSec">
+      <div className="bg-white rounded-[22px] p-3.5 border border-lilac/15 shadow-card flex items-center justify-between">
+        <div className="flex items-center gap-3 min-w-0">
+          <div className="w-10 h-10 rounded-2xl bg-[#FEDA70]/25 flex items-center justify-center shrink-0">
+            <Mascot size="xs" pose="medal" />
+          </div>
+          <div className="min-w-0">
+            <h3 className="text-xs font-extrabold text-[#432171] leading-tight">Conquistas & Evolução</h3>
+            <p className="text-[11px] font-semibold text-[#7D6A9C] truncate">
               Ofensiva ativa e metas em progresso contínuo.
             </p>
           </div>
         </div>
-        <span className="text-[11px] font-extrabold text-primary bg-primary/10 px-2.5 py-1 rounded-full">
+        <span className="text-[11px] font-black text-[#432171] bg-gradient-to-r from-[#FEDA70]/30 to-[#CF91F6]/25 border border-[#FEDA70]/70 px-2.5 py-1 rounded-full shrink-0">
           Nível 3
         </span>
       </div>
 
       {/* Seção Minha Conta */}
-      <div className="bg-white rounded-[22px] p-4 border border-lilac/15 shadow-card flex flex-col divide-y divide-lilac/10">
-        <div className="text-[11px] font-extrabold text-textSec uppercase tracking-wider px-2 pb-2">
+      <div className="bg-white rounded-[22px] p-3 border border-lilac/15 shadow-card flex flex-col divide-y divide-lilac/10">
+        <div className="text-[11px] font-black text-[#7D6A9C] uppercase tracking-wider px-2 pt-1 pb-2">
           Minha conta
         </div>
 
         <button
           onClick={() => setIsEditModalOpen(true)}
-          className="py-3 px-2 flex items-center justify-between text-left hover:bg-bg/50 rounded-xl transition-colors"
+          className="py-2.5 px-2 flex items-center justify-between text-left hover:bg-[#F8F5FC] rounded-xl transition-colors cursor-pointer"
         >
           <div className="flex items-center gap-3">
-            <User className="w-4 h-4 text-primary" />
-            <span className="text-xs font-bold text-deep">Dados pessoais</span>
+            <div className="w-7 h-7 rounded-lg bg-[#DEEEFC] text-[#7D2BD6] flex items-center justify-center">
+              <User className="w-4 h-4" />
+            </div>
+            <span className="text-xs font-bold text-[#432171]">Dados pessoais</span>
           </div>
-          <ChevronRight className="w-4 h-4 text-textSec" />
+          <ChevronRight className="w-4 h-4 text-[#7D6A9C]" />
         </button>
 
         <button
           onClick={() => setIsNotificationsModalOpen(true)}
-          className="py-3 px-2 flex items-center justify-between text-left hover:bg-bg/50 rounded-xl transition-colors"
+          className="py-2.5 px-2 flex items-center justify-between text-left hover:bg-[#F8F5FC] rounded-xl transition-colors cursor-pointer"
         >
           <div className="flex items-center gap-3">
-            <Bell className="w-4 h-4 text-primary" />
-            <span className="text-xs font-bold text-deep">Notificações</span>
+            <div className="w-7 h-7 rounded-lg bg-[#EEDEFB] text-[#B037F8] flex items-center justify-center">
+              <Bell className="w-4 h-4" />
+            </div>
+            <span className="text-xs font-bold text-[#432171]">Notificações</span>
           </div>
-          <ChevronRight className="w-4 h-4 text-textSec" />
+          <ChevronRight className="w-4 h-4 text-[#7D6A9C]" />
         </button>
 
         <button
           onClick={() => setIsPrivacyModalOpen(true)}
-          className="py-3 px-2 flex items-center justify-between text-left hover:bg-bg/50 rounded-xl transition-colors"
+          className="py-2.5 px-2 flex items-center justify-between text-left hover:bg-[#F8F5FC] rounded-xl transition-colors cursor-pointer"
         >
           <div className="flex items-center gap-3">
-            <Shield className="w-4 h-4 text-primary" />
-            <span className="text-xs font-bold text-deep">Privacidade e segurança</span>
+            <div className="w-7 h-7 rounded-lg bg-[#DCFCE7] text-[#15803D] flex items-center justify-center">
+              <Shield className="w-4 h-4" />
+            </div>
+            <span className="text-xs font-bold text-[#432171]">Privacidade e segurança</span>
           </div>
-          <ChevronRight className="w-4 h-4 text-textSec" />
+          <ChevronRight className="w-4 h-4 text-[#7D6A9C]" />
         </button>
 
         <button
           onClick={() => setIsAboutModalOpen(true)}
-          className="py-3 px-2 flex items-center justify-between text-left hover:bg-bg/50 rounded-xl transition-colors"
+          className="py-2.5 px-2 flex items-center justify-between text-left hover:bg-[#F8F5FC] rounded-xl transition-colors cursor-pointer"
         >
           <div className="flex items-center gap-3">
-            <Info className="w-4 h-4 text-primary" />
-            <span className="text-xs font-bold text-deep">Sobre o PurplePiggy</span>
+            <div className="w-7 h-7 rounded-lg bg-[#FCE7F3] text-[#BE185D] flex items-center justify-center">
+              <Info className="w-4 h-4" />
+            </div>
+            <span className="text-xs font-bold text-[#432171]">Sobre o PurplePiggy</span>
           </div>
-          <ChevronRight className="w-4 h-4 text-textSec" />
+          <ChevronRight className="w-4 h-4 text-[#7D6A9C]" />
         </button>
       </div>
 
       {/* Seção Conexões Financeiras */}
-      <div className="bg-white rounded-[22px] p-4 border border-lilac/15 shadow-card flex flex-col">
-        <div className="text-[11px] font-extrabold text-textSec uppercase tracking-wider px-2 pb-2">
+      <div className="bg-white rounded-[22px] p-3 border border-lilac/15 shadow-card flex flex-col">
+        <div className="text-[11px] font-black text-[#7D6A9C] uppercase tracking-wider px-2 pt-1 pb-2">
           Conexões financeiras
         </div>
 
         <button
           onClick={() => navigate('/open-finance')}
-          className="py-3 px-2 flex items-center justify-between text-left hover:bg-bg/50 rounded-xl transition-colors"
+          className="py-2.5 px-2 flex items-center justify-between text-left hover:bg-[#F8F5FC] rounded-xl transition-colors cursor-pointer"
         >
           <div className="flex items-center gap-3">
-            <div className="w-7 h-7 rounded-lg bg-primary/10 text-primary flex items-center justify-center">
+            <div className="w-7 h-7 rounded-lg bg-[#F3E8FF] text-[#7D2BD6] flex items-center justify-center">
               <Settings className="w-4 h-4" />
             </div>
             <div>
-              <div className="text-xs font-bold text-deep">Open Finance</div>
-              <div className="text-[10px] text-textSec font-semibold">Contas e consentimentos</div>
+              <div className="text-xs font-bold text-[#432171]">Open Finance</div>
+              <div className="text-[10px] text-[#7D6A9C] font-semibold">Contas bancárias e consentimentos</div>
             </div>
           </div>
-          <ChevronRight className="w-4 h-4 text-textSec" />
+          <div className="flex items-center gap-2">
+            <span className="text-[10px] font-bold text-[#15803D] bg-[#DCFCE7] px-2 py-0.5 rounded-full">
+              Ativa
+            </span>
+            <ChevronRight className="w-4 h-4 text-[#7D6A9C]" />
+          </div>
         </button>
       </div>
 
       {/* Restaurar dados se estiver no modo demo */}
       {isDemo && (
-        <div className="bg-gold/15 border border-gold/40 rounded-[22px] p-4 flex items-center justify-between">
-          <div className="flex items-center gap-2.5">
-            <Sparkles className="w-5 h-5 text-amber-700" />
-            <div>
-              <div className="text-xs font-bold text-deep">Dados demonstrativos</div>
-              <div className="text-[10px] text-textSec font-semibold">
-                Restaura o conjunto fictício original de Ana Oliveira
+        <div className="bg-[#FEF3C7]/60 border border-[#FEDA70] rounded-[22px] p-3.5 flex items-center justify-between">
+          <div className="flex items-center gap-2.5 min-w-0">
+            <div className="w-8 h-8 rounded-xl bg-[#FEDA70] text-[#78350F] flex items-center justify-center shrink-0">
+              <Sparkles className="w-4 h-4" />
+            </div>
+            <div className="min-w-0">
+              <div className="text-xs font-bold text-[#432171]">Dados demonstrativos</div>
+              <div className="text-[10px] text-[#7D6A9C] font-semibold truncate">
+                Restaura o conjunto fictício de Ana Oliveira
               </div>
             </div>
           </div>
           <button
             onClick={handleResetDemo}
             disabled={isResettingDemo}
-            className="text-xs font-bold text-amber-900 bg-gold/40 hover:bg-gold/60 py-1.5 px-3 rounded-full flex items-center gap-1"
+            className="text-xs font-bold text-[#78350F] bg-[#FEDA70] hover:bg-[#FBBF24] active:scale-95 py-1.5 px-3 rounded-full flex items-center gap-1 shadow-xs transition-all shrink-0 cursor-pointer"
           >
             <RotateCcw className="w-3.5 h-3.5" />
             {isResettingDemo ? 'Restaurando...' : 'Restaurar'}
@@ -316,17 +336,15 @@ export const ProfilePage: React.FC = () => {
         </div>
       )}
 
-      {/* Botão contorno vermelho "Sair da conta" (Layout oficial) */}
-      <div className="pt-2">
-        <Button
-          size="lg"
-          variant="destructive"
-          fullWidth
-          icon={<LogOut className="w-5 h-5" />}
+      {/* Botão Sair da conta (Layout oficial) */}
+      <div className="pt-1">
+        <button
           onClick={handleSignOut}
+          className="w-full py-3 px-4 rounded-full border border-rose-300 text-rose-600 hover:bg-rose-50/80 active:scale-95 font-nunito font-extrabold text-sm flex items-center justify-center gap-2 transition-all shadow-xs cursor-pointer"
         >
+          <LogOut className="w-4 h-4" />
           Sair da conta
-        </Button>
+        </button>
       </div>
 
       {/* Modal: Editar Perfil */}

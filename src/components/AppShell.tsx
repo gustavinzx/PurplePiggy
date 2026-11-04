@@ -39,8 +39,10 @@ export const AppShell: React.FC<AppShellProps> = ({
       {/* Container Mobile Principal: coluna centralizada com largura fixa nos tokens */}
       <div
         id="app-shell-container"
-        className={`w-full max-w-[var(--app-max-width)] h-[100dvh] flex flex-col relative shadow-2xl overflow-hidden border-x border-lilac/10 mx-auto ${
-          variant === 'splash' ? 'bg-transparent' : 'bg-bg'
+        className={`w-full max-w-[var(--app-max-width)] h-[100dvh] flex flex-col relative shadow-2xl overflow-hidden border-x border-lilac/15 mx-auto ${
+          variant === 'splash'
+            ? 'bg-transparent'
+            : 'bg-gradient-to-b from-[#F6EEFF] via-[#F8F5FC] to-[#E9D8FF]'
         } ${containerClassName}`}
         style={{
           width: '100%',
@@ -49,16 +51,30 @@ export const AppShell: React.FC<AppShellProps> = ({
           paddingTop: 'env(safe-area-inset-top, 0px)',
         }}
       >
+        {/* Manchas orgânicas da identidade visual interna (blobs suaves nos cantos) */}
+        {variant !== 'splash' && (
+          <div className="absolute inset-0 pointer-events-none overflow-hidden -z-0 select-none" aria-hidden="true">
+            {/* Mancha superior lilás */}
+            <div className="absolute -top-16 -left-16 w-64 h-64 rounded-full bg-[#EEDEFB]/70 blur-3xl" />
+            {/* Mancha superior azul bebê */}
+            <div className="absolute -top-12 -right-12 w-60 h-60 rounded-full bg-[#DEEEFC]/70 blur-3xl" />
+            {/* Mancha suave intermediária */}
+            <div className="absolute top-1/2 -right-24 w-72 h-72 rounded-full bg-[#F5E6FC]/50 blur-3xl" />
+            {/* Mancha inferior lilás */}
+            <div className="absolute -bottom-16 -left-12 w-64 h-64 rounded-full bg-[#E9D8FF]/60 blur-3xl" />
+          </div>
+        )}
+
         {/* Cabeçalho opcional fixo */}
         {header && (
-          <header className="w-full shrink-0 z-30 bg-bg/95 backdrop-blur-md">
+          <header className="w-full shrink-0 z-30 bg-[#F6EEFF]/90 backdrop-blur-md border-b border-lilac/10">
             {header}
           </header>
         )}
 
         {/* Conteúdo da Tela: largura 100%, nunca depende do conteúdo */}
         <main
-          className={`flex-1 flex flex-col w-full min-w-0 ${className} ${contentClassName}`}
+          className={`flex-1 flex flex-col w-full min-w-0 relative z-10 ${className} ${contentClassName}`}
           style={{
             width: '100%',
             minWidth: 0,
