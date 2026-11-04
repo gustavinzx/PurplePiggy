@@ -54,8 +54,11 @@ jobs:
         run: |
           cd android
           chmod +x gradlew
-          ./gradlew assembleDebug --no-daemon --stacktrace > build.log 2>&1 || (echo "=== GRADLE FAILED - LAST 150 LINES ===" && tail -n 150 build.log && exit 1)
-          cat build.log | tail -n 50
+          if ! ./gradlew assembleDebug --no-daemon --stacktrace > build.log 2>&1; then
+            ERR=$(grep -E "FAILURE:|What went wrong:|Caused by:|Execution failed" build.log -A 3 | head -n 30 | tr '\n' ' ')
+            echo "::error title=GradleError::$ERR"
+            exit 1
+          fi
 
       - name: Locate APK
         run: |
