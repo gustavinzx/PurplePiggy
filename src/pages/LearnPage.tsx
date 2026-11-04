@@ -5,6 +5,7 @@ import { useParams, useNavigate } from 'react-router-dom'
 import { supabase } from '../lib/supabase'
 import { useAuth } from '../context/AuthContext'
 import { AppShell } from '../components/AppShell'
+import { BackgroundBlobs } from '../components/BackgroundBlobs'
 import {
   StatChip,
   SectionBanner,
@@ -219,8 +220,11 @@ export const LearnPage: React.FC = () => {
 
   return (
     <AppShell
-      className="bg-gradient-to-b from-[#FBF8FF] via-[#F6EEFF] to-[#EDE4F8] min-h-screen pb-24"
+      variant="app"
+      className="relative min-h-screen pb-24 select-none"
     >
+      {/* Atmosfera oficial do PurplePiggy: degradê lilás, blobs suaves e brilhos dourados */}
+      <BackgroundBlobs showSparkles={true} />
       <div className="max-w-md mx-auto px-4 pt-3">
         {/* Top Bar Fixa de Status com Chips */}
         <header className="sticky top-0 z-30 pt-2 pb-3 backdrop-blur-md bg-white/75 -mx-4 px-4 border-b border-purple-100/50 flex items-center justify-between gap-1.5 shadow-sm">

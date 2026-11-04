@@ -129,7 +129,8 @@ export const LearnMap: React.FC<LearnMapProps> = ({
       )}
 
       {/* Lista de Nós em Zigue-zague */}
-      <div className="w-full flex flex-col-reverse items-center space-y-reverse space-y-8 relative">
+      {/* Lista de Nós em Zigue-zague com amplo espaçamento vertical (evita sobreposição do balão e nós) */}
+      <div className="w-full flex flex-col-reverse items-center space-y-reverse space-y-24 relative pt-4 pb-8">
         {levels.map((level, idx) => {
           const offsetPx = HORIZONTAL_OFFSETS[idx % HORIZONTAL_OFFSETS.length]
           let status: LevelNodeStatus = 'locked'

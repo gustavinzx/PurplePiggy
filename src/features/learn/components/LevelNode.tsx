@@ -183,7 +183,7 @@ export const LevelNode: React.FC<LevelNodeProps> = ({
       </button>
 
       {/* Rótulo opcional ou identificador */}
-      <div className="mt-1.5 text-center max-w-[90px]">
+      <div className="mt-2 text-center max-w-[120px] px-1">
         <p className="font-nunito font-bold text-xs text-[#581C87] truncate">
           {title}
         </p>

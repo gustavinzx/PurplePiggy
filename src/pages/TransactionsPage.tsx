@@ -123,16 +123,42 @@ export const TransactionsPage: React.FC = () => {
     .filter((t) => t.type === 'expense')
     .reduce((acc, t) => acc + Number(t.amount), 0)
 
-  // Gráfico mensal dos últimos 6 meses fiel a design/telas/07-gastos.png (Ago, Set, Set, Out, Nov, Dez)
-  const monthlyExpensesMock = [
-    { label: 'Ago', value: 700 },
-    { label: 'Set', value: 1600 },
-    { label: 'Set', value: 750 },
-    { label: 'Out', value: 1850 },
-    { label: 'Nov', value: totalExpenses > 0 ? totalExpenses : 1960 },
-    { label: 'Dez', value: 1300 },
-  ]
-  const maxMonthVal = Math.max(...monthlyExpensesMock.map((m) => m.value))
+  // Gráfico mensal dos últimos 6 meses reais baseado nas transações do usuário no Supabase
+  const monthShortNames = ['Jan', 'Fev', 'Mar', 'Abr', 'Mai', 'Jun', 'Jul', 'Ago', 'Set', 'Out', 'Nov', 'Dez']
+  const now = new Date()
+  const monthlyExpenses = Array.from({ length: 6 }, (_, i) => {
+    const offset = 5 - i // 5 meses atrás até o mês atual (0)
+    const d = new Date(now.getFullYear(), now.getMonth() - offset, 1)
+    const year = d.getFullYear()
+    const month = String(d.getMonth() + 1).padStart(2, '0')
+    const monthKey = `${year}-${month}`
+    const label = monthShortNames[d.getMonth()]
+    const isCurrentMonth = offset === 0
+
+    // Filtra transações reais do usuário para este mês
+    const monthTxs = transactions.filter((t) => {
+      if (t.type !== 'expense') return false
+      if (selectedCategory !== 'all' && t.category_id !== selectedCategory) return false
+      return t.occurred_on.startsWith(monthKey)
+    })
+
+    const value = monthTxs.reduce((acc, t) => acc + Number(t.amount), 0)
+
+    return {
+      label,
+      monthKey,
+      value,
+      isCurrentMonth,
+    }
+  })
+
+  // Valor máximo para dimensionamento das barras verticais (evita divisão por zero)
+  const maxMonthVal = Math.max(...monthlyExpenses.map((m) => m.value), 1)
+
+  const isOnlyIncome = typeFilter === 'income'
+  const displayTotal = isOnlyIncome
+    ? filtered.filter((t) => t.type === 'income').reduce((acc, t) => acc + Number(t.amount), 0)
+    : totalExpenses
 
   const periodLabels: Record<string, string> = {
     this_month: 'Este mês',
@@ -361,26 +387,34 @@ export const TransactionsPage: React.FC = () => {
         </div>
       </div>
 
-      {/* 3. Total de despesas e Gráfico de barras mensais (Sem card fechado, direto no fundo como no layout) */}
+      {/* 3. Total de despesas e Gráfico de barras mensais com dados 100% dinâmicos e reais */}
       <div className="w-full min-w-0 pt-1">
-        <span className="text-[13px] font-bold text-deep/70">Total de despesas</span>
+        <span className="text-[13px] font-bold text-deep/70">
+          {isOnlyIncome ? 'Total de receitas' : 'Total de despesas'}
+        </span>
         <div className="text-[26px] font-extrabold text-deep font-sans tracking-tight mb-3">
-          {formatCurrency(totalExpenses > 0 ? totalExpenses : 1960)}
+          {formatCurrency(displayTotal)}
         </div>
 
-        {/* Gráfico de barras verticais */}
+        {/* Gráfico de barras verticais dos últimos 6 meses */}
         <div className="w-full flex items-end justify-between h-28 px-1 border-b border-[#E9D5FF]/60 pb-2">
-          {monthlyExpensesMock.map((m, idx) => {
-            const heightPct = Math.round((m.value / maxMonthVal) * 100)
-            const isHighlight = idx === 4 // Nov
+          {monthlyExpenses.map((m) => {
+            const heightPct = m.value > 0 ? Math.max(Math.round((m.value / maxMonthVal) * 100), 8) : 6
+            const isHighlight = m.isCurrentMonth
             return (
-              <div key={`${m.label}-${idx}`} className="flex flex-col items-center gap-1.5 flex-1">
+              <div
+                key={m.monthKey}
+                className="flex flex-col items-center gap-1.5 flex-1"
+                title={`${m.label}: ${formatCurrency(m.value)}`}
+              >
                 <div className="w-5 bg-[#F0E5FA] rounded-t-lg h-20 flex items-end justify-center overflow-hidden">
                   <div
                     className={`w-full rounded-t-lg transition-all duration-500 ${
                       isHighlight
                         ? 'bg-gradient-to-t from-[#8E32D8] to-[#521D83]'
-                        : 'bg-gradient-to-t from-[#B037F8] to-[#7D2BD6]'
+                        : m.value > 0
+                        ? 'bg-gradient-to-t from-[#B037F8] to-[#7D2BD6]'
+                        : 'bg-purple-200/50'
                     }`}
                     style={{ height: `${heightPct}%` }}
                   />
