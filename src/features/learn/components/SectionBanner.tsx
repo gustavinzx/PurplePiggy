@@ -1,5 +1,5 @@
 // src/features/learn/components/SectionBanner.tsx
-// Header/Banner da Trilha Atual no topo do Mapa Sinuoso
+// Header/Banner Compacto da Trilha Atual (80 a 88px)
 import React from 'react'
 import { ChevronDown, BookOpen } from 'lucide-react'
 
@@ -16,7 +16,6 @@ interface SectionBannerProps {
 export const SectionBanner: React.FC<SectionBannerProps> = ({
   trackOrder,
   trackTitle,
-  trackDescription,
   progressPct,
   onOpenTrackSelector,
   onOpenGuide,
@@ -26,58 +25,49 @@ export const SectionBanner: React.FC<SectionBannerProps> = ({
 
   return (
     <div
-      className={`w-full bg-gradient-to-r from-[#7D2BD6] via-[#8E2DE2] to-[#A855F7] rounded-3xl p-4 text-white shadow-lg shadow-purple-600/20 relative overflow-hidden ${className}`}
+      className={`w-full bg-gradient-to-r from-[#7D2BD6] via-[#8E2DE2] to-[#A855F7] rounded-2xl p-3 text-white shadow-md shadow-purple-600/15 relative overflow-hidden flex flex-col justify-between h-[84px] select-none ${className}`}
     >
-      {/* Detalhe translúcido de fundo */}
-      <div className="absolute -right-8 -bottom-8 w-28 h-28 bg-white/10 rounded-full blur-xl pointer-events-none" />
+      <div className="absolute -right-6 -bottom-6 w-24 h-24 bg-white/10 rounded-full blur-lg pointer-events-none" />
 
-      <div className="flex items-center justify-between gap-3 relative z-10">
-        {/* Seletor de Trilha (clicável para abrir a sheet) */}
+      {/* Linha 1: "TRILHA 0X ⌄" + Botão Guia */}
+      <div className="flex items-center justify-between relative z-10">
         <button
           type="button"
           onClick={onOpenTrackSelector}
-          className="flex-1 text-left group flex items-start gap-2.5 focus:outline-none"
+          className="flex items-center gap-1.5 focus:outline-none group"
         >
-          <div className="flex-1">
-            <div className="flex items-center gap-1.5">
-              <span className="text-[11px] font-black uppercase tracking-wider text-purple-200">
-                TRILHA {orderFormatted}
-              </span>
-              <ChevronDown className="w-4 h-4 text-purple-200 group-hover:translate-y-0.5 transition-transform" />
-            </div>
-            <h1 className="font-nunito font-extrabold text-lg sm:text-xl text-white leading-tight mt-0.5">
-              {trackTitle}
-            </h1>
-            {trackDescription && (
-              <p className="font-nunito text-xs text-purple-100/90 line-clamp-1 mt-0.5">
-                {trackDescription}
-              </p>
-            )}
-          </div>
+          <span className="text-[11px] font-black uppercase tracking-wider text-purple-200">
+            TRILHA {orderFormatted}
+          </span>
+          <ChevronDown className="w-3.5 h-3.5 text-purple-200 group-hover:translate-y-0.5 transition-transform" />
         </button>
 
-        {/* Botão para abrir o Guia da Unidade */}
         {onOpenGuide && (
           <button
             type="button"
             onClick={onOpenGuide}
             aria-label="Abrir guia da unidade"
-            className="w-10 h-10 rounded-2xl bg-white/20 hover:bg-white/30 active:scale-95 transition-all flex items-center justify-center border border-white/25 flex-shrink-0 drop-shadow-sm"
+            className="w-7 h-7 rounded-xl bg-white/20 hover:bg-white/30 active:scale-95 transition-all flex items-center justify-center border border-white/25 drop-shadow-sm"
           >
-            <BookOpen className="w-5 h-5 text-white" />
+            <BookOpen className="w-3.5 h-3.5 text-white" />
           </button>
         )}
       </div>
 
-      {/* Mini barra de progresso da trilha */}
-      <div className="mt-3 pt-2.5 border-t border-white/15 flex items-center gap-3 relative z-10">
-        <div className="flex-1 bg-black/20 h-2 rounded-full overflow-hidden p-0.5">
+      {/* Linha 2: Título da Trilha em 1 linha */}
+      <h1 className="font-nunito font-extrabold text-base text-white truncate relative z-10 -mt-1 leading-tight">
+        {trackTitle}
+      </h1>
+
+      {/* Linha 3: Barra e percentual na mesma linha */}
+      <div className="flex items-center gap-2 relative z-10">
+        <div className="flex-1 bg-black/20 h-1.5 rounded-full overflow-hidden">
           <div
             className="bg-[#2FBF71] h-full rounded-full transition-all duration-500 shadow-sm"
             style={{ width: `${Math.min(100, Math.max(0, progressPct))}%` }}
           />
         </div>
-        <span className="font-nunito font-extrabold text-xs text-purple-100 flex-shrink-0">
+        <span className="font-nunito font-black text-[11px] text-purple-100 shrink-0 leading-none">
           {progressPct}%
         </span>
       </div>

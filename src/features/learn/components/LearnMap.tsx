@@ -1,8 +1,10 @@
 // src/features/learn/components/LearnMap.tsx
-// Mapa Sinuoso de Níveis (Desafio Piggy - Prompt N9B)
+// Mapa Sinuoso de Níveis com Geometria Pura (computeMapLayout)
 import React, { useLayoutEffect, useRef, useState, useEffect } from 'react'
 import { LevelNode, LevelNodeStatus } from './LevelNode'
 import { NodeSheet } from './NodeSheet'
+import { computeMapLayout, MapLayout } from '../map/layout'
+import { Mascot } from '../../../components/Mascot'
 import { toast } from 'sonner'
 import { ArrowDown, Sparkles } from 'lucide-react'
 import confetti from 'canvas-confetti'
@@ -30,9 +32,7 @@ interface LearnMapProps {
   className?: string
 }
 
-// Deslocamento lateral senoidal para formar o zigue-zague do Duolingo
-// offsets em porcentagem horizontal a partir do centro (0px, +60px, 0px, -60px, etc.)
-const HORIZONTAL_OFFSETS = [0, 56, 0, -56, 0, 56, 0, -56]
+const clamp = (v: number, a: number, b: number) => Math.min(b, Math.max(a, v))
 
 export const LearnMap: React.FC<LearnMapProps> = ({
   trackSlug,
@@ -43,40 +43,89 @@ export const LearnMap: React.FC<LearnMapProps> = ({
   className = '',
 }) => {
   const containerRef = useRef<HTMLDivElement>(null)
-  const currentNodeRef = useRef<HTMLDivElement>(null)
+  const [dimensions, setDimensions] = useState<{ width: number; height: number } | null>(null)
   const [selectedNode, setSelectedNode] = useState<LevelItem | null>(null)
   const [showScrollToCurrent, setShowScrollToCurrent] = useState(false)
 
-  // Rolagem inicial direta para o nó atual sem animação (sem piscada)
-  useLayoutEffect(() => {
-    if (currentNodeRef.current && containerRef.current) {
-      currentNodeRef.current.scrollIntoView({
-        behavior: 'auto',
-        block: 'center',
-      })
-    }
-  }, [trackSlug, levels])
-
-  // Observador para exibir o botão flutuante "Voltar ao nó atual"
+  // 1. Medir a área útil do mapa via ResizeObserver
   useEffect(() => {
-    const handleScroll = () => {
-      if (!currentNodeRef.current) return
-      const rect = currentNodeRef.current.getBoundingClientRect()
-      const isVisible = rect.top >= 100 && rect.bottom <= window.innerHeight - 80
-      setShowScrollToCurrent(!isVisible)
-    }
+    const el = containerRef.current
+    if (!el) return
 
-    window.addEventListener('scroll', handleScroll, { passive: true })
-    return () => window.removeEventListener('scroll', handleScroll)
+    const ro = new ResizeObserver((entries) => {
+      for (const entry of entries) {
+        const { width, height } = entry.contentRect
+        if (width > 0 && height > 0) {
+          setDimensions((prev) => {
+            if (prev && prev.width === Math.round(width) && prev.height === Math.round(height)) {
+              return prev
+            }
+            return { width: Math.round(width), height: Math.round(height) }
+          })
+        }
+      }
+    })
+
+    ro.observe(el)
+    return () => ro.disconnect()
   }, [])
 
-  const scrollToCurrentNode = () => {
-    if (currentNodeRef.current) {
-      currentNodeRef.current.scrollIntoView({
-        behavior: 'smooth',
-        block: 'center',
-      })
+  // Identificar o índice do nó atual (0 = base / início da trilha)
+  const currentIndex = Math.max(0, levels.findIndex((l) => l.isCurrent))
+
+  // Calcular layout puro a partir das dimensões
+  let layout: MapLayout | null = null
+  if (dimensions && levels.length > 0) {
+    try {
+      layout = computeMapLayout(dimensions.width, dimensions.height, levels.length, currentIndex)
+    } catch (err) {
+      console.error('Erro ao computar layout do mapa:', err)
     }
+  }
+
+  // 2. Rolagem inicial focando no nó atual antes do primeiro paint se o mapa rolar
+  useLayoutEffect(() => {
+    if (!layout || !layout.scrolls || !containerRef.current || !dimensions) return
+    const targetScroll = clamp(
+      layout.currentCy - dimensions.height / 2,
+      0,
+      layout.contentHeight - dimensions.height
+    )
+    containerRef.current.scrollTop = targetScroll
+  }, [trackSlug, layout?.scrolls, layout?.contentHeight, dimensions?.height])
+
+  // Observador para exibir botão flutuante se o usuário rolar para longe do nó atual
+  useEffect(() => {
+    const el = containerRef.current
+    if (!el || !layout || !layout.scrolls) return
+
+    const handleScroll = () => {
+      if (!dimensions) return
+      const currentScroll = el.scrollTop
+      const targetScroll = clamp(
+        layout.currentCy - dimensions.height / 2,
+        0,
+        layout.contentHeight - dimensions.height
+      )
+      const diff = Math.abs(currentScroll - targetScroll)
+      setShowScrollToCurrent(diff > 120)
+    }
+
+    el.addEventListener('scroll', handleScroll, { passive: true })
+    return () => el.removeEventListener('scroll', handleScroll)
+  }, [layout, dimensions])
+
+  const scrollToCurrentNode = () => {
+    if (!containerRef.current || !layout || !dimensions) return
+    const targetScroll = clamp(
+      layout.currentCy - dimensions.height / 2,
+      0,
+      layout.contentHeight - dimensions.height
+    )
+    containerRef.current.scrollTo({
+      top: targetScroll,
+      behavior: 'smooth',
+    })
   }
 
   const handleNodeClick = async (level: LevelItem) => {
@@ -90,9 +139,7 @@ export const LearnMap: React.FC<LearnMapProps> = ({
 
     if (level.isChest) {
       if (level.isChestClaimed) {
-        toast('Você já resgatou este baú de moedas!', {
-          description: '+50 moedas Piggy adicionadas ao seu saldo.',
-        })
+        toast('Você já resgatou este baú!')
       } else if (onClaimChest) {
         await onClaimChest(level)
         confetti({
@@ -105,64 +152,105 @@ export const LearnMap: React.FC<LearnMapProps> = ({
       return
     }
 
-    // Abre a gaveta de início do nível
     setSelectedNode(level)
   }
 
-  // Ordenação de baixo para cima (Nível 1 na base, Nível 5 / Troféu no topo)
-  // levels já vem na ordem crescente (1, 2, 3...)
   return (
     <div
       ref={containerRef}
-      className={`relative w-full max-w-md mx-auto py-8 px-4 flex flex-col items-center select-none ${className}`}
+      className={`relative w-full h-full flex-1 select-none ${
+        layout?.scrolls ? 'overflow-y-auto overflow-x-hidden' : 'overflow-hidden'
+      } ${className}`}
+      style={{
+        overscrollBehavior: 'contain',
+      }}
     >
       {/* Botão flutuante "Voltar ao nó atual" */}
       {showScrollToCurrent && (
         <button
           type="button"
           onClick={scrollToCurrentNode}
-          className="fixed bottom-24 right-5 z-40 bg-[#7D2BD6] text-white px-3.5 py-2 rounded-full shadow-lg border-2 border-purple-300 font-nunito font-extrabold text-xs flex items-center gap-1.5 active:scale-95 transition-all animate-bounce-subtle"
+          className="fixed bottom-24 right-5 z-40 bg-[#7D2BD6] text-white px-3 py-1.5 rounded-full shadow-lg border-2 border-purple-300 font-nunito font-black text-xs flex items-center gap-1.5 active:scale-95 transition-all animate-bounce-subtle"
         >
-          <ArrowDown className="w-4 h-4 text-amber-300" />
+          <ArrowDown className="w-3.5 h-3.5 text-amber-300" />
           Nó Atual
         </button>
       )}
 
-      {/* Lista de Nós em Zigue-zague */}
-      {/* Lista de Nós em Zigue-zague com amplo espaçamento vertical (evita sobreposição do balão e nós) */}
-      <div className="w-full flex flex-col-reverse items-center space-y-reverse space-y-24 relative pt-4 pb-8">
-        {levels.map((level, idx) => {
-          const offsetPx = HORIZONTAL_OFFSETS[idx % HORIZONTAL_OFFSETS.length]
-          let status: LevelNodeStatus = 'locked'
-          if (level.isChest) {
-            status = level.isChestClaimed ? 'chest_claimed' : 'chest'
-          } else if (level.isTrophy) {
-            status = level.isCompleted ? 'trophy_completed' : 'trophy'
-          } else if (level.isCompleted) {
-            status = 'completed'
-          } else if (level.isCurrent) {
-            status = 'current'
-          }
+      {/* Placeholder silencioso enquanto o ResizeObserver mede as dimensões */}
+      {!layout ? (
+        <div className="w-full h-full min-h-[360px]" />
+      ) : (
+        <div
+          className="relative w-full"
+          style={{
+            height: `${layout.contentHeight}px`,
+            minHeight: '100%',
+          }}
+        >
+          {/* Balão "Começar!" com caixa exata devolvida pela geometria pura */}
+          <div
+            className="absolute z-20 flex flex-col items-center justify-center animate-bounce-subtle pointer-events-none"
+            style={{
+              left: `${layout.balloon.x}px`,
+              top: `${layout.balloon.y}px`,
+              width: `${layout.balloon.w}px`,
+              height: `${layout.balloon.h}px`,
+            }}
+          >
+            <div className="w-full h-full bg-[#7D2BD6] text-white text-[11px] font-black rounded-full shadow-md tracking-wider uppercase border border-purple-400 flex items-center justify-center leading-none">
+              Começar!
+            </div>
+            {/* Triângulo apontador */}
+            <div className="w-0 h-0 border-x-4 border-x-transparent border-t-4 border-t-[#7D2BD6] -mb-1 shrink-0" />
+          </div>
 
-          return (
-            <div
-              key={level.id}
-              ref={level.isCurrent ? currentNodeRef : undefined}
-              className="relative transition-transform duration-300"
-              style={{
-                transform: `translateX(${offsetPx}px)`,
-              }}
-            >
+          {/* Mascote oficial na caixa exata devolvida pela geometria */}
+          <div
+            className="absolute z-10 pointer-events-none drop-shadow"
+            style={{
+              left: `${layout.mascot.x}px`,
+              top: `${layout.mascot.y}px`,
+              width: `${layout.mascot.w}px`,
+              height: `${layout.mascot.h}px`,
+            }}
+          >
+            <Mascot pose="head" className="w-full h-full object-contain" priority />
+          </div>
+
+          {/* Nós posicionados exatamente pelas coordenadas (left = cx - size/2, top = cy - size/2) */}
+          {layout.nodes.map((pos) => {
+            const level = levels[pos.index]
+            if (!level) return null
+
+            let status: LevelNodeStatus = 'locked'
+            if (level.isChest) {
+              status = level.isChestClaimed ? 'chest_claimed' : 'chest'
+            } else if (level.isTrophy) {
+              status = level.isCompleted ? 'trophy_completed' : 'trophy'
+            } else if (level.isCompleted) {
+              status = 'completed'
+            } else if (level.isCurrent) {
+              status = 'current'
+            }
+
+            return (
               <LevelNode
+                key={level.id}
                 levelNumber={level.levelNumber}
                 title={level.title}
                 status={status}
+                size={pos.size}
                 onClick={() => handleNodeClick(level)}
+                style={{
+                  left: `${pos.cx - pos.size / 2}px`,
+                  top: `${pos.cy - pos.size / 2}px`,
+                }}
               />
-            </div>
-          )
-        })}
-      </div>
+            )
+          })}
+        </div>
+      )}
 
       {/* Gaveta do Nó selecionado */}
       {selectedNode && (

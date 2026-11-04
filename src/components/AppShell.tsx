@@ -4,11 +4,14 @@ import { BottomNav } from './BottomNav'
 
 export interface AppShellProps {
   children: React.ReactNode
+  header?: React.ReactNode
   showNav?: boolean
   className?: string
   variant?: AtmosphereVariant
   plainAtmosphere?: boolean
   containerClassName?: string
+  contentClassName?: string
+  contentStyle?: React.CSSProperties
 }
 
 /**
@@ -19,32 +22,43 @@ export interface AppShellProps {
  */
 export const AppShell: React.FC<AppShellProps> = ({
   children,
+  header,
   showNav = true,
   className = '',
   variant = 'app',
   plainAtmosphere = false,
   containerClassName = '',
+  contentClassName = '',
+  contentStyle = {},
 }) => {
   return (
-    <div className="relative min-h-[100vh] min-h-[100dvh] w-full flex justify-center selection:bg-lilac selection:text-white">
+    <div className="relative min-h-[100vh] min-h-[100dvh] h-[100dvh] w-full flex justify-center selection:bg-lilac selection:text-white overflow-hidden bg-bg">
       {/* Atmosphere de fundo cobrindo todo o viewport desktop */}
       <Atmosphere variant={variant} plain={plainAtmosphere} />
 
       {/* Container Mobile Principal: coluna centralizada com largura fixa nos tokens */}
       <div
         id="app-shell-container"
-        className={`w-full max-w-[var(--app-max-width)] min-h-[100vh] min-h-[100dvh] flex flex-col relative shadow-2xl overflow-x-hidden border-x border-lilac/10 mx-auto ${
+        className={`w-full max-w-[var(--app-max-width)] h-[100dvh] flex flex-col relative shadow-2xl overflow-hidden border-x border-lilac/10 mx-auto ${
           variant === 'splash' ? 'bg-transparent' : 'bg-bg'
         } ${containerClassName}`}
         style={{
           width: '100%',
           maxWidth: 'var(--app-max-width)',
           marginInline: 'auto',
+          paddingTop: 'env(safe-area-inset-top, 0px)',
         }}
       >
+        {/* Cabeçalho opcional fixo */}
+        {header && (
+          <header className="w-full shrink-0 z-30 bg-bg/95 backdrop-blur-md">
+            {header}
+          </header>
+        )}
+
         {/* Conteúdo da Tela: largura 100%, nunca depende do conteúdo */}
         <main
-          className={`flex-1 flex flex-col w-full min-w-0 ${className}`}
+          className={`flex-1 flex flex-col w-full min-w-0 ${className} ${contentClassName}`}
           style={{
             width: '100%',
             minWidth: 0,
@@ -52,6 +66,7 @@ export const AppShell: React.FC<AppShellProps> = ({
             paddingBottom: showNav
               ? 'calc(var(--nav-height) + env(safe-area-inset-bottom, 0px) + 16px)'
               : undefined,
+            ...contentStyle,
           }}
         >
           {children}
