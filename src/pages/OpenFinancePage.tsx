@@ -335,6 +335,7 @@ export const OpenFinancePage: React.FC = () => {
       {isManaging && (
         <div className="fixed inset-0 z-50 bg-deep/60 backdrop-blur-xs flex items-center justify-center p-4 animate-fadeIn">
           <div className="bg-white rounded-[26px] p-6 w-full max-w-sm shadow-2xl border border-lilac/20">
+            <Mascot size="md" pose="shield" floating={true} className="mx-auto mb-2" />
             <h3 className="text-base font-extrabold text-deep font-sans mb-2">
               Gerenciar escopos de dados
             </h3>
@@ -359,6 +360,7 @@ export const OpenFinancePage: React.FC = () => {
       {isConnectingNew && (
         <div className="fixed inset-0 z-50 bg-deep/60 backdrop-blur-xs flex items-center justify-center p-4 animate-fadeIn">
           <div className="bg-white rounded-[26px] p-6 w-full max-w-sm shadow-2xl border border-lilac/20">
+            <Mascot size="md" pose="connect" floating={true} className="mx-auto mb-2" />
             <h3 className="text-base font-extrabold text-deep font-sans mb-1">
               Conectar conta (demonstração)
             </h3>

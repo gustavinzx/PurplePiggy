@@ -326,6 +326,11 @@ export const BudgetPage: React.FC = () => {
                 </div>
               </div>
             ))
+          ) : categories.length === 0 ? (
+            <div className="py-8 text-center text-xs font-bold text-textSec flex flex-col items-center">
+              <Mascot size="lg" pose="empty" floating={true} className="mb-2" />
+              <span>Nenhuma categoria de orçamento cadastrada.</span>
+            </div>
           ) : (
             categories.map((cat) => {
             const spent = spentByCategory[cat.id] || 0

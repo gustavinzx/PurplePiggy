@@ -30,6 +30,7 @@ export const TransactionModal: React.FC<TransactionModalProps> = ({
   const [notes, setNotes] = useState('')
   const [categories, setCategories] = useState<{ id: string; name: string }[]>([])
   const [loading, setLoading] = useState(false)
+  const [isSuccess, setIsSuccess] = useState(false)
 
   useEffect(() => {
     setType(initialType)
@@ -130,12 +131,16 @@ export const TransactionModal: React.FC<TransactionModalProps> = ({
         }
       }
 
+      setIsSuccess(true)
       toast.success(type === 'expense' ? 'Gasto registrado com sucesso! ✓' : 'Receita registrada com sucesso! ✓')
-      setDescription('')
-      setAmount('')
-      setNotes('')
-      onClose()
-      if (onSuccess) onSuccess()
+      setTimeout(() => {
+        setIsSuccess(false)
+        setDescription('')
+        setAmount('')
+        setNotes('')
+        onClose()
+        if (onSuccess) onSuccess()
+      }, 750)
     } catch (err: any) {
       console.error('Erro ao adicionar transação:', err)
       toast.error('Não foi possível salvar o lançamento. Tente de novo.')
@@ -147,6 +152,18 @@ export const TransactionModal: React.FC<TransactionModalProps> = ({
   return (
     <div className="fixed inset-0 z-50 bg-deep/60 backdrop-blur-xs flex items-end sm:items-center justify-center p-3 sm:p-4 animate-fadeIn">
       <div className="bg-white rounded-[26px] p-6 w-full max-w-sm shadow-2xl flex flex-col relative max-h-[90vh] overflow-y-auto">
+{isSuccess ? (
+          <div className="py-8 flex flex-col items-center justify-center text-center gap-3 animate-in fade-in zoom-in-95">
+            <Mascot size="lg" pose="success" floating={true} />
+            <h3 className="text-base font-extrabold text-deep font-sans">
+              {type === 'expense' ? 'Gasto registrado com sucesso!' : 'Receita registrada com sucesso!'}
+            </h3>
+            <p className="text-xs font-semibold text-textSec">
+              Seu planejamento financeiro já foi atualizado.
+            </p>
+          </div>
+        ) : (
+          <>
         {/* Header do Modal com mascote contextual */}
         <div className="flex items-center justify-between pb-3 border-b border-lilac/15">
           <div className="flex items-center gap-2">
@@ -293,6 +310,8 @@ export const TransactionModal: React.FC<TransactionModalProps> = ({
             </Button>
           </div>
         </form>
+          </>
+        )}
       </div>
     </div>
   )

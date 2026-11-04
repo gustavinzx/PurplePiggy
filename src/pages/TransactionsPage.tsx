@@ -473,8 +473,17 @@ export const TransactionsPage: React.FC = () => {
           </div>
         ) : (
           <div className="py-8 text-center text-xs font-bold text-textSec flex flex-col items-center">
-            <Mascot size="lg" pose="empty" floating={true} className="mb-2" />
-            <span>Nenhuma transação encontrada para os filtros selecionados.</span>
+            {transactions.length === 0 ? (
+              <>
+                <Mascot size="lg" pose="empty" floating={true} className="mb-2" />
+                <span>Você ainda não registrou nenhum gasto. Que tal começar agora?</span>
+              </>
+            ) : (
+              <>
+                <Mascot size="lg" pose="search" floating={true} className="mb-2" />
+                <span>Nenhuma transação encontrada para os filtros selecionados.</span>
+              </>
+            )}
           </div>
         )}
       </div>
