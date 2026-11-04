@@ -7,11 +7,11 @@ export interface CardProps extends React.HTMLAttributes<HTMLDivElement> {
 }
 
 /**
- * Componente Card canônico do PurplePiggy:
- * - 'white' / 'glass': Fundo vidro claro (bg-white/90 backdrop-blur-md), raio grande (24px), borda lilás suave e sombra roxa difusa.
- * - 'saldo': Degradê roxo escuro canônico (#8E32D8 -> #521D83), texto branco, glow de elevação.
- * - 'baby': Fundo azul-bebê suave para destaques informativos.
- * - 'lilac': Fundo lilás claro para caixas de incentivo e reserva.
+ * Componente Card canônico do PurplePiggy (design/tokens.md):
+ * - 'white': Fundo branco (#FFFFFF), raio 24px (rounded-[24px]), borda #F0EBF8, sombra card suave e padding interno p-5 (20px).
+ * - 'saldo': Fundo degradê roxo (#8E32D8 -> #521D83), texto branco, raio 24px, padding p-5 (20px).
+ * - 'sm': Raio 20px (rounded-[20px]), padding p-3.5 (14px).
+ * - Altura automática (h-auto), overflow visível (overflow-visible) para garantir que sombras e anéis nunca sejam cortados.
  */
 export const Card: React.FC<CardProps> = ({
   children,
@@ -22,19 +22,21 @@ export const Card: React.FC<CardProps> = ({
   ...props
 }) => {
   const variantStyles = {
-    white: 'bg-white/90 backdrop-blur-md text-deep shadow-card border border-lilac/20',
-    glass: 'bg-white/80 backdrop-blur-lg text-deep shadow-glass border border-lilac/25',
+    white: 'bg-white text-deep shadow-card border border-[#F0EBF8]',
+    glass: 'bg-white/85 backdrop-blur-md text-deep shadow-card border border-lilac/25',
     saldo: 'bg-gradient-to-br from-[#8E32D8] to-[#521D83] text-white shadow-card-saldo border-0',
     baby: 'bg-[#DEEEFC] text-deep border border-[#D5E7FA] shadow-xs',
     lilac: 'bg-[#F8E9FE] text-deep border border-[#F0DAFB] shadow-xs',
   }
 
-  const radiusStyle = size === 'sm' ? 'rounded-card-sm p-4' : 'rounded-card p-5'
-  const hoverClass = hoverEffect ? 'hover:border-primary/40 hover:shadow-md transition-all cursor-pointer' : ''
+  const radiusAndPadding = size === 'sm' ? 'rounded-[20px] p-3.5' : 'rounded-[24px] p-5'
+  const hoverClass = hoverEffect
+    ? 'hover:border-primary/30 transition-all cursor-pointer active:scale-[0.99]'
+    : ''
 
   return (
     <div
-      className={`${radiusStyle} transition-all duration-200 ${variantStyles[variant]} ${hoverClass} ${className}`}
+      className={`w-full h-auto overflow-visible min-w-0 transition-all duration-200 ${radiusAndPadding} ${variantStyles[variant]} ${hoverClass} ${className}`}
       {...props}
     >
       {children}

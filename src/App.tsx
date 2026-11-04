@@ -1,8 +1,9 @@
-import React from 'react'
+import React, { useEffect } from 'react'
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom'
 import { Toaster } from 'sonner'
 import { AuthProvider } from './context/AuthContext'
 import { AuthGate } from './components/AuthGate'
+import { initCapacitor, useAndroidBackButton } from './lib/capacitor'
 
 import { SplashPage } from './pages/SplashPage'
 import { WelcomePage } from './pages/WelcomePage'
@@ -27,9 +28,18 @@ import { DesignSystemMascotPage } from './pages/DesignSystemMascotPage'
 import { DesignSystemAtmospherePage } from './pages/DesignSystemAtmospherePage'
 import { DesignSystemLearnPage } from './pages/DesignSystemLearnPage'
 
+const AndroidShellHandler: React.FC = () => {
+  useAndroidBackButton()
+  return null
+}
+
 export const App: React.FC = () => {
+  useEffect(() => {
+    initCapacitor()
+  }, [])
   return (
     <BrowserRouter>
+      <AndroidShellHandler />
       <AuthProvider>
         <Toaster position="top-center" richColors />
         <Routes>

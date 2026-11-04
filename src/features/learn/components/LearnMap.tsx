@@ -1,5 +1,5 @@
 // src/features/learn/components/LearnMap.tsx
-// Mapa Sinuoso de Níveis (Desafio Piggy - Prompt N9B)
+// Mapa Sinuoso de Níveis (Desafio Piggy - Dimensões e Espaçamento Dinâmico)
 import React, { useLayoutEffect, useRef, useState, useEffect } from 'react'
 import { LevelNode, LevelNodeStatus } from './LevelNode'
 import { NodeSheet } from './NodeSheet'
@@ -30,9 +30,8 @@ interface LearnMapProps {
   className?: string
 }
 
-// Deslocamento lateral senoidal para formar o zigue-zague do Duolingo
-// offsets em porcentagem horizontal a partir do centro (0px, +60px, 0px, -60px, etc.)
-const HORIZONTAL_OFFSETS = [0, 56, 0, -56, 0, 56, 0, -56]
+// Deslocamento lateral com amplitude de até 28% (aprox 40px) para não cortar nas bordas
+const HORIZONTAL_OFFSETS = [0, 42, 0, -42, 0, 42, 0, -42]
 
 export const LearnMap: React.FC<LearnMapProps> = ({
   trackSlug,
@@ -47,9 +46,9 @@ export const LearnMap: React.FC<LearnMapProps> = ({
   const [selectedNode, setSelectedNode] = useState<LevelItem | null>(null)
   const [showScrollToCurrent, setShowScrollToCurrent] = useState(false)
 
-  // Rolagem inicial direta para o nó atual sem animação (sem piscada)
+  // Rolagem inicial suave e imediata focando no nó atual para o usuário nunca precisar rolar procurando onde está
   useLayoutEffect(() => {
-    if (currentNodeRef.current && containerRef.current) {
+    if (currentNodeRef.current) {
       currentNodeRef.current.scrollIntoView({
         behavior: 'auto',
         block: 'center',
@@ -57,12 +56,11 @@ export const LearnMap: React.FC<LearnMapProps> = ({
     }
   }, [trackSlug, levels])
 
-  // Observador para exibir o botão flutuante "Voltar ao nó atual"
   useEffect(() => {
     const handleScroll = () => {
       if (!currentNodeRef.current) return
       const rect = currentNodeRef.current.getBoundingClientRect()
-      const isVisible = rect.top >= 100 && rect.bottom <= window.innerHeight - 80
+      const isVisible = rect.top >= 80 && rect.bottom <= window.innerHeight - 80
       setShowScrollToCurrent(!isVisible)
     }
 
@@ -105,32 +103,32 @@ export const LearnMap: React.FC<LearnMapProps> = ({
       return
     }
 
-    // Abre a gaveta de início do nível
+    // Abre o bottom sheet de detalhes do nível
     setSelectedNode(level)
   }
 
-  // Ordenação de baixo para cima (Nível 1 na base, Nível 5 / Troféu no topo)
-  // levels já vem na ordem crescente (1, 2, 3...)
+  // Se tiver até 5 nós, usa espaçamento vertical proporcional para caber na tela sem rolar
+  const gapClass = levels.length <= 5 ? 'space-y-6 sm:space-y-8' : 'space-y-7'
+
   return (
     <div
       ref={containerRef}
-      className={`relative w-full max-w-md mx-auto py-8 px-4 flex flex-col items-center select-none ${className}`}
+      className={`relative w-full max-w-md mx-auto py-3 px-4 flex flex-col items-center select-none flex-1 justify-center ${className}`}
     >
-      {/* Botão flutuante "Voltar ao nó atual" */}
+      {/* Botão flutuante "Voltar ao nó atual" se rolado para longe */}
       {showScrollToCurrent && (
         <button
           type="button"
           onClick={scrollToCurrentNode}
-          className="fixed bottom-24 right-5 z-40 bg-[#7D2BD6] text-white px-3.5 py-2 rounded-full shadow-lg border-2 border-purple-300 font-nunito font-extrabold text-xs flex items-center gap-1.5 active:scale-95 transition-all animate-bounce-subtle"
+          className="fixed bottom-24 right-5 z-40 bg-[#7D2BD6] text-white px-3 py-1.5 rounded-full shadow-lg border-2 border-purple-300 font-nunito font-black text-xs flex items-center gap-1.5 active:scale-95 transition-all animate-bounce-subtle"
         >
-          <ArrowDown className="w-4 h-4 text-amber-300" />
+          <ArrowDown className="w-3.5 h-3.5 text-amber-300" />
           Nó Atual
         </button>
       )}
 
-      {/* Lista de Nós em Zigue-zague */}
-      {/* Lista de Nós em Zigue-zague com amplo espaçamento vertical (evita sobreposição do balão e nós) */}
-      <div className="w-full flex flex-col-reverse items-center space-y-reverse space-y-24 relative pt-4 pb-8">
+      {/* Lista de Nós em Zigue-zague (da base para o topo: Nível 1 embaixo, Troféu em cima) */}
+      <div className={`w-full flex flex-col-reverse items-center space-y-reverse ${gapClass} relative py-2`}>
         {levels.map((level, idx) => {
           const offsetPx = HORIZONTAL_OFFSETS[idx % HORIZONTAL_OFFSETS.length]
           let status: LevelNodeStatus = 'locked'
@@ -143,6 +141,9 @@ export const LearnMap: React.FC<LearnMapProps> = ({
           } else if (level.isCurrent) {
             status = 'current'
           }
+
+          // Inverte mascote para a esquerda se o nó estiver deslocado para a direita
+          const flipMascot = offsetPx > 20
 
           return (
             <div
@@ -157,6 +158,7 @@ export const LearnMap: React.FC<LearnMapProps> = ({
                 levelNumber={level.levelNumber}
                 title={level.title}
                 status={status}
+                flipMascot={flipMascot}
                 onClick={() => handleNodeClick(level)}
               />
             </div>

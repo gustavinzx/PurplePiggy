@@ -103,7 +103,10 @@ export const BottomNav: React.FC<BottomNavProps> = ({ className = '', isFixed = 
 
   return (
     <nav
-      className={`${positionClass} bg-white/95 backdrop-blur-lg border-t border-lilac/15 shadow-nav rounded-t-nav ${className}`}
+      className={`${positionClass} bg-white border-t border-lilac/15 shadow-nav rounded-t-nav ${className}`}
+      style={{
+        paddingBottom: 'env(safe-area-inset-bottom, 0px)',
+      }}
     >
       <div className="flex items-center justify-around h-16 px-2">
         {navItems.map((item) => {
@@ -158,7 +161,7 @@ export const FloatingActionButton: React.FC<FloatingActionButtonProps> = ({
   className = '',
 }) => {
   const containerClass = isFixed
-    ? 'fixed bottom-[calc(var(--nav-height)+10px)] left-1/2 -translate-x-1/2 w-full max-w-[var(--app-max-width)] px-[var(--screen-x)] z-30 pointer-events-auto'
+    ? 'fixed bottom-[calc(var(--nav-h)+env(safe-area-inset-bottom,0px)+12px)] left-1/2 -translate-x-1/2 w-full max-w-[var(--app-max-width)] px-[var(--screen-x)] z-30 pointer-events-auto'
     : 'w-full'
 
   return (

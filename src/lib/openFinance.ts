@@ -36,6 +36,15 @@ export interface OpenFinanceConnectOptions {
   itemId?: string
 }
 
+export interface SyncPluggyResult {
+  success: boolean
+  institutionName: string
+  accountsCount: number
+  transactionsCount: number
+  totalBalance: number
+  error?: string
+}
+
 const PLUGGY_SCRIPT_URL = 'https://cdn.pluggy.ai/pluggy-connect/v2.5.0/pluggy-connect.js'
 
 /**
@@ -88,6 +97,30 @@ export const fetchPluggyConnectToken = async (itemId?: string): Promise<string> 
 }
 
 /**
+ * Sincroniza contas e transações da Pluggy em tempo real com o banco de dados do PurplePiggy.
+ */
+export const syncPluggyData = async (
+  userId: string,
+  itemId?: string
+): Promise<SyncPluggyResult> => {
+  const { data, error } = await supabase.functions.invoke('create-connect-token', {
+    body: {
+      action: 'sync',
+      itemId,
+      userId,
+    },
+  })
+
+  if (error || !data?.success) {
+    const msg = error?.message || data?.error || 'Erro ao sincronizar extrato bancário.'
+    console.error('[OpenFinance] Erro na sincronização:', msg)
+    throw new Error(msg)
+  }
+
+  return data as SyncPluggyResult
+}
+
+/**
  * Salva a conexão bancária e os consentimentos nas tabelas oficiais do Supabase.
  */
 export const persistPluggyConnection = async (
@@ -95,7 +128,8 @@ export const persistPluggyConnection = async (
   item: PluggyItem
 ): Promise<{ connectionId: string }> => {
   const institutionName = item.connector?.name || 'Instituição Financeira'
-  const isConnected = item.status === 'UPDATED' || item.status === 'UPDATING' || item.status === 'COMPLETED'
+  const isConnected =
+    item.status === 'UPDATED' || item.status === 'UPDATING' || item.status === 'COMPLETED'
 
   // 1. Salvar ou atualizar conexão em bank_connections
   const { data: conn, error: connErr } = await supabase
@@ -143,11 +177,11 @@ export const openPluggyConnect = async (
   userId: string,
   options: OpenFinanceConnectOptions = {}
 ): Promise<void> => {
-  const provider = import.meta.env.VITE_OPEN_FINANCE_PROVIDER || 'demo'
+  const provider = import.meta.env.VITE_OPEN_FINANCE_PROVIDER || 'pluggy'
 
   if (provider !== 'pluggy') {
     console.info(
-      `[OpenFinance] VITE_OPEN_FINANCE_PROVIDER="${provider}". Modo Pluggy inativo. Para ativar a integração real, defina VITE_OPEN_FINANCE_PROVIDER=pluggy no arquivo .env.`
+      `[OpenFinance] VITE_OPEN_FINANCE_PROVIDER="${provider}". Modo Pluggy inativo.`
     )
     return
   }
@@ -165,10 +199,17 @@ export const openPluggyConnect = async (
   // 3. Inicializa o PluggyConnect
   const pluggyInstance = new window.PluggyConnect({
     connectToken,
+    includeSandbox: true,
     onSuccess: async (data: PluggySuccessPayload) => {
       try {
         if (data?.item) {
           await persistPluggyConnection(userId, data.item)
+          // Executa sincronização real imediata
+          try {
+            await syncPluggyData(userId, data.item.id)
+          } catch (syncErr) {
+            console.warn('[OpenFinance] Sincronização pós-conexão em background:', syncErr)
+          }
           options.onSuccess?.(data.item)
         }
       } catch (saveError) {

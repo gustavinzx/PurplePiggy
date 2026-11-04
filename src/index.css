@@ -53,6 +53,7 @@
   /* Dimensões e Raios */
   --app-max-width: 480px;
   --screen-x: 20px;
+  --nav-h: 64px;
   --nav-height: 64px;
   --radius-card: 24px;
   --radius-card-sm: 20px;
@@ -64,15 +65,29 @@
 @layer base {
   html {
     scrollbar-gutter: stable;
+    -webkit-text-size-adjust: 100%;
+    text-size-adjust: 100%;
     overflow-x: clip;
+    overscroll-behavior: none;
+    height: 100%;
   }
 
   body {
     @apply bg-bg text-deep font-sans antialiased;
     overflow-x: clip;
+    overscroll-behavior: none;
+    touch-action: manipulation;
+    -webkit-text-size-adjust: 100%;
+    text-size-adjust: 100%;
+    -webkit-tap-highlight-color: transparent;
+    height: 100%;
     min-height: 100vh;
     min-height: 100dvh;
     font-feature-settings: "cv02", "cv03", "cv04", "cv11";
+  }
+
+  button, a, input, select, textarea, [role="button"] {
+    -webkit-tap-highlight-color: transparent;
   }
 }
 

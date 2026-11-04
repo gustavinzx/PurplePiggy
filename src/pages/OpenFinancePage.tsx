@@ -5,7 +5,7 @@ import { useAuth } from '../context/AuthContext'
 import { AppShell } from '../components/AppShell'
 import { Button } from '../components/Button'
 import { Mascot } from '../components/Mascot'
-import { openPluggyConnect } from '../lib/openFinance'
+import { openPluggyConnect, syncPluggyData } from '../lib/openFinance'
 import {
   ArrowLeft,
   Building2,
@@ -23,7 +23,8 @@ type OpenFinanceConsent = Database['public']['Tables']['open_finance_consents'][
 
 export const OpenFinancePage: React.FC = () => {
   const navigate = useNavigate()
-  const { user, isDemo } = useAuth()
+  const { user, profile, isDemo, refreshProfile } = useAuth()
+  const [isSyncing, setIsSyncing] = useState(false)
 
   const [connections, setConnections] = useState<BankConnection[]>([])
   const [consents, setConsents] = useState<OpenFinanceConsent[]>([])
@@ -65,6 +66,26 @@ export const OpenFinancePage: React.FC = () => {
     }
   }
 
+  
+  const handleSyncNow = async () => {
+    if (!user) return
+    setIsSyncing(true)
+    try {
+      const res = await syncPluggyData(user.id, activeConnection?.provider_ref || undefined)
+      if (res.success) {
+        toast.success(`Extrato atualizado! ${res.transactionsCount || 0} transações e saldo sincronizados.`)
+        await refreshProfile()
+        await loadOpenFinanceData()
+      } else {
+        toast.error(res.error || 'Não foi possível sincronizar o extrato agora.')
+      }
+    } catch (err: any) {
+      toast.error('Erro ao sincronizar extrato.')
+    } finally {
+      setIsSyncing(false)
+    }
+  }
+
   const handleRevoke = async (connId: string) => {
     if (!user) return
     try {
@@ -95,12 +116,24 @@ export const OpenFinancePage: React.FC = () => {
       setConnecting(true)
       try {
         await openPluggyConnect(user.id, {
-          onSuccess: (item) => {
+          onSuccess: async (item) => {
             setConnecting(false)
             toast.success(
               `Conta ${item.connector?.name || 'bancária'} conectada com sucesso via Open Finance!`
             )
-            loadOpenFinanceData()
+            setIsSyncing(true)
+            try {
+              const syncRes = await syncPluggyData(user.id, item.id)
+              if (syncRes.success) {
+                toast.success(`${syncRes.transactionsCount || 0} transações sincronizadas com o PurplePiggy!`)
+              }
+              await refreshProfile()
+            } catch (e) {
+              console.error('Erro no sync inicial:', e)
+            } finally {
+              setIsSyncing(false)
+              loadOpenFinanceData()
+            }
           },
           onError: (error) => {
             setConnecting(false)
@@ -214,15 +247,28 @@ export const OpenFinancePage: React.FC = () => {
               </div>
             </div>
 
-            <span
-              className={`text-[11px] font-bold px-3 py-1 rounded-full ${
-                activeConnection.status === 'active'
-                  ? 'bg-success/15 text-success'
-                  : 'bg-danger/15 text-danger'
-              }`}
-            >
-              {activeConnection.status === 'active' ? 'Ativa' : 'Revogada'}
-            </span>
+            <div className="flex flex-col items-end gap-2">
+              <span
+                className={`text-[11px] font-bold px-3 py-1 rounded-full ${
+                  activeConnection.status === 'active'
+                    ? 'bg-success/15 text-success'
+                    : 'bg-danger/15 text-danger'
+                }`}
+              >
+                {activeConnection.status === 'active' ? 'Ativa' : 'Revogada'}
+              </span>
+
+              {activeConnection.status === 'active' && (
+                <button
+                  onClick={handleSyncNow}
+                  disabled={isSyncing}
+                  className="inline-flex items-center gap-1.5 text-xs font-bold text-primary hover:text-deep active:scale-95 transition-all bg-baby/60 px-3 py-1.5 rounded-xl border border-lilac/20"
+                >
+                  <RefreshCw className={`w-3.5 h-3.5 ${isSyncing ? 'animate-spin' : ''}`} />
+                  <span>{isSyncing ? 'Sincronizando...' : 'Sincronizar'}</span>
+                </button>
+              )}
+            </div>
           </div>
         ) : (
           <div className="bg-white rounded-[24px] p-6 text-center border border-lilac/15 shadow-card">

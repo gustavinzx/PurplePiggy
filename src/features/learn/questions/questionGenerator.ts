@@ -84,7 +84,7 @@ export function validateAnswer(
       if (Array.isArray(userAnswer)) {
         isCorrect =
           userAnswer.length === q.correctOrder.length &&
-          userAnswer.every((item, idx) => item === q.correctOrder[idx])
+          userAnswer.every((item, idx) => String(item).trim() === String(q.correctOrder[idx]).trim())
       }
       break
     }
@@ -94,7 +94,7 @@ export function validateAnswer(
       // userAnswer deve ser um array ou record de pares resolvidos { [left]: right }
       if (typeof userAnswer === 'object' && userAnswer !== null) {
         const answers = userAnswer as Record<string, string>
-        isCorrect = q.pairs.every((pair) => answers[pair.left] === pair.right)
+        isCorrect = q.pairs.every((pair) => answers[pair.left]?.trim() === pair.right.trim())
       }
       break
     }
@@ -103,6 +103,11 @@ export function validateAnswer(
       if (typeof userAnswer === 'string') {
         isCorrect =
           userAnswer.trim().toLowerCase() === question.correctAnswer.trim().toLowerCase()
+      } else if (typeof userAnswer === 'number' && (question as any).options) {
+        const opt = (question as any).options[userAnswer]
+        isCorrect =
+          typeof opt === 'string' &&
+          opt.trim().toLowerCase() === question.correctAnswer.trim().toLowerCase()
       }
       break
     }

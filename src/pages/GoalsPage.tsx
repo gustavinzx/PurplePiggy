@@ -194,7 +194,11 @@ export const GoalsPage: React.FC = () => {
   }
 
   return (
-    <AppShell showNav={true} className="py-6 flex flex-col gap-4">
+    <AppShell
+      showNav={true}
+      className="py-6 flex flex-col gap-4 select-none"
+      contentStyle={{ paddingBottom: 'calc(var(--nav-h) + env(safe-area-inset-bottom, 0px) + 84px)' }}
+    >
       {/* Título da tela */}
       <div className="w-full min-w-0">
         <h1 className="text-xl font-extrabold text-deep font-sans mb-1">
@@ -270,17 +274,20 @@ export const GoalsPage: React.FC = () => {
         )}
       </div>
 
-      {/* Botão "+ Criar nova meta" */}
-      <div className="pt-2">
-        <Button
-          variant="outline"
-          size="lg"
-          fullWidth
-          icon={<Plus className="w-5 h-5" />}
+      {/* Botão flutuante "+ Criar nova meta" (Fiel ao layout 10-metas.png) */}
+      <div
+        className="fixed left-1/2 -translate-x-1/2 z-30 w-full max-w-[var(--app-max-width)] px-4 pointer-events-none"
+        style={{
+          bottom: 'calc(var(--nav-h) + env(safe-area-inset-bottom, 0px) + 12px)',
+        }}
+      >
+        <button
           onClick={() => setIsCreateModalOpen(true)}
+          className="w-full bg-gradient-to-r from-btn-primary-start to-btn-primary-end text-white font-extrabold text-[15px] py-3.5 px-6 rounded-full shadow-button flex items-center justify-center gap-2 hover:brightness-105 active:scale-95 transition-all pointer-events-auto"
         >
-          Criar nova meta
-        </Button>
+          <Plus className="w-5 h-5" strokeWidth={2.5} />
+          <span>Criar nova meta</span>
+        </button>
       </div>
 
       {/* Modal: Detalhes e Ações da Meta Selecionada */}

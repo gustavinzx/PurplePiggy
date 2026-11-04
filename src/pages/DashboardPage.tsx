@@ -3,6 +3,7 @@ import { useNavigate, Link } from 'react-router-dom'
 import { useAuth } from '../context/AuthContext'
 import { supabase } from '../lib/supabase'
 import { AppShell } from '../components/AppShell'
+import { Card } from '../components/Card'
 import { Mascot } from '../components/Mascot'
 import { CategoryCircle } from '../components/CategoryIcon'
 import { BackgroundBlobs } from '../components/BackgroundBlobs'
@@ -141,17 +142,17 @@ export const DashboardPage: React.FC = () => {
   const firstName = profile?.full_name?.split(' ')[0] || 'Gustavo'
 
   return (
-    <AppShell showNav={true} className="relative pt-4 flex flex-col gap-3.5 select-none pb-24">
+    <AppShell showNav={true} className="relative pt-4 flex flex-col gap-3.5 select-none">
       {/* Fundo com manchas orgânicas lilás e brilhos dourados sutis */}
       <BackgroundBlobs showSparkles={true} />
 
       {/* 1. Header: Saudação oficial */}
-      <div className="w-full pt-1 pb-0 min-w-0 max-w-[210px]">
+      <div className="w-full pt-1 pb-0 min-w-0 max-w-[260px]">
         <h1 className="text-[22px] font-extrabold text-[#33105D] font-sans tracking-tight leading-tight truncate">
           Olá, {firstName}! 👋
         </h1>
         <p className="text-[13px] font-bold text-[#581C87]/75 leading-tight mt-0.5">
-          Sua vida financeira no caminho certo.
+          Sua vida financeira<br />no caminho certo.
         </p>
       </div>
 
@@ -228,7 +229,7 @@ export const DashboardPage: React.FC = () => {
       {/* 3. Dois Mini-Cards: Receitas e Despesas lado a lado fiel a design/telas/06-home.png */}
       <div className="w-full grid grid-cols-2 gap-3 min-w-0">
         {/* Mini Card Receitas */}
-        <div className="w-full bg-white rounded-[20px] p-3.5 border border-[#F0EBF8] shadow-card flex items-center gap-2.5 min-w-0">
+        <Card size="sm" className="flex items-center gap-2.5">
           <div className="w-9 h-9 rounded-xl bg-[#DCFCE7] text-[#15803D] flex items-center justify-center shrink-0">
             <TrendingUp className="w-5 h-5" strokeWidth={2.2} />
           </div>
@@ -238,10 +239,10 @@ export const DashboardPage: React.FC = () => {
               {hideBalance ? '••••' : formatCurrency(monthlySummary.income)}
             </span>
           </div>
-        </div>
+        </Card>
 
         {/* Mini Card Despesas */}
-        <div className="w-full bg-white rounded-[20px] p-3.5 border border-[#F0EBF8] shadow-card flex items-center gap-2.5 min-w-0">
+        <Card size="sm" className="flex items-center gap-2.5">
           <div className="w-9 h-9 rounded-xl bg-[#FEF3C7] text-[#D97706] flex items-center justify-center shrink-0">
             <TrendingDown className="w-5 h-5" strokeWidth={2.2} />
           </div>
@@ -251,7 +252,7 @@ export const DashboardPage: React.FC = () => {
               {hideBalance ? '••••' : formatCurrency(monthlySummary.expense)}
             </span>
           </div>
-        </div>
+        </Card>
       </div>
 
       {/* 4. Atalhos Rápidos Interativos (+ Gasto, + Receita, Simulador) */}
@@ -294,7 +295,7 @@ export const DashboardPage: React.FC = () => {
       </div>
 
       {/* 4. Card "Painel de gastos" com link Este mês > e barra segmentada multicolorida */}
-      <div className="w-full bg-white rounded-[24px] p-4.5 border border-[#F0EBF8] shadow-card min-w-0">
+      <Card>
         <div className="flex items-center justify-between mb-1 min-w-0">
           <span className="text-[15px] font-extrabold text-deep">Painel de gastos</span>
           <Link
@@ -337,12 +338,12 @@ export const DashboardPage: React.FC = () => {
             </>
           )}
         </div>
-      </div>
+      </Card>
 
       {/* 5. Card "Reserva de emergência" fiel a design/telas/06-home.png */}
-      <div
+      <Card
         onClick={() => navigate('/metas')}
-        className="w-full bg-white rounded-[24px] p-4.5 border border-[#F0EBF8] shadow-card cursor-pointer hover:border-primary/20 transition-all min-w-0"
+        hoverEffect={true}
       >
         <div className="flex items-center justify-between mb-1 min-w-0">
           <span className="text-[14px] font-extrabold text-deep">Reserva de emergência</span>
@@ -360,10 +361,10 @@ export const DashboardPage: React.FC = () => {
             style={{ width: `${Math.min(emergencyPct, 100)}%` }}
           />
         </div>
-      </div>
+      </Card>
 
       {/* 6. Card "Progresso das metas" com anéis circulares */}
-      <div className="w-full bg-white rounded-[24px] p-4.5 border border-[#F0EBF8] shadow-card min-w-0">
+      <Card>
         <div className="flex items-center justify-between mb-3.5 min-w-0">
           <span className="text-[14px] font-extrabold text-deep">Progresso das metas</span>
           <Link
@@ -409,10 +410,10 @@ export const DashboardPage: React.FC = () => {
             </button>
           </div>
         )}
-      </div>
+      </Card>
 
       {/* 7. Transações Recentes reais */}
-      <div className="w-full bg-white rounded-[24px] p-4.5 border border-[#F0EBF8] shadow-card min-w-0">
+      <Card>
         <div className="flex items-center justify-between mb-2 min-w-0">
           <span className="text-[14px] font-extrabold text-deep">Transações recentes</span>
           <Link
@@ -493,7 +494,7 @@ export const DashboardPage: React.FC = () => {
             </button>
           </div>
         )}
-      </div>
+      </Card>
 
       {/* Modal de Transação */}
       <TransactionModal
