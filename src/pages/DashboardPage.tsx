@@ -22,6 +22,8 @@ import {
   ChevronRight,
   TrendingUp,
   TrendingDown,
+  Plus,
+  Calculator,
 } from 'lucide-react'
 import type { Database } from '../types/database.types'
 
@@ -250,6 +252,45 @@ export const DashboardPage: React.FC = () => {
             </span>
           </div>
         </div>
+      </div>
+
+      {/* 4. Atalhos Rápidos Interativos (+ Gasto, + Receita, Simulador) */}
+      <div className="w-full grid grid-cols-3 gap-2.5 min-w-0">
+        <button
+          onClick={() => {
+            setModalType('expense')
+            setIsModalOpen(true)
+          }}
+          className="w-full bg-white hover:bg-[#FAF6FD] border border-[#F0EBF8] rounded-[18px] py-2.5 px-2 flex items-center justify-center gap-1.5 text-[12px] font-bold text-deep transition-all shadow-card hover:scale-[1.02] active:scale-95 min-w-0 cursor-pointer"
+        >
+          <div className="w-6 h-6 rounded-full bg-[#FCE7F3] text-[#BE185D] flex items-center justify-center shrink-0">
+            <Plus className="w-3.5 h-3.5" strokeWidth={2.5} />
+          </div>
+          <span className="truncate">+ Gasto</span>
+        </button>
+
+        <button
+          onClick={() => {
+            setModalType('income')
+            setIsModalOpen(true)
+          }}
+          className="w-full bg-white hover:bg-[#FAF6FD] border border-[#F0EBF8] rounded-[18px] py-2.5 px-2 flex items-center justify-center gap-1.5 text-[12px] font-bold text-deep transition-all shadow-card hover:scale-[1.02] active:scale-95 min-w-0 cursor-pointer"
+        >
+          <div className="w-6 h-6 rounded-full bg-[#DCFCE7] text-[#15803D] flex items-center justify-center shrink-0">
+            <Plus className="w-3.5 h-3.5" strokeWidth={2.5} />
+          </div>
+          <span className="truncate">+ Receita</span>
+        </button>
+
+        <button
+          onClick={() => navigate('/simulador')}
+          className="w-full bg-white hover:bg-[#FAF6FD] border border-[#F0EBF8] rounded-[18px] py-2.5 px-2 flex items-center justify-center gap-1.5 text-[12px] font-bold text-deep transition-all shadow-card hover:scale-[1.02] active:scale-95 min-w-0 cursor-pointer"
+        >
+          <div className="w-6 h-6 rounded-full bg-[#F3E8FF] text-[#7D2BD6] flex items-center justify-center shrink-0">
+            <Calculator className="w-3.5 h-3.5" strokeWidth={2.5} />
+          </div>
+          <span className="truncate">Simulador</span>
+        </button>
       </div>
 
       {/* 4. Card "Painel de gastos" com link Este mês > e barra segmentada multicolorida */}
