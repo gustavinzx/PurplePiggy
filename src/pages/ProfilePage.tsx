@@ -26,11 +26,16 @@ export const ProfilePage: React.FC = () => {
   const { user, profile, isDemo, signOut, resetDemoData, refreshProfile } = useAuth()
 
   const [isEditModalOpen, setIsEditModalOpen] = useState(false)
+  const [isPreferencesModalOpen, setIsPreferencesModalOpen] = useState(false)
   const [isAboutModalOpen, setIsAboutModalOpen] = useState(false)
   const [isPrivacyModalOpen, setIsPrivacyModalOpen] = useState(false)
   const [isNotificationsModalOpen, setIsNotificationsModalOpen] = useState(false)
   const [isResettingDemo, setIsResettingDemo] = useState(false)
   const [isSavingProfile, setIsSavingProfile] = useState(false)
+
+  // Preferences toggles
+  const [hideBalance, setHideBalance] = useState(profile?.hide_balance ?? false)
+  const [soundEnabled, setSoundEnabled] = useState(true)
 
   // Form states para edição
   const [editName, setEditName] = useState(profile?.full_name || '')
@@ -143,7 +148,11 @@ export const ProfilePage: React.FC = () => {
   }
 
   return (
-    <AppShell showNav={true} className="py-6 flex flex-col gap-5">
+    <AppShell
+      showNav={true}
+      className="py-6 flex flex-col gap-5 select-none"
+      contentStyle={{ paddingBottom: 'calc(var(--nav-h) + env(safe-area-inset-bottom, 0px) + 36px)' }}
+    >
       {/* Título da tela */}
       <div className="w-full min-w-0">
         <h1 className="text-xl font-extrabold text-deep font-sans mb-1">
@@ -214,7 +223,7 @@ export const ProfilePage: React.FC = () => {
             </p>
           </div>
         </div>
-        <span className="text-[11px] font-extrabold text-primary bg-primary/10 px-2.5 py-1 rounded-full">
+        <span className="text-[11px] font-extrabold text-primary bg-primary/10 px-3 py-1 rounded-full whitespace-nowrap shrink-0 min-w-fit">
           Nível 3
         </span>
       </div>
@@ -232,6 +241,17 @@ export const ProfilePage: React.FC = () => {
           <div className="flex items-center gap-3">
             <User className="w-4 h-4 text-primary" />
             <span className="text-xs font-bold text-deep">Dados pessoais</span>
+          </div>
+          <ChevronRight className="w-4 h-4 text-textSec" />
+        </button>
+
+        <button
+          onClick={() => setIsPreferencesModalOpen(true)}
+          className="py-3 px-2 flex items-center justify-between text-left hover:bg-bg/50 rounded-xl transition-colors"
+        >
+          <div className="flex items-center gap-3">
+            <Settings className="w-4 h-4 text-primary" />
+            <span className="text-xs font-bold text-deep">Preferências</span>
           </div>
           <ChevronRight className="w-4 h-4 text-textSec" />
         </button>
@@ -282,7 +302,24 @@ export const ProfilePage: React.FC = () => {
         >
           <div className="flex items-center gap-3">
             <div className="w-7 h-7 rounded-lg bg-primary/10 text-primary flex items-center justify-center">
-              <Settings className="w-4 h-4" />
+              <svg
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="2.2"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                className="w-4 h-4 text-primary"
+              >
+                <path d="M3 9.5L12 3l9 6.5" />
+                <path d="M4 10h16" />
+                <path d="M6 10v7" />
+                <path d="M10 10v7" />
+                <path d="M14 10v7" />
+                <path d="M18 10v7" />
+                <path d="M3 17h18" />
+                <path d="M2 21h20" />
+              </svg>
             </div>
             <div>
               <div className="text-xs font-bold text-deep">Open Finance</div>
@@ -316,17 +353,14 @@ export const ProfilePage: React.FC = () => {
         </div>
       )}
 
-      {/* Botão contorno vermelho "Sair da conta" (Layout oficial) */}
+      {/* Botão contorno vermelho "Sair da conta" (Layout oficial 14) */}
       <div className="pt-2">
-        <Button
-          size="lg"
-          variant="destructive"
-          fullWidth
-          icon={<LogOut className="w-5 h-5" />}
+        <button
           onClick={handleSignOut}
+          className="w-full py-3.5 px-6 rounded-full border-2 border-[#E5487A] text-[#E5487A] bg-white font-extrabold text-[15px] hover:bg-[#E5487A]/5 active:scale-95 transition-all text-center select-none"
         >
           Sair da conta
-        </Button>
+        </button>
       </div>
 
       {/* Modal: Editar Perfil */}
@@ -446,6 +480,81 @@ export const ProfilePage: React.FC = () => {
             </div>
 
             <Button size="md" fullWidth onClick={handleSaveNotifications}>
+              Salvar preferências
+            </Button>
+          </div>
+        </div>
+      )}
+
+      {/* Modal: Preferências do App */}
+      {isPreferencesModalOpen && (
+        <div className="fixed inset-0 z-50 bg-deep/60 backdrop-blur-xs flex items-center justify-center p-4 animate-fadeIn">
+          <div className="bg-white rounded-[26px] p-6 w-full max-w-sm shadow-2xl border border-lilac/20">
+            <div className="flex items-center justify-between pb-3 border-b border-lilac/15 mb-4">
+              <h3 className="text-base font-extrabold text-deep font-sans">
+                Preferências do app
+              </h3>
+              <button
+                onClick={() => setIsPreferencesModalOpen(false)}
+                className="p-1 rounded-full text-textSec hover:text-deep"
+              >
+                <X className="w-5 h-5" />
+              </button>
+            </div>
+
+            <div className="flex flex-col gap-4 mb-6">
+              <label className="flex items-center justify-between cursor-pointer">
+                <div>
+                  <div className="text-xs font-bold text-deep">Ocultar saldo no início</div>
+                  <div className="text-[10px] text-textSec">Privacidade ao abrir o app em público</div>
+                </div>
+                <input
+                  type="checkbox"
+                  checked={hideBalance}
+                  onChange={(e) => setHideBalance(e.target.checked)}
+                  className="w-5 h-5 accent-primary cursor-pointer"
+                />
+              </label>
+
+              <label className="flex items-center justify-between cursor-pointer">
+                <div>
+                  <div className="text-xs font-bold text-deep">Sons e feedback háptico</div>
+                  <div className="text-[10px] text-textSec">Sons suaves ao concluir lições e metas</div>
+                </div>
+                <input
+                  type="checkbox"
+                  checked={soundEnabled}
+                  onChange={(e) => setSoundEnabled(e.target.checked)}
+                  className="w-5 h-5 accent-primary cursor-pointer"
+                />
+              </label>
+
+              <div className="flex items-center justify-between">
+                <div>
+                  <div className="text-xs font-bold text-deep">Moeda padrão</div>
+                  <div className="text-[10px] text-textSec">Formatação monetária oficial</div>
+                </div>
+                <span className="text-xs font-extrabold text-primary bg-primary/10 px-2.5 py-1 rounded-full">
+                  BRL (R$)
+                </span>
+              </div>
+            </div>
+
+            <Button
+              size="md"
+              fullWidth
+              onClick={async () => {
+                if (user) {
+                  await supabase
+                    .from('profiles')
+                    .update({ hide_balance: hideBalance })
+                    .eq('id', user.id)
+                  refreshProfile()
+                }
+                toast.success('Preferências salvas com sucesso!')
+                setIsPreferencesModalOpen(false)
+              }}
+            >
               Salvar preferências
             </Button>
           </div>
