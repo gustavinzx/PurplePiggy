@@ -119,12 +119,16 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
       // Garantir que o perfil existe mesmo se o trigger demorar
       if (data.user) {
-        await supabase.from('profiles').upsert({
-          id: data.user.id,
-          full_name: fullName,
-          email: email,
-          is_demo: false,
-        })
+        try {
+          await supabase.from('profiles').upsert({
+            id: data.user.id,
+            full_name: fullName,
+            email: email,
+            is_demo: false,
+          })
+        } catch (profileErr) {
+          console.warn('Perfil será sincronizado pelo trigger do banco:', profileErr)
+        }
       }
       return { error: null }
     } catch (err) {

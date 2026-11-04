@@ -1,9 +1,9 @@
 import React, { useState } from 'react'
 import { useNavigate, Link } from 'react-router-dom'
 import { supabase } from '../lib/supabase'
+import { Mascot } from '../components/Mascot'
 import { AppShell } from '../components/AppShell'
 import { BackgroundBlobs } from '../components/BackgroundBlobs'
-import { Mascot } from '../components/Mascot'
 import { ArrowLeft, Mail } from 'lucide-react'
 import { toast } from 'sonner'
 
@@ -16,7 +16,7 @@ export const ResetPasswordPage: React.FC = () => {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     if (!email) {
-      toast.error('Informe seu e-mail cadastrado.')
+      toast.error('Informe seu e-mail cadastrado')
       return
     }
 
@@ -26,12 +26,14 @@ export const ResetPasswordPage: React.FC = () => {
         redirectTo: `${window.location.origin}/redefinir-senha`,
       })
 
-      if (error) throw error
-
-      setSent(true)
-      toast.success('Instruções enviadas para o seu e-mail!')
+      if (error) {
+        toast.error(error.message || 'Não conseguimos enviar o link. Confira o e-mail digitado.')
+      } else {
+        setSent(true)
+        toast.success('Link de recuperação enviado com sucesso!')
+      }
     } catch {
-      toast.error('Não conseguimos enviar o e-mail. Confira o endereço informado.')
+      toast.error('Ocorreu um erro inesperado. Tente novamente.')
     } finally {
       setLoading(false)
     }
@@ -45,7 +47,7 @@ export const ResetPasswordPage: React.FC = () => {
         {/* Header com botão voltar */}
         <div className="flex items-center gap-3 mb-6">
           <button
-            onClick={() => navigate('/entrar')}
+            onClick={() => navigate(-1)}
             className="w-11 h-11 rounded-full bg-white/85 hover:bg-white text-deep shadow-xs flex items-center justify-center transition-all active:scale-95 border border-purple-100/60 cursor-pointer"
             aria-label="Voltar"
           >
@@ -83,8 +85,8 @@ export const ResetPasswordPage: React.FC = () => {
           </div>
         ) : (
           <form onSubmit={handleSubmit} className="flex flex-col gap-4 mt-4">
-            <div className="relative flex items-center shadow-[0_4px_16px_rgba(125,43,214,0.06)] rounded-full">
-              <span className="absolute left-4.5 text-[#8E32D8] pointer-events-none">
+            <div className="relative flex items-center shadow-[0_4px_16px_rgba(125,43,214,0.06)] rounded-2xl">
+              <span className="absolute left-5 w-6 h-6 flex items-center justify-center text-[#8E32D8] pointer-events-none">
                 <Mail className="w-5 h-5" strokeWidth={2.2} />
               </span>
               <input
@@ -92,7 +94,7 @@ export const ResetPasswordPage: React.FC = () => {
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 placeholder="Seu e-mail cadastrado"
-                className="w-full h-14 pl-14 pr-5 bg-white border border-[#E9D5FF]/80 rounded-full text-deep placeholder:text-[#581C87]/45 font-bold text-[15px] focus:outline-none focus:border-[#8E32D8] focus:ring-4 focus:ring-[#8E32D8]/10 transition-all"
+                className="w-full h-14 pl-[58px] pr-5 bg-white border border-[#E9D5FF]/80 rounded-2xl text-deep placeholder:text-[#581C87]/45 font-bold text-[15px] focus:outline-none focus:border-[#8E32D8] focus:ring-4 focus:ring-[#8E32D8]/10 transition-all"
                 required
               />
             </div>
@@ -111,11 +113,10 @@ export const ResetPasswordPage: React.FC = () => {
           </form>
         )}
 
-        {/* Rodapé integrado logo abaixo */}
         <div className="mt-8 text-center">
           <Link
             to="/entrar"
-            className="text-[14px] font-extrabold text-[#8E32D8] hover:underline"
+            className="text-[13px] font-extrabold text-[#581C87] hover:text-[#8E32D8] transition-colors"
           >
             Lembrou a senha? Voltar ao login
           </Link>

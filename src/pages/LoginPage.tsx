@@ -92,15 +92,15 @@ export const LoginPage: React.FC = () => {
         <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-4">
           {/* E-mail */}
           <div>
-            <div className="relative flex items-center shadow-[0_4px_16px_rgba(125,43,214,0.06)] rounded-full">
-              <span className="absolute left-4.5 text-[#8E32D8] pointer-events-none">
+            <div className="relative flex items-center shadow-[0_4px_16px_rgba(125,43,214,0.06)] rounded-2xl">
+              <span className="absolute left-5 w-6 h-6 flex items-center justify-center text-[#8E32D8] pointer-events-none">
                 <Mail className="w-5 h-5" strokeWidth={2.2} />
               </span>
               <input
                 {...register('email')}
                 type="email"
                 placeholder="E-mail"
-                className="w-full h-14 pl-14 pr-5 bg-white border border-[#E9D5FF]/80 rounded-full text-deep placeholder:text-[#581C87]/45 font-bold text-[15px] focus:outline-none focus:border-[#8E32D8] focus:ring-4 focus:ring-[#8E32D8]/10 transition-all"
+                className="w-full h-14 pl-[58px] pr-5 bg-white border border-[#E9D5FF]/80 rounded-2xl text-deep placeholder:text-[#581C87]/45 font-bold text-[15px] focus:outline-none focus:border-[#8E32D8] focus:ring-4 focus:ring-[#8E32D8]/10 transition-all"
               />
             </div>
             {errors.email && (
@@ -112,20 +112,20 @@ export const LoginPage: React.FC = () => {
 
           {/* Senha */}
           <div>
-            <div className="relative flex items-center shadow-[0_4px_16px_rgba(125,43,214,0.06)] rounded-full">
-              <span className="absolute left-4.5 text-[#8E32D8] pointer-events-none">
+            <div className="relative flex items-center shadow-[0_4px_16px_rgba(125,43,214,0.06)] rounded-2xl">
+              <span className="absolute left-5 w-6 h-6 flex items-center justify-center text-[#8E32D8] pointer-events-none">
                 <Lock className="w-5 h-5" strokeWidth={2.2} />
               </span>
               <input
                 {...register('password')}
                 type={showPassword ? 'text' : 'password'}
                 placeholder="Senha"
-                className="w-full h-14 pl-14 pr-12 bg-white border border-[#E9D5FF]/80 rounded-full text-deep placeholder:text-[#581C87]/45 font-bold text-[15px] focus:outline-none focus:border-[#8E32D8] focus:ring-4 focus:ring-[#8E32D8]/10 transition-all"
+                className="w-full h-14 pl-[58px] pr-12 bg-white border border-[#E9D5FF]/80 rounded-2xl text-deep placeholder:text-[#581C87]/45 font-bold text-[15px] focus:outline-none focus:border-[#8E32D8] focus:ring-4 focus:ring-[#8E32D8]/10 transition-all"
               />
               <button
                 type="button"
                 onClick={() => setShowPassword(!showPassword)}
-                className="absolute right-4 p-1.5 rounded-full text-[#581C87]/60 hover:text-[#8E32D8] hover:bg-purple-50 transition-colors cursor-pointer"
+                className="absolute right-3.5 w-10 h-10 flex items-center justify-center rounded-full text-[#581C87]/60 hover:text-[#8E32D8] hover:bg-purple-50 transition-colors cursor-pointer"
                 aria-label={showPassword ? 'Ocultar senha' : 'Ver senha'}
               >
                 {showPassword ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}

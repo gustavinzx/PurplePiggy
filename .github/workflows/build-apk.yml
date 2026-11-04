@@ -34,7 +34,7 @@ jobs:
         run: npm run build
         env:
           VITE_SUPABASE_URL: ${{ secrets.VITE_SUPABASE_URL || 'https://viugrfwxkjzntqgrlony.supabase.co' }}
-          VITE_SUPABASE_ANON_KEY: ${{ secrets.VITE_SUPABASE_ANON_KEY || 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InZpdWdyZnd4a2p6bnRxZ3Jsb255Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDIzOTM1MDMsImV4cCI6MjA1Nzk2OTUwM30.7g6x1m9BwM7n8bC3x0iR4K3F7lFj1yT7sV9Z9Q3e3gI' }}
+          VITE_SUPABASE_ANON_KEY: ${{ secrets.VITE_SUPABASE_ANON_KEY || 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InZpdWdyZnd4a2p6bnRxZ3Jsb255Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTM2NDg4ODIsImV4cCI6MjEwOTIyNDg4Mn0.zlzghbTP0vJAtq7rhsG0Upe2sVvkf6pcqUsCasAx0sU' }}
           VITE_OPEN_FINANCE_PROVIDER: 'pluggy'
 
       - name: Copy Web Assets to Android
