@@ -58,37 +58,37 @@ export const LoginPage: React.FC = () => {
   }
 
   return (
-    <AppShell variant="app" showNav={false} className="relative px-6 py-6 min-h-screen flex flex-col justify-between select-none">
+    <AppShell variant="app" showNav={false} className="relative px-6 py-8 flex flex-col select-none">
       <BackgroundBlobs showSparkles={true} />
 
-      <div className="relative z-10 w-full">
-        {/* Header com botão voltar e Mascote oficial no canto superior direito cortando a borda */}
-        <div className="relative flex items-center justify-between pt-1 mb-6">
+      <div className="relative z-10 w-full flex flex-col">
+        {/* Header com botão voltar e Mascote grande no canto superior direito */}
+        <div className="relative flex items-center justify-between mb-8">
           <button
             onClick={() => navigate('/')}
-            className="w-10 h-10 rounded-full bg-white/80 hover:bg-white text-deep shadow-xs flex items-center justify-center transition-all active:scale-95"
+            className="w-11 h-11 rounded-full bg-white/85 hover:bg-white text-deep shadow-xs flex items-center justify-center transition-all active:scale-95 border border-purple-100/60 cursor-pointer"
             aria-label="Voltar"
           >
             <ArrowLeft className="w-5 h-5 text-[#581C87]" />
           </button>
 
-          {/* Mascote pig-head grande no canto superior direito conforme design/telas/04-login.png */}
-          <div className="absolute -top-3 -right-4 w-28 h-28 pointer-events-none drop-shadow-md z-10 select-none">
+          {/* Mascote pig-head grande no canto superior direito */}
+          <div className="absolute -top-2 -right-3 w-28 h-28 pointer-events-none drop-shadow-md select-none">
             <Mascot pose="head" priority className="w-full h-full object-contain" />
           </div>
         </div>
 
         {/* Título e Subtítulo */}
-        <div className="mb-8 max-w-[240px]">
-          <h1 className="text-[26px] font-extrabold text-[#33105D] font-sans leading-tight tracking-tight mb-1.5">
+        <div className="mb-8 max-w-[230px]">
+          <h1 className="text-[28px] font-extrabold text-[#33105D] font-sans leading-tight tracking-tight mb-2">
             Que bom ter você de volta!
           </h1>
-          <p className="text-[14px] font-bold text-[#581C87]/75 leading-snug">
+          <p className="text-[15px] font-bold text-[#581C87]/75 leading-relaxed">
             Entre para acompanhar sua evolução.
           </p>
         </div>
 
-        {/* Formulário com Caixas Altas, Espaçosas e Profissionais */}
+        {/* Formulário com Caixas Altas, Espaçosas e Confortáveis */}
         <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-4">
           {/* E-mail */}
           <div>
@@ -125,7 +125,7 @@ export const LoginPage: React.FC = () => {
               <button
                 type="button"
                 onClick={() => setShowPassword(!showPassword)}
-                className="absolute right-4 p-1.5 rounded-full text-[#581C87]/60 hover:text-[#8E32D8] hover:bg-purple-50 transition-colors"
+                className="absolute right-4 p-1.5 rounded-full text-[#581C87]/60 hover:text-[#8E32D8] hover:bg-purple-50 transition-colors cursor-pointer"
                 aria-label={showPassword ? 'Ocultar senha' : 'Ver senha'}
               >
                 {showPassword ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
@@ -149,7 +149,7 @@ export const LoginPage: React.FC = () => {
           </div>
 
           {/* Botões Principais */}
-          <div className="flex flex-col gap-3 mt-4">
+          <div className="flex flex-col gap-3.5 mt-5">
             <button
               type="submit"
               disabled={isSubmitting}
@@ -171,19 +171,20 @@ export const LoginPage: React.FC = () => {
             </button>
           </div>
         </form>
-      </div>
 
-      {/* Botão extra discreto de demonstração */}
-      <div className="relative z-10 pt-6 pb-2 text-center">
-        <button
-          onClick={handleDemo}
-          disabled={isDemoLoading}
-          className="text-xs font-bold text-[#581C87]/70 hover:text-[#8E32D8] transition-colors inline-flex items-center gap-1.5 py-1.5 px-4 rounded-full hover:bg-white/80 backdrop-blur-xs"
-        >
-          <Sparkles className="w-4 h-4 text-amber-500" />
-          {isDemoLoading ? 'Preparando...' : 'Ver modo demonstração (Ana Oliveira)'}
-        </button>
+        {/* Botão de demonstração integrado no fluxo logo abaixo dos botões */}
+        <div className="mt-8 text-center">
+          <button
+            onClick={handleDemo}
+            disabled={isDemoLoading}
+            className="text-xs font-bold text-[#581C87]/70 hover:text-[#8E32D8] transition-colors inline-flex items-center gap-1.5 py-2 px-4 rounded-full hover:bg-white/80 backdrop-blur-xs cursor-pointer"
+          >
+            <Sparkles className="w-4 h-4 text-amber-500" />
+            {isDemoLoading ? 'Preparando...' : 'Ver modo demonstração (Ana Oliveira)'}
+          </button>
+        </div>
       </div>
     </AppShell>
   )
 }
+export default LoginPage

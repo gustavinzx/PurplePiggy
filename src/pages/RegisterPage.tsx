@@ -57,29 +57,29 @@ export const RegisterPage: React.FC = () => {
   }
 
   return (
-    <AppShell variant="app" showNav={false} className="relative px-6 py-6 min-h-screen flex flex-col justify-between select-none">
+    <AppShell variant="app" showNav={false} className="relative px-6 py-8 flex flex-col select-none">
       <BackgroundBlobs showSparkles={true} />
 
-      <div className="relative z-10 w-full">
+      <div className="relative z-10 w-full flex flex-col">
         {/* Header com botão voltar e Mascote oficial */}
-        <div className="relative flex items-center justify-between pt-1 mb-4">
+        <div className="relative flex items-center justify-between mb-5">
           <button
             onClick={() => navigate(-1)}
-            className="w-10 h-10 rounded-full bg-white/80 hover:bg-white text-deep shadow-xs flex items-center justify-center transition-all active:scale-95"
+            className="w-11 h-11 rounded-full bg-white/85 hover:bg-white text-deep shadow-xs flex items-center justify-center transition-all active:scale-95 border border-purple-100/60 cursor-pointer"
             aria-label="Voltar"
           >
             <ArrowLeft className="w-5 h-5 text-[#581C87]" />
           </button>
 
-          {/* Mascote pig-peek espiando na parte superior direita */}
-          <div className="absolute -top-3 -right-3 w-20 h-20 pointer-events-none drop-shadow-md z-10 select-none">
+          {/* Mascote pig-peek grande no canto superior direito */}
+          <div className="absolute -top-2 -right-3 w-24 h-24 pointer-events-none drop-shadow-md select-none">
             <Mascot pose="peek" priority className="w-full h-full object-contain" />
           </div>
         </div>
 
-        {/* Título Centralizado fiel a design/telas/03-cadastro.png */}
+        {/* Título Centralizado com tipografia harmoniosa */}
         <div className="mb-6 text-center">
-          <h1 className="text-[26px] font-extrabold text-[#33105D] font-sans leading-tight tracking-tight mb-1">
+          <h1 className="text-[28px] font-extrabold text-[#33105D] font-sans leading-tight tracking-tight mb-1.5">
             Crie sua conta
           </h1>
           <p className="text-[14px] font-bold text-[#581C87]/75 leading-tight">
@@ -144,7 +144,7 @@ export const RegisterPage: React.FC = () => {
               <button
                 type="button"
                 onClick={() => setShowPassword(!showPassword)}
-                className="absolute right-4 p-1.5 rounded-full text-[#581C87]/60 hover:text-[#8E32D8] hover:bg-purple-50 transition-colors"
+                className="absolute right-4 p-1.5 rounded-full text-[#581C87]/60 hover:text-[#8E32D8] hover:bg-purple-50 transition-colors cursor-pointer"
                 aria-label={showPassword ? 'Ocultar senha' : 'Ver senha'}
               >
                 {showPassword ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
@@ -172,7 +172,7 @@ export const RegisterPage: React.FC = () => {
               <button
                 type="button"
                 onClick={() => setShowConfirm(!showConfirm)}
-                className="absolute right-4 p-1.5 rounded-full text-[#581C87]/60 hover:text-[#8E32D8] hover:bg-purple-50 transition-colors"
+                className="absolute right-4 p-1.5 rounded-full text-[#581C87]/60 hover:text-[#8E32D8] hover:bg-purple-50 transition-colors cursor-pointer"
                 aria-label={showConfirm ? 'Ocultar senha' : 'Ver senha'}
               >
                 {showConfirm ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
@@ -196,7 +196,7 @@ export const RegisterPage: React.FC = () => {
           </div>
 
           {/* Botão de envio */}
-          <div className="mt-3">
+          <div className="mt-4">
             <button
               type="submit"
               disabled={isSubmitting}
@@ -210,17 +210,18 @@ export const RegisterPage: React.FC = () => {
             </button>
           </div>
         </form>
-      </div>
 
-      {/* Rodapé */}
-      <div className="relative z-10 text-center pt-4 pb-2">
-        <p className="text-[13px] font-bold text-[#581C87]/75">
-          Já tem conta?{' '}
-          <Link to="/entrar" className="text-[#8E32D8] font-extrabold hover:underline">
-            Entrar
-          </Link>
-        </p>
+        {/* Rodapé integrado diretamente abaixo do botão */}
+        <div className="mt-6 text-center">
+          <p className="text-[14px] font-bold text-[#581C87]/75">
+            Já tem conta?{' '}
+            <Link to="/entrar" className="text-[#8E32D8] font-extrabold hover:underline">
+              Entrar
+            </Link>
+          </p>
+        </div>
       </div>
     </AppShell>
   )
 }
+export default RegisterPage
