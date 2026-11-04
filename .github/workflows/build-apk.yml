@@ -21,6 +21,9 @@ jobs:
           distribution: 'temurin'
           java-version: '17'
 
+      - name: Setup Android SDK
+        uses: android-actions/setup-android@v3
+
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
@@ -38,7 +41,9 @@ jobs:
           VITE_OPEN_FINANCE_PROVIDER: 'pluggy'
 
       - name: Copy Assets to Android
-        run: npx cap copy android
+        run: |
+          npm run cap:copy
+          ls -la android/app/src/main/assets/public
 
       - name: Setup Gradle
         uses: gradle/actions/setup-gradle@v3

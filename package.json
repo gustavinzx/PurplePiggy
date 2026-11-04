@@ -8,7 +8,9 @@
     "build": "node scripts/verify_mascots.cjs && tsc && vite build",
     "preview": "vite preview",
     "test": "vitest run",
-    "test:mascots": "node scripts/verify_mascots.cjs"
+    "test:mascots": "node scripts/verify_mascots.cjs",
+    "cap": "capacitor",
+    "cap:copy": "capacitor copy android"
   },
   "dependencies": {
     "@capacitor/android": "^8.6.0",
