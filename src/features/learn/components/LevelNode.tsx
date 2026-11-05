@@ -20,6 +20,7 @@ interface LevelNodeProps {
   size?: number // retrocompatibilidade
   stars?: number // 1 a 3 estrelas para nível concluído
   isFirstLocked?: boolean
+  isUnlocking?: boolean
   onClick: () => void
   style?: React.CSSProperties
   className?: string
@@ -34,6 +35,7 @@ export const LevelNode: React.FC<LevelNodeProps> = ({
   size,
   stars = 3,
   isFirstLocked = false,
+  isUnlocking = false,
   onClick,
   style = {},
   className = '',
@@ -46,6 +48,15 @@ export const LevelNode: React.FC<LevelNodeProps> = ({
 
   const effectiveW = isCurrent ? 140 : size_w || size || 112
   const effectiveH = isCurrent ? 108 : size_h || size || 88
+
+  // Classes de flutuação em fases distintas (respeitando prefers-reduced-motion)
+  const floatClass = isCurrent
+    ? 'animate-island-1'
+    : levelNumber % 3 === 0
+    ? 'animate-island-0'
+    : levelNumber % 3 === 1
+    ? 'animate-island-1'
+    : 'animate-island-2'
 
   // Asset de ilha correspondente
   const getIslandSrc = () => {
@@ -77,7 +88,9 @@ export const LevelNode: React.FC<LevelNodeProps> = ({
     >
       {/* Ilha flutuante e sobreposições */}
       <div
-        className="relative flex items-center justify-center"
+        className={`relative flex items-center justify-center ${floatClass} ${
+          isUnlocking ? 'animate-unlock-glow' : ''
+        }`}
         style={{
           width: `${effectiveW}px`,
           height: `${effectiveH}px`,

@@ -1,12 +1,11 @@
 // src/features/learn/components/LearnMap.tsx
-// Mapa Sinuoso de Níveis V2 com Ilhas Flutuantes e Cenário
+// Mapa Sinuoso de Níveis V2 com Ilhas Flutuantes, Cenário e Animações
 import React, { useLayoutEffect, useRef, useState, useEffect, useMemo } from 'react'
 import { LevelNode, LevelNodeStatus } from './LevelNode'
 import { NodeSheet } from './NodeSheet'
 import { computeMapLayout, MapLayout, MapDirection } from '../map/layout'
 import { toast } from 'sonner'
 import { Play, Sparkles } from 'lucide-react'
-import confetti from 'canvas-confetti'
 
 export interface LevelItem {
   id: string
@@ -26,6 +25,7 @@ export interface LevelItem {
 interface LearnMapProps {
   trackSlug: string
   levels: LevelItem[]
+  unlockedLevelId?: string
   onSelectLevel: (level: LevelItem) => void
   onReadGuide?: (level: LevelItem) => void
   onClaimChest?: (level: LevelItem) => Promise<void>
@@ -52,6 +52,7 @@ function createSeededRandom(seedStr: string) {
 export const LearnMap: React.FC<LearnMapProps> = ({
   trackSlug,
   levels,
+  unlockedLevelId,
   onSelectLevel,
   onReadGuide,
   onClaimChest,
@@ -61,8 +62,20 @@ export const LearnMap: React.FC<LearnMapProps> = ({
   const containerRef = useRef<HTMLDivElement>(null)
   const [dimensions, setDimensions] = useState<{ width: number; height: number } | null>(null)
   const [selectedNode, setSelectedNode] = useState<LevelItem | null>(null)
+  const [animatingUnlockId, setAnimatingUnlockId] = useState<string | null>(null)
 
-  // 1. Medir a área útil do mapa via ResizeObserver
+  // 1. Efeito de destravar a ilha ao liberar (600ms com brilho)
+  useEffect(() => {
+    if (unlockedLevelId) {
+      setAnimatingUnlockId(unlockedLevelId)
+      const timer = setTimeout(() => {
+        setAnimatingUnlockId(null)
+      }, 1200)
+      return () => clearTimeout(timer)
+    }
+  }, [unlockedLevelId])
+
+  // 2. Medir a área útil do mapa via ResizeObserver
   useEffect(() => {
     const el = containerRef.current
     if (!el) return
@@ -85,10 +98,18 @@ export const LearnMap: React.FC<LearnMapProps> = ({
     return () => ro.disconnect()
   }, [])
 
-  // Identificar o índice do nó atual
+  // Identificar o índice do nó focal (nó destravando ou nó atual)
+  const focalIndex = useMemo(() => {
+    if (unlockedLevelId) {
+      const idx = levels.findIndex((l) => l.id === unlockedLevelId)
+      if (idx !== -1) return idx
+    }
+    return Math.max(0, levels.findIndex((l) => l.isCurrent))
+  }, [levels, unlockedLevelId])
+
   const currentIndex = Math.max(0, levels.findIndex((l) => l.isCurrent))
 
-  // 2. Calcular layout puro a partir das dimensões
+  // 3. Calcular layout puro a partir das dimensões
   let layout: MapLayout | null = null
   if (dimensions && levels.length > 0) {
     try {
@@ -96,7 +117,7 @@ export const LearnMap: React.FC<LearnMapProps> = ({
         dimensions.width,
         dimensions.height,
         levels.length,
-        currentIndex,
+        focalIndex,
         direction
       )
     } catch (err) {
@@ -104,7 +125,7 @@ export const LearnMap: React.FC<LearnMapProps> = ({
     }
   }
 
-  // 3. Rolagem inicial focando no nó atual com o balão 100% visível
+  // 4. Rolagem inicial focando no nó atual/destravado com o balão 100% visível
   useLayoutEffect(() => {
     if (!layout || !layout.scrolls || !containerRef.current || !dimensions) return
     const targetScroll = layout.scrollTop
@@ -126,16 +147,16 @@ export const LearnMap: React.FC<LearnMapProps> = ({
       cancelAnimationFrame(rafId)
       clearTimeout(timerId)
     }
-  }, [trackSlug, layout?.scrolls, layout?.contentHeight, dimensions?.height, layout?.scrollTop])
+  }, [trackSlug, layout?.scrolls, layout?.contentHeight, dimensions?.height, layout?.scrollTop, focalIndex])
 
-  // 4. Cenário determinístico: 4 a 6 nuvens e 2 a 4 pinheiros por tela de rolagem (~600px)
+  // 5. Cenário determinístico: 4 a 6 nuvens e 2 a 4 pinheiros por tela de rolagem (~600px)
   const scenery = useMemo(() => {
     if (!dimensions || !layout) return { clouds: [], trees: [] }
     const totalHeight = layout.contentHeight
     const screens = Math.max(1, Math.ceil(totalHeight / 600))
     const rand = createSeededRandom(trackSlug)
 
-    const clouds: Array<{ x: number; y: number; src: string; size: number; opacity: number }> = []
+    const clouds: Array<{ x: number; y: number; src: string; size: number; opacity: number; delay: number }> = []
     const cloudAssets = [
       '/assets/learn/cloud-a.webp',
       '/assets/learn/cloud-b.webp',
@@ -161,6 +182,7 @@ export const LearnMap: React.FC<LearnMapProps> = ({
           src,
           size: Math.round(70 + rand() * 50),
           opacity: 0.65 + rand() * 0.25,
+          delay: Math.round((c + s * 3) * 4),
         })
       }
 
@@ -183,35 +205,35 @@ export const LearnMap: React.FC<LearnMapProps> = ({
     return { clouds, trees }
   }, [trackSlug, dimensions?.width, layout?.contentHeight])
 
-  const handleNodeClick = async (level: LevelItem) => {
-    if (level.isLocked) {
-      toast('Conclua o nível anterior para liberar este!', {
+  const handleNodeClick = (level: LevelItem) => {
+    // Ilha bloqueada normal
+    if (level.isLocked && !level.isTrophy && !level.isChest) {
+      toast('Conclua a etapa anterior para liberar.', {
         description: 'Um passo de cada vez no seu próprio ritmo.',
         icon: <Sparkles className="w-4 h-4 text-purple-600" />,
       })
       return
     }
 
-    if (level.isChest) {
-      if (level.isChestClaimed) {
-        toast('Você já resgatou este baú!')
-      } else if (onClaimChest) {
-        await onClaimChest(level)
-        confetti({
-          particleCount: 40,
-          spread: 60,
-          origin: { y: 0.6 },
-          colors: ['#F5B83D', '#7D2BD6', '#2FBF71'],
-        })
-      }
+    // Troféu bloqueado
+    if (level.isTrophy && level.isLocked) {
+      toast('Conclua todas as etapas anteriores para desbloquear o Troféu!', {
+        icon: <Sparkles className="w-4 h-4 text-purple-600" />,
+      })
       return
     }
 
+    // Abre o NodeSheet com os tokens V2 para níveis atuais, concluídos, baús ou troféu liberado
     setSelectedNode(level)
   }
 
   // Primeiro índice de nó bloqueado
   const firstLockedIndex = levels.findIndex((l) => l.isLocked)
+
+  // Verifica se todos os níveis de conteúdo da trilha estão concluídos
+  const allLevelsCompleted = levels
+    .filter((l) => !l.isChest && !l.isTrophy)
+    .every((l) => l.isCompleted)
 
   return (
     <div
@@ -234,26 +256,27 @@ export const LearnMap: React.FC<LearnMapProps> = ({
             minHeight: '100%',
           }}
         >
-          {/* Cenário de Fundo: Nuvens e Pinheiros */}
+          {/* Cenário de Fundo: Nuvens e Pinheiros com deriva lenta */}
           <div className="absolute inset-0 pointer-events-none overflow-hidden select-none -z-0" aria-hidden="true">
-            {/* Nuvens decorativas */}
-            {scenery.clouds.map((cloud, idx) => (
+            {/* Nuvens decorativas com animação de deriva (translateX de 40px em 60s) */}
+            {scenery.clouds.slice(0, 6).map((cloud, idx) => (
               <img
                 key={`cloud-${idx}`}
                 src={cloud.src}
                 alt=""
-                className="absolute object-contain pointer-events-none drop-shadow-sm"
+                className="absolute object-contain pointer-events-none drop-shadow-sm animate-cloud-drift"
                 style={{
                   left: `${cloud.x}px`,
                   top: `${cloud.y}px`,
                   width: `${cloud.size}px`,
                   opacity: cloud.opacity,
+                  animationDelay: `${cloud.delay}s`,
                 }}
                 loading="lazy"
               />
             ))}
 
-            {/* Pinheiros decorativos */}
+            {/* Pinheiros decorativos estáticos */}
             {scenery.trees.map((tree, idx) => (
               <img
                 key={`tree-${idx}`}
@@ -318,14 +341,15 @@ export const LearnMap: React.FC<LearnMapProps> = ({
             )}
           </div>
 
-          {/* Balão de Fala "Vamos começar?" com Botão "Começar" */}
+          {/* Balão de Fala "Vamos começar?" com Botão "Começar" - Inicia o nível direto */}
           {levels[currentIndex] && (
             <div
               data-testid="balloon-current"
-              onClick={() => handleNodeClick(levels[currentIndex])}
+              onClick={() => onSelectLevel(levels[currentIndex])}
               role="button"
               tabIndex={0}
-              className="absolute z-30 flex flex-col items-center cursor-pointer transition-transform active:scale-95 animate-bounce-subtle select-none filter drop-shadow-md"
+              aria-label="Iniciar nível atual diretamente"
+              className="absolute z-30 flex flex-col items-center cursor-pointer transition-transform active:scale-95 select-none filter drop-shadow-md"
               style={{
                 left: `${layout.balloon.x}px`,
                 top: `${layout.balloon.y}px`,
@@ -337,19 +361,19 @@ export const LearnMap: React.FC<LearnMapProps> = ({
                 <span className="font-nunito font-extrabold text-[12px] text-[#432171] leading-tight text-center">
                   Vamos começar?
                 </span>
-                <div className="w-full bg-gradient-to-r from-[#7D2BD6] to-[#8E2DE2] text-white py-1.5 px-3 rounded-full flex items-center justify-center gap-1.5 shadow-xs">
+                <div className="w-full bg-gradient-to-r from-[#7D2BD6] to-[#8E2DE2] text-white py-1.5 px-3 rounded-full flex items-center justify-center gap-1.5 shadow-xs animate-pulse-btn">
                   <Play className="w-3 h-3 fill-white text-white" />
                   <span className="font-nunito font-black text-[11px] tracking-wide uppercase leading-none">
                     Começar
                   </span>
                 </div>
               </div>
-              {/* Pequena ponta do balão apontando para o nó */}
+              {/* Ponta do balão */}
               <div className="w-0 h-0 border-x-4 border-x-transparent border-t-4 border-t-white shrink-0 -mt-0.5" />
             </div>
           )}
 
-          {/* Nós / Ilhas flutuantes */}
+          {/* Nós / Ilhas flutuantes com animação de flutuação em fases distintas */}
           {layout.nodes.map((pos) => {
             const level = levels[pos.index]
             if (!level) return null
@@ -368,6 +392,7 @@ export const LearnMap: React.FC<LearnMapProps> = ({
             const isCurrent = level.isCurrent
             const nodeW = isCurrent ? 140 : 112
             const nodeH = isCurrent ? 108 : 88
+            const isUnlocking = animatingUnlockId === level.id
 
             return (
               <LevelNode
@@ -379,6 +404,7 @@ export const LearnMap: React.FC<LearnMapProps> = ({
                 size_h={nodeH}
                 stars={level.stars ?? 3}
                 isFirstLocked={pos.index === firstLockedIndex}
+                isUnlocking={isUnlocking}
                 onClick={() => handleNodeClick(level)}
                 style={{
                   left: `${pos.cx - nodeW / 2}px`,
@@ -390,7 +416,7 @@ export const LearnMap: React.FC<LearnMapProps> = ({
         </div>
       )}
 
-      {/* Gaveta do Nó selecionado */}
+      {/* Gaveta do Nó selecionado com Tokens V2 */}
       {selectedNode && (
         <NodeSheet
           isOpen={Boolean(selectedNode)}
@@ -399,6 +425,11 @@ export const LearnMap: React.FC<LearnMapProps> = ({
           title={selectedNode.title}
           description={selectedNode.description}
           isCompleted={selectedNode.isCompleted}
+          stars={selectedNode.stars ?? 3}
+          isChest={selectedNode.isChest}
+          isChestClaimed={selectedNode.isChestClaimed}
+          isTrophy={selectedNode.isTrophy}
+          allLevelsCompleted={allLevelsCompleted}
           onStartLesson={() => {
             const node = selectedNode
             setSelectedNode(null)
@@ -410,6 +441,14 @@ export const LearnMap: React.FC<LearnMapProps> = ({
                   const node = selectedNode
                   setSelectedNode(null)
                   onReadGuide(node)
+                }
+              : undefined
+          }
+          onClaimChest={
+            onClaimChest
+              ? async () => {
+                  const node = selectedNode
+                  await onClaimChest(node)
                 }
               : undefined
           }

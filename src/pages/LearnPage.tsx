@@ -1,7 +1,7 @@
 // src/pages/LearnPage.tsx
 // Tela Aprender (Desafio Piggy - Geometria Pura com Layout do Mapa e Cabeçalho Fixo)
 import React, { useState, useEffect } from 'react'
-import { useParams, useNavigate } from 'react-router-dom'
+import { useParams, useNavigate, useLocation } from 'react-router-dom'
 import { supabase } from '../lib/supabase'
 import { useAuth } from '../context/AuthContext'
 import { AppShell } from '../components/AppShell'
@@ -19,7 +19,9 @@ import { toast } from 'sonner'
 export const LearnPage: React.FC = () => {
   const { slug } = useParams<{ slug?: string }>()
   const navigate = useNavigate()
+  const location = useLocation()
   const { user } = useAuth()
+  const unlockedLevelId = (location.state as any)?.unlockedLevelId
 
   const [stats, setStats] = useState<LearnStats | null>(null)
   const [tracks, setTracks] = useState<TrackSummary[]>([])
@@ -182,7 +184,7 @@ export const LearnPage: React.FC = () => {
     if (!activeTrack) return
     try {
       await learnService.claimChest(activeTrack.trackSlug, 1)
-      toast.success('Baú de recompensa resgatado!')
+      toast.success('Baú de recompensa resgatado! +30 XP')
       setLevels((prev) =>
         prev.map((l) => (l.id === level.id ? { ...l, isChestClaimed: true } : l))
       )
@@ -236,6 +238,7 @@ export const LearnPage: React.FC = () => {
           <LearnMap
             trackSlug={activeTrack.trackSlug}
             levels={levels}
+            unlockedLevelId={unlockedLevelId}
             onSelectLevel={handleSelectLevel}
             onReadGuide={handleReadGuide}
             onClaimChest={handleClaimChest}

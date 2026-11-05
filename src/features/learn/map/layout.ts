@@ -7,8 +7,8 @@ export const MAP = {
   padTop: 24,
   padBottom: 24,
   balloon: { w: 176, h: 76, gap: 8 },
-  minStep: 128,
-  maxStep: 160,
+  minStep: 210,
+  maxStep: 240,
   amp: 74,
 } as const
 
@@ -140,27 +140,37 @@ export function computeMapLayout(
     nodes.some((node) => boxesIntersect(b, node.box))
 
   if (collidesWithAnyNode(candidateBalloon)) {
-    // Tenta posicionar para o lado oposto ao nó mais próximo
-    const aboveNodes = nodes.filter((node) => node.cy < n.cy)
-    const nearestAbove = aboveNodes.length
-      ? aboveNodes.reduce((prev, curr) => (curr.cy > prev.cy ? curr : prev))
-      : null
+    // Tenta posicionar para o lado oposto ao nó colidente
+    const collidingNodes = nodes.filter(
+      (node) => node.index !== cur && boxesIntersect(candidateBalloon, node.box)
+    )
+    const targetNode = collidingNodes[0]
 
-    if (nearestAbove) {
-      const shiftX =
-        nearestAbove.cx >= width / 2
-          ? c.edge
-          : width - c.edge - c.balloon.w
+    if (targetNode) {
+      const shiftLeft = Math.max(0, targetNode.box.x - c.balloon.w - 1)
+      const shiftRight = Math.min(width - c.balloon.w, targetNode.box.x + targetNode.box.w + 1)
+      const shiftPrimary = targetNode.cx >= width / 2 ? shiftLeft : shiftRight
+      const shiftSecondary = targetNode.cx >= width / 2 ? shiftRight : shiftLeft
 
-      const altBalloon: Box = {
-        x: shiftX,
+      const alt1: Box = {
+        x: shiftPrimary,
         y: by,
         w: c.balloon.w,
         h: c.balloon.h,
       }
 
-      if (!collidesWithAnyNode(altBalloon)) {
-        candidateBalloon = altBalloon
+      if (!collidesWithAnyNode(alt1)) {
+        candidateBalloon = alt1
+      } else {
+        const alt2: Box = {
+          x: shiftSecondary,
+          y: by,
+          w: c.balloon.w,
+          h: c.balloon.h,
+        }
+        if (!collidesWithAnyNode(alt2)) {
+          candidateBalloon = alt2
+        }
       }
     }
   }
