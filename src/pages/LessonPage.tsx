@@ -9,6 +9,7 @@ import {
   OptionCard,
   FeedbackPanel,
   ChunkyButton,
+  CelebrationScreen,
 } from '../features/learn/components'
 import { OrderPrioritiesView } from '../features/learn/components/questions/OrderPrioritiesView'
 import { ConceptMatchingView } from '../features/learn/components/questions/ConceptMatchingView'
@@ -42,6 +43,9 @@ export const LessonPage: React.FC = () => {
   const [isLevelFinished, setIsLevelFinished] = useState(false)
   const [completionResult, setCompletionResult] = useState<any>(null)
   const [isTrackCompleted, setIsTrackCompleted] = useState(false)
+  const [resolvedLessonTitle, setResolvedLessonTitle] = useState<string>('')
+  const [resolvedTrackTitle, setResolvedTrackTitle] = useState<string>('')
+  const [nextLessonId, setNextLessonId] = useState<string>('')
 
   // 1. Resolução da Trilha e Lição a partir dos parâmetros de rota
   useEffect(() => {
@@ -51,24 +55,35 @@ export const LessonPage: React.FC = () => {
         const targetTrack = slug || trackSlug || 'organizacao-financeira'
         let targetLesson = lessonSlug || ''
 
-        // Se a rota for /aprender/trilha/:slug/nivel/:n
-        if (!targetLesson && n) {
-          const levelNum = parseInt(n, 10) || 1
-          const { data: contents } = await supabase
-            .from('educational_contents')
-            .select('lesson_slug')
-            .eq('track_slug', targetTrack)
-            .order('lesson_order', { ascending: true })
+        const { data: contents } = await supabase
+          .from('educational_contents')
+          .select('id, lesson_slug, lesson_title, track_title, lesson_order')
+          .eq('track_slug', targetTrack)
+          .order('lesson_order', { ascending: true })
 
-          if (contents && contents[levelNum - 1]) {
-            targetLesson = contents[levelNum - 1].lesson_slug
-          } else if (contents && contents[0]) {
-            targetLesson = contents[0].lesson_slug
+        let foundIdx = -1
+        if (targetLesson && contents) {
+          foundIdx = contents.findIndex((c) => c.lesson_slug === targetLesson)
+        } else if (n && contents) {
+          const levelNum = parseInt(n, 10) || 1
+          foundIdx = levelNum - 1
+        }
+
+        if (contents && contents.length > 0) {
+          const activeItem = contents[foundIdx >= 0 ? foundIdx : 0]
+          targetLesson = activeItem.lesson_slug
+          setResolvedLessonTitle(activeItem.lesson_title)
+          setResolvedTrackTitle(activeItem.track_title)
+
+          const nextItem = contents[(foundIdx >= 0 ? foundIdx : 0) + 1]
+          if (nextItem) {
+            setNextLessonId(nextItem.id)
           }
         }
 
         if (!targetLesson) {
           targetLesson = 'para-onde-vai-meu-dinheiro'
+          setResolvedLessonTitle('Para onde vai meu dinheiro?')
         }
 
         setResolvedTrackSlug(targetTrack)
@@ -195,90 +210,32 @@ export const LessonPage: React.FC = () => {
     )
   }
 
-  // TELA DE CONCLUSÃO DO NÍVEL (Prompt N11)
+  // TELA DE PARABÉNS V2 (design/v2/06-parabens.png)
   if (isLevelFinished) {
-    const isPerfect = state.mistakesCount === 0
+    const totalQ = questions.length || state.questions.length || 3
+    const firstTry = Math.max(0, totalQ - state.mistakesCount)
+    const accuracy = totalQ > 0 ? firstTry / totalQ : 1
+    // Estrelas acesas conforme precisão: 3 estrelas se >= 90%, 2 estrelas se >= 60%, 1 estrela caso contrário
+    const calculatedStars = accuracy >= 0.9 ? 3 : accuracy >= 0.6 ? 2 : 1
+    const finalStars = completionResult?.stars || calculatedStars
+
     return (
-      <div className="min-h-screen bg-[#FAF5FF] flex flex-col justify-between max-w-md mx-auto p-6 animate-fadeIn">
-        <div className="pt-8 text-center space-y-4">
-          {/* Mascote de Conclusão: troféu se acertou tudo de primeira, medalha caso contrário, diploma só se concluiu a trilha inteira */}
-          <div className="w-28 h-28 mx-auto drop-shadow-lg">
-            <Mascot
-              pose={
-                isTrackCompleted
-                  ? 'diploma'
-                  : isPerfect
-                  ? 'trophy'
-                  : 'medal'
-              }
-              className="w-full h-full object-contain"
-              priority
-            />
-          </div>
-
-          <div>
-            <span className="text-xs font-black uppercase tracking-wider text-purple-600 bg-purple-100 px-3 py-1 rounded-full">
-              {isTrackCompleted ? 'TRILHA FINALIZADA' : 'NÍVEL CONCLUÍDO'}
-            </span>
-            <h1 className="font-nunito font-black text-2xl sm:text-3xl text-[#3B0764] mt-2">
-              {isTrackCompleted
-                ? 'Trilha concluída! Parabéns!'
-                : isPerfect
-                ? 'Incrível! Tudo de primeira!'
-                : 'Muito bem! Você completou!'}
-            </h1>
-            <p className="font-nunito font-semibold text-sm text-gray-600 mt-1">
-              {isTrackCompleted
-                ? 'Você dominou todos os conceitos desta unidade.'
-                : 'Pequenos passos constantes constroem sua tranquilidade financeira.'}
-            </p>
-          </div>
-
-          {/* Cards de Conquista / Recompensas Reais */}
-          <div className="grid grid-cols-2 gap-3 pt-3">
-            <div className="bg-white p-4 rounded-2xl border border-purple-100 shadow-sm flex flex-col items-center text-center">
-              <img src="/assets/icons/icon-xp.png" alt="XP" className="w-8 h-8 object-contain mb-1" />
-              <span className="font-nunito font-black text-lg text-[#7D2BD6]">
-                +{completionResult?.xp_earned || 20} XP
-              </span>
-              <span className="font-nunito font-bold text-xs text-gray-500">Experiência</span>
-            </div>
-
-            <div className="bg-white p-4 rounded-2xl border border-amber-100 shadow-sm flex flex-col items-center text-center">
-              <img src="/assets/coins/coin-1.png" alt="Moedas" className="w-8 h-8 object-contain mb-1" />
-              <span className="font-nunito font-black text-lg text-[#B45309]">
-                +{completionResult?.coins_earned || 10} Moedas
-              </span>
-              <span className="font-nunito font-bold text-xs text-gray-500">Piggy Moedas</span>
-            </div>
-          </div>
-
-          {/* Ofensiva Piggy Streak Milestone */}
-          <div className="bg-gradient-to-r from-amber-50 to-orange-50 border border-amber-200 rounded-2xl p-4 flex items-center gap-3.5 shadow-sm text-left">
-            <img src="/assets/icons/icon-chama.png" alt="Ofensiva" className="w-10 h-10 object-contain flex-shrink-0" />
-            <div>
-              <div className="font-nunito font-black text-sm text-amber-900">
-                {completionResult?.current_streak || 1} dias de Ofensiva Piggy!
-              </div>
-              <p className="font-nunito text-xs text-amber-800/80 mt-0.5">
-                Pequenos passos também são conquistas. Continue amanhã!
-              </p>
-            </div>
-          </div>
-        </div>
-
-        {/* Botão de Retorno ao Mapa */}
-        <div className="pt-6 pb-2">
-          <ChunkyButton
-            variant="success"
-            size="lg"
-            className="w-full text-base font-black tracking-wide"
-            onClick={() => navigate(`/aprender/trilha/${resolvedTrackSlug}`)}
-          >
-            CONTINUAR PARA O MAPA
-          </ChunkyButton>
-        </div>
-      </div>
+      <CelebrationScreen
+        levelTitle={resolvedLessonTitle || 'Primeiros passos'}
+        trackTitle={resolvedTrackTitle}
+        stars={finalStars}
+        xpEarned={completionResult?.xp_earned || 20}
+        firstTryCount={firstTry}
+        totalQuestions={totalQ}
+        isTrackCompleted={isTrackCompleted}
+        isFirstLevelOfDay={Boolean(completionResult?.newly_completed)}
+        streakCount={completionResult?.current_streak || 1}
+        onContinueToMap={() => {
+          navigate(`/aprender/trilha/${resolvedTrackSlug}`, {
+            state: { unlockedLevelId: nextLessonId },
+          })
+        }}
+      />
     )
   }
 

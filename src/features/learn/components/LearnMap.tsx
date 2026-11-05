@@ -1,13 +1,11 @@
 // src/features/learn/components/LearnMap.tsx
-// Mapa Sinuoso de Níveis com Geometria Pura (computeMapLayout)
-import React, { useLayoutEffect, useRef, useState, useEffect } from 'react'
+// Mapa Sinuoso de Níveis V2 com Ilhas Flutuantes, Cenário e Animações
+import React, { useLayoutEffect, useRef, useState, useEffect, useMemo } from 'react'
 import { LevelNode, LevelNodeStatus } from './LevelNode'
 import { NodeSheet } from './NodeSheet'
-import { computeMapLayout, MapLayout } from '../map/layout'
-import { Mascot } from '../../../components/Mascot'
+import { computeMapLayout, MapLayout, MapDirection } from '../map/layout'
 import { toast } from 'sonner'
-import { ArrowDown, Sparkles } from 'lucide-react'
-import confetti from 'canvas-confetti'
+import { Play, Sparkles } from 'lucide-react'
 
 export interface LevelItem {
   id: string
@@ -21,33 +19,63 @@ export interface LevelItem {
   isCurrent: boolean
   isLocked: boolean
   isChestClaimed?: boolean
+  stars?: number
 }
 
 interface LearnMapProps {
   trackSlug: string
   levels: LevelItem[]
+  unlockedLevelId?: string
   onSelectLevel: (level: LevelItem) => void
   onReadGuide?: (level: LevelItem) => void
   onClaimChest?: (level: LevelItem) => Promise<void>
+  direction?: MapDirection
   className?: string
 }
 
 const clamp = (v: number, a: number, b: number) => Math.min(b, Math.max(a, v))
 
+// Gerador pseudo-aleatório determinístico baseado no hash do trackSlug
+function createSeededRandom(seedStr: string) {
+  let hash = 0
+  for (let i = 0; i < seedStr.length; i++) {
+    hash = (hash << 5) - hash + seedStr.charCodeAt(i)
+    hash |= 0
+  }
+  let s = Math.abs(hash) || 123456789
+  return () => {
+    s = (s * 16807) % 2147483647
+    return (s - 1) / 2147483646
+  }
+}
+
 export const LearnMap: React.FC<LearnMapProps> = ({
   trackSlug,
   levels,
+  unlockedLevelId,
   onSelectLevel,
   onReadGuide,
   onClaimChest,
+  direction = 'down', // 'down' reproduz exatamente a ordem do mockup V2 (concluído em cima)
   className = '',
 }) => {
   const containerRef = useRef<HTMLDivElement>(null)
   const [dimensions, setDimensions] = useState<{ width: number; height: number } | null>(null)
   const [selectedNode, setSelectedNode] = useState<LevelItem | null>(null)
-  const [showScrollToCurrent, setShowScrollToCurrent] = useState(false)
+  const [animatingUnlockId, setAnimatingUnlockId] = useState<string | null>(null)
 
-  // 1. Medir a área útil do mapa via ResizeObserver
+  // 1. Efeito de destravar a ilha ao liberar (600ms com brilho)
+  useEffect(() => {
+    if (unlockedLevelId) {
+      setAnimatingUnlockId(unlockedLevelId)
+      const timer = setTimeout(() => {
+        setAnimatingUnlockId(null)
+      }, 1200)
+      return () => clearTimeout(timer)
+    }
+  }, [unlockedLevelId])
+
+  // 2. Medir a área útil do mapa via ResizeObserver
   useEffect(() => {
     const el = containerRef.current
     if (!el) return
@@ -70,30 +98,40 @@ export const LearnMap: React.FC<LearnMapProps> = ({
     return () => ro.disconnect()
   }, [])
 
-  // Identificar o índice do nó atual (0 = base / início da trilha)
+  // Identificar o índice do nó focal (nó destravando ou nó atual)
+  const focalIndex = useMemo(() => {
+    if (unlockedLevelId) {
+      const idx = levels.findIndex((l) => l.id === unlockedLevelId)
+      if (idx !== -1) return idx
+    }
+    return Math.max(0, levels.findIndex((l) => l.isCurrent))
+  }, [levels, unlockedLevelId])
+
   const currentIndex = Math.max(0, levels.findIndex((l) => l.isCurrent))
 
-  // Calcular layout puro a partir das dimensões
+  // 3. Calcular layout puro a partir das dimensões
   let layout: MapLayout | null = null
   if (dimensions && levels.length > 0) {
     try {
-      layout = computeMapLayout(dimensions.width, dimensions.height, levels.length, currentIndex)
+      layout = computeMapLayout(
+        dimensions.width,
+        dimensions.height,
+        levels.length,
+        focalIndex,
+        direction
+      )
     } catch (err) {
       console.error('Erro ao computar layout do mapa:', err)
     }
   }
 
-  // 2. Rolagem inicial focando no nó atual antes do primeiro paint se o mapa rolar
+  // 4. Rolagem inicial focando no nó atual/destravado com o balão 100% visível
   useLayoutEffect(() => {
     if (!layout || !layout.scrolls || !containerRef.current || !dimensions) return
-    const targetScroll = clamp(
-      layout.currentCy - dimensions.height / 2,
-      0,
-      layout.contentHeight - dimensions.height
-    )
+    const targetScroll = layout.scrollTop
     containerRef.current.scrollTop = targetScroll
 
-    // Reforço via rAF e timer curto para garantir no Android WebView
+    // Reforço para garantir em navegadores móveis / webviews
     const rafId = requestAnimationFrame(() => {
       if (containerRef.current) {
         containerRef.current.scrollTop = targetScroll
@@ -109,68 +147,93 @@ export const LearnMap: React.FC<LearnMapProps> = ({
       cancelAnimationFrame(rafId)
       clearTimeout(timerId)
     }
-  }, [trackSlug, layout?.scrolls, layout?.contentHeight, dimensions?.height, layout?.currentCy])
+  }, [trackSlug, layout?.scrolls, layout?.contentHeight, dimensions?.height, layout?.scrollTop, focalIndex])
 
-  // Observador para exibir botão flutuante se o usuário rolar para longe do nó atual
-  useEffect(() => {
-    const el = containerRef.current
-    if (!el || !layout || !layout.scrolls) return
+  // 5. Cenário determinístico: 4 a 6 nuvens e 2 a 4 pinheiros por tela de rolagem (~600px)
+  const scenery = useMemo(() => {
+    if (!dimensions || !layout) return { clouds: [], trees: [] }
+    const totalHeight = layout.contentHeight
+    const screens = Math.max(1, Math.ceil(totalHeight / 600))
+    const rand = createSeededRandom(trackSlug)
 
-    const handleScroll = () => {
-      if (!dimensions) return
-      const currentScroll = el.scrollTop
-      const targetScroll = clamp(
-        layout.currentCy - dimensions.height / 2,
-        0,
-        layout.contentHeight - dimensions.height
-      )
-      const diff = Math.abs(currentScroll - targetScroll)
-      setShowScrollToCurrent(diff > 120)
+    const clouds: Array<{ x: number; y: number; src: string; size: number; opacity: number; delay: number }> = []
+    const cloudAssets = [
+      '/assets/learn/cloud-a.webp',
+      '/assets/learn/cloud-b.webp',
+      '/assets/learn/cloud-c.webp',
+    ]
+
+    const trees: Array<{ x: number; y: number; size: number }> = []
+
+    for (let s = 0; s < screens; s++) {
+      const screenBaseY = s * 600
+      // 4 a 6 nuvens por tela
+      const cloudCount = 4 + Math.floor(rand() * 3)
+      for (let c = 0; c < cloudCount; c++) {
+        const cloudY = screenBaseY + rand() * 560
+        const isLeft = c % 2 === 0
+        const cloudX = isLeft
+          ? rand() * (dimensions.width * 0.3)
+          : dimensions.width * 0.7 + rand() * (dimensions.width * 0.3) - 60
+        const src = cloudAssets[Math.floor(rand() * cloudAssets.length)]
+        clouds.push({
+          x: Math.round(cloudX),
+          y: Math.round(cloudY),
+          src,
+          size: Math.round(70 + rand() * 50),
+          opacity: 0.65 + rand() * 0.25,
+          delay: Math.round((c + s * 3) * 4),
+        })
+      }
+
+      // 2 a 4 pinheiros por tela
+      const treeCount = 2 + Math.floor(rand() * 3)
+      for (let t = 0; t < treeCount; t++) {
+        const treeY = screenBaseY + rand() * 560
+        const isLeft = t % 2 === 0
+        const treeX = isLeft
+          ? rand() * (dimensions.width * 0.22)
+          : dimensions.width * 0.8 + rand() * (dimensions.width * 0.18) - 40
+        trees.push({
+          x: Math.round(treeX),
+          y: Math.round(treeY),
+          size: Math.round(36 + rand() * 20),
+        })
+      }
     }
 
-    el.addEventListener('scroll', handleScroll, { passive: true })
-    return () => el.removeEventListener('scroll', handleScroll)
-  }, [layout, dimensions])
+    return { clouds, trees }
+  }, [trackSlug, dimensions?.width, layout?.contentHeight])
 
-  const scrollToCurrentNode = () => {
-    if (!containerRef.current || !layout || !dimensions) return
-    const targetScroll = clamp(
-      layout.currentCy - dimensions.height / 2,
-      0,
-      layout.contentHeight - dimensions.height
-    )
-    containerRef.current.scrollTo({
-      top: targetScroll,
-      behavior: 'smooth',
-    })
-  }
-
-  const handleNodeClick = async (level: LevelItem) => {
-    if (level.isLocked) {
-      toast('Conclua o nível anterior para liberar este!', {
+  const handleNodeClick = (level: LevelItem) => {
+    // Ilha bloqueada normal
+    if (level.isLocked && !level.isTrophy && !level.isChest) {
+      toast('Conclua a etapa anterior para liberar.', {
         description: 'Um passo de cada vez no seu próprio ritmo.',
         icon: <Sparkles className="w-4 h-4 text-purple-600" />,
       })
       return
     }
 
-    if (level.isChest) {
-      if (level.isChestClaimed) {
-        toast('Você já resgatou este baú!')
-      } else if (onClaimChest) {
-        await onClaimChest(level)
-        confetti({
-          particleCount: 40,
-          spread: 60,
-          origin: { y: 0.6 },
-          colors: ['#F5B83D', '#7D2BD6', '#2FBF71'],
-        })
-      }
+    // Troféu bloqueado
+    if (level.isTrophy && level.isLocked) {
+      toast('Conclua todas as etapas anteriores para desbloquear o Troféu!', {
+        icon: <Sparkles className="w-4 h-4 text-purple-600" />,
+      })
       return
     }
 
+    // Abre o NodeSheet com os tokens V2 para níveis atuais, concluídos, baús ou troféu liberado
     setSelectedNode(level)
   }
+
+  // Primeiro índice de nó bloqueado
+  const firstLockedIndex = levels.findIndex((l) => l.isLocked)
+
+  // Verifica se todos os níveis de conteúdo da trilha estão concluídos
+  const allLevelsCompleted = levels
+    .filter((l) => !l.isChest && !l.isTrophy)
+    .every((l) => l.isCompleted)
 
   return (
     <div
@@ -182,19 +245,7 @@ export const LearnMap: React.FC<LearnMapProps> = ({
         overscrollBehavior: 'contain',
       }}
     >
-      {/* Botão flutuante "Voltar ao nó atual" */}
-      {showScrollToCurrent && (
-        <button
-          type="button"
-          onClick={scrollToCurrentNode}
-          className="fixed bottom-24 right-5 z-40 bg-[#7D2BD6] text-white px-3 py-1.5 rounded-full shadow-lg border-2 border-purple-300 font-nunito font-black text-xs flex items-center gap-1.5 active:scale-95 transition-all animate-bounce-subtle"
-        >
-          <ArrowDown className="w-3.5 h-3.5 text-amber-300" />
-          Nó Atual
-        </button>
-      )}
-
-      {/* Placeholder silencioso enquanto o ResizeObserver mede as dimensões */}
+      {/* Placeholder enquanto mede */}
       {!layout ? (
         <div className="w-full h-full min-h-[360px]" />
       ) : (
@@ -205,40 +256,49 @@ export const LearnMap: React.FC<LearnMapProps> = ({
             minHeight: '100%',
           }}
         >
-          {/* Fundo Ambiência Temática PurplePiggy: Blobs orgânicos e Trilha Sinuosa */}
+          {/* Cenário de Fundo: Nuvens e Pinheiros com deriva lenta */}
           <div className="absolute inset-0 pointer-events-none overflow-hidden select-none -z-0" aria-hidden="true">
-            {/* Mancha suave lilás próxima ao nó atual */}
-            <div
-              className="absolute w-64 h-64 rounded-full bg-[#EEDEFB]/65 blur-3xl"
-              style={{
-                left: `${(layout.nodes[currentIndex]?.cx || dimensions?.width || 360) / 2 - 128}px`,
-                top: `${layout.currentCy - 128}px`,
-              }}
-            />
-            {/* Mancha dourada suave próxima ao Baú e Troféu no topo */}
-            <div
-              className="absolute w-56 h-56 rounded-full bg-[#FEDA70]/20 blur-3xl"
-              style={{
-                left: '20%',
-                top: '60px',
-              }}
-            />
-            {/* Mancha azul bebê suave na base */}
-            <div
-              className="absolute w-60 h-60 rounded-full bg-[#DEEEFC]/70 blur-3xl"
-              style={{
-                right: '-40px',
-                bottom: '40px',
-              }}
-            />
+            {/* Nuvens decorativas com animação de deriva (translateX de 40px em 60s) */}
+            {scenery.clouds.slice(0, 6).map((cloud, idx) => (
+              <img
+                key={`cloud-${idx}`}
+                src={cloud.src}
+                alt=""
+                className="absolute object-contain pointer-events-none drop-shadow-sm animate-cloud-drift"
+                style={{
+                  left: `${cloud.x}px`,
+                  top: `${cloud.y}px`,
+                  width: `${cloud.size}px`,
+                  opacity: cloud.opacity,
+                  animationDelay: `${cloud.delay}s`,
+                }}
+                loading="lazy"
+              />
+            ))}
 
-            {/* Trilha/Caminho Sinuoso em SVG conectando os centros dos nós */}
+            {/* Pinheiros decorativos estáticos */}
+            {scenery.trees.map((tree, idx) => (
+              <img
+                key={`tree-${idx}`}
+                src="/assets/learn/tree-pine.webp"
+                alt=""
+                className="absolute object-contain pointer-events-none drop-shadow-xs opacity-90"
+                style={{
+                  left: `${tree.x}px`,
+                  top: `${tree.y}px`,
+                  width: `${tree.size}px`,
+                }}
+                loading="lazy"
+              />
+            ))}
+
+            {/* Caminho Sinuoso Pontilhado em SVG conectando os centros dos nós */}
             {layout.nodes.length > 1 && (
               <svg
                 className="absolute inset-0 w-full h-full pointer-events-none"
                 style={{ width: `${dimensions?.width || 360}px`, height: `${layout.contentHeight}px` }}
               >
-                {/* 1. Trilha de fundo larga (halo suave azul-bebê / lilás) */}
+                {/* Trilha de halo suave */}
                 <path
                   d={(() => {
                     const sorted = [...layout.nodes].sort((a, b) => a.cy - b.cy)
@@ -252,12 +312,12 @@ export const LearnMap: React.FC<LearnMapProps> = ({
                     return d
                   })()}
                   fill="none"
-                  stroke="#DEEEFC"
-                  strokeWidth="12"
+                  stroke="#E8DEFB"
+                  strokeWidth="8"
                   strokeLinecap="round"
-                  opacity="0.6"
+                  opacity="0.8"
                 />
-                {/* 2. Linha da trilha pontilhada estilizada roxa/lilás */}
+                {/* Linha pontilhada violeta */}
                 <path
                   d={(() => {
                     const sorted = [...layout.nodes].sort((a, b) => a.cy - b.cy)
@@ -272,45 +332,48 @@ export const LearnMap: React.FC<LearnMapProps> = ({
                   })()}
                   fill="none"
                   stroke="#B037F8"
-                  strokeWidth="4"
-                  strokeDasharray="8 8"
+                  strokeWidth="3.5"
+                  strokeDasharray="6 6"
                   strokeLinecap="round"
-                  opacity="0.45"
+                  opacity="0.75"
                 />
               </svg>
             )}
           </div>
-          {/* Balão "Começar!" com caixa exata devolvida pela geometria pura */}
-          <div
-            className="absolute z-20 flex flex-col items-center justify-center animate-bounce-subtle pointer-events-none"
-            style={{
-              left: `${layout.balloon.x}px`,
-              top: `${layout.balloon.y}px`,
-              width: `${layout.balloon.w}px`,
-              height: `${layout.balloon.h}px`,
-            }}
-          >
-            <div className="w-full h-full bg-[#7D2BD6] text-white text-[11px] font-black rounded-full shadow-md tracking-wider uppercase border border-purple-400 flex items-center justify-center leading-none">
-              Começar!
+
+          {/* Balão de Fala "Vamos começar?" com Botão "Começar" - Inicia o nível direto */}
+          {levels[currentIndex] && (
+            <div
+              data-testid="balloon-current"
+              onClick={() => onSelectLevel(levels[currentIndex])}
+              role="button"
+              tabIndex={0}
+              aria-label="Iniciar nível atual diretamente"
+              className="absolute z-30 flex flex-col items-center cursor-pointer transition-transform active:scale-95 select-none filter drop-shadow-md"
+              style={{
+                left: `${layout.balloon.x}px`,
+                top: `${layout.balloon.y}px`,
+                width: `${layout.balloon.w}px`,
+                height: `${layout.balloon.h}px`,
+              }}
+            >
+              <div className="w-full h-full bg-white/95 backdrop-blur-xs border border-purple-200/80 rounded-[18px] p-2 flex flex-col items-center justify-between shadow-sm">
+                <span className="font-nunito font-extrabold text-[12px] text-[#432171] leading-tight text-center">
+                  Vamos começar?
+                </span>
+                <div className="w-full bg-gradient-to-r from-[#7D2BD6] to-[#8E2DE2] text-white py-1.5 px-3 rounded-full flex items-center justify-center gap-1.5 shadow-xs animate-pulse-btn">
+                  <Play className="w-3 h-3 fill-white text-white" />
+                  <span className="font-nunito font-black text-[11px] tracking-wide uppercase leading-none">
+                    Começar
+                  </span>
+                </div>
+              </div>
+              {/* Ponta do balão */}
+              <div className="w-0 h-0 border-x-4 border-x-transparent border-t-4 border-t-white shrink-0 -mt-0.5" />
             </div>
-            {/* Triângulo apontador */}
-            <div className="w-0 h-0 border-x-4 border-x-transparent border-t-4 border-t-[#7D2BD6] -mb-1 shrink-0" />
-          </div>
+          )}
 
-          {/* Mascote oficial na caixa exata devolvida pela geometria */}
-          <div
-            className="absolute z-10 pointer-events-none drop-shadow"
-            style={{
-              left: `${layout.mascot.x}px`,
-              top: `${layout.mascot.y}px`,
-              width: `${layout.mascot.w}px`,
-              height: `${layout.mascot.h}px`,
-            }}
-          >
-            <Mascot pose="head" className="w-full h-full object-contain" priority />
-          </div>
-
-          {/* Nós posicionados exatamente pelas coordenadas (left = cx - size/2, top = cy - size/2) */}
+          {/* Nós / Ilhas flutuantes com animação de flutuação em fases distintas */}
           {layout.nodes.map((pos) => {
             const level = levels[pos.index]
             if (!level) return null
@@ -326,17 +389,26 @@ export const LearnMap: React.FC<LearnMapProps> = ({
               status = 'current'
             }
 
+            const isCurrent = level.isCurrent
+            const nodeW = isCurrent ? 140 : 112
+            const nodeH = isCurrent ? 108 : 88
+            const isUnlocking = animatingUnlockId === level.id
+
             return (
               <LevelNode
                 key={level.id}
                 levelNumber={level.levelNumber}
                 title={level.title}
                 status={status}
-                size={pos.size}
+                size_w={nodeW}
+                size_h={nodeH}
+                stars={level.stars ?? 3}
+                isFirstLocked={pos.index === firstLockedIndex}
+                isUnlocking={isUnlocking}
                 onClick={() => handleNodeClick(level)}
                 style={{
-                  left: `${pos.cx - pos.size / 2}px`,
-                  top: `${pos.cy - pos.size / 2}px`,
+                  left: `${pos.cx - nodeW / 2}px`,
+                  top: `${pos.cy - nodeH / 2}px`,
                 }}
               />
             )
@@ -344,7 +416,7 @@ export const LearnMap: React.FC<LearnMapProps> = ({
         </div>
       )}
 
-      {/* Gaveta do Nó selecionado */}
+      {/* Gaveta do Nó selecionado com Tokens V2 */}
       {selectedNode && (
         <NodeSheet
           isOpen={Boolean(selectedNode)}
@@ -353,6 +425,11 @@ export const LearnMap: React.FC<LearnMapProps> = ({
           title={selectedNode.title}
           description={selectedNode.description}
           isCompleted={selectedNode.isCompleted}
+          stars={selectedNode.stars ?? 3}
+          isChest={selectedNode.isChest}
+          isChestClaimed={selectedNode.isChestClaimed}
+          isTrophy={selectedNode.isTrophy}
+          allLevelsCompleted={allLevelsCompleted}
           onStartLesson={() => {
             const node = selectedNode
             setSelectedNode(null)
@@ -367,8 +444,17 @@ export const LearnMap: React.FC<LearnMapProps> = ({
                 }
               : undefined
           }
+          onClaimChest={
+            onClaimChest
+              ? async () => {
+                  const node = selectedNode
+                  await onClaimChest(node)
+                }
+              : undefined
+          }
         />
       )}
     </div>
   )
 }
+export default LearnMap

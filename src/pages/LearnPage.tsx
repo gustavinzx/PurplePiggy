@@ -1,13 +1,12 @@
 // src/pages/LearnPage.tsx
 // Tela Aprender (Desafio Piggy - Geometria Pura com Layout do Mapa e Cabeçalho Fixo)
 import React, { useState, useEffect } from 'react'
-import { useParams, useNavigate } from 'react-router-dom'
+import { useParams, useNavigate, useLocation } from 'react-router-dom'
 import { supabase } from '../lib/supabase'
 import { useAuth } from '../context/AuthContext'
 import { AppShell } from '../components/AppShell'
 import { BackgroundBlobs } from '../components/BackgroundBlobs'
 import {
-  StatChip,
   SectionBanner,
   LearnMap,
   TrackSelectorSheet,
@@ -20,7 +19,9 @@ import { toast } from 'sonner'
 export const LearnPage: React.FC = () => {
   const { slug } = useParams<{ slug?: string }>()
   const navigate = useNavigate()
+  const location = useLocation()
   const { user } = useAuth()
+  const unlockedLevelId = (location.state as any)?.unlockedLevelId
 
   const [stats, setStats] = useState<LearnStats | null>(null)
   const [tracks, setTracks] = useState<TrackSummary[]>([])
@@ -183,7 +184,7 @@ export const LearnPage: React.FC = () => {
     if (!activeTrack) return
     try {
       await learnService.claimChest(activeTrack.trackSlug, 1)
-      toast.success('Baú de recompensa resgatado!')
+      toast.success('Baú de recompensa resgatado! +30 XP')
       setLevels((prev) =>
         prev.map((l) => (l.id === level.id ? { ...l, isChestClaimed: true } : l))
       )
@@ -197,51 +198,21 @@ export const LearnPage: React.FC = () => {
     navigate('/aprender/guias')
   }
 
-  // Cabeçalho Fixo: Chips soltos (apenas Ofensiva e XP) + Banner compacto de 84px com padding horizontal exato (--screen-x)
-  const fixedHeader = (
-    <div className="w-full flex flex-col gap-2 pt-1 pb-2">
-      {/* Pílulas soltas (sem faixa branca de fundo) */}
-      <div
-        className="flex items-center gap-2"
-        style={{ paddingInline: 'var(--screen-x)' }}
-      >
-        <StatChip
-          variant="streak"
-          value={stats?.streak_count || 1}
-          onClick={() =>
-            toast('Ofensiva Piggy', {
-              description: `${stats?.streak_count || 1} dias seguidos aprendendo! Continue firme.`,
-            })
-          }
-        />
-        <StatChip
-          variant="xp"
-          value={stats?.xp_points || 0}
-          onClick={() =>
-            toast('Pontos de Experiência (XP)', {
-              description: `${stats?.xp_points || 0} XP acumulados com suas lições.`,
-            })
-          }
-        />
-      </div>
-
-      {/* Banner da Trilha Atual com largura inteira da coluna menos o padding */}
-      {activeTrack && (
-        <div style={{ paddingInline: 'var(--screen-x)' }}>
-          <SectionBanner
-            trackOrder={activeTrack.trackOrder}
-            trackTitle={activeTrack.trackTitle}
-            progressPct={activeTrack.progressPct}
-            onOpenTrackSelector={() => setIsTrackSheetOpen(true)}
-            onOpenGuide={() => {
-              const firstLesson = levels[0]
-              if (firstLesson) handleReadGuide(firstLesson)
-            }}
-          />
-        </div>
-      )}
+  // Cabeçalho Fixo V2: Banner da Trilha Atual (112-128px) com padding horizontal exato (--screen-x)
+  const fixedHeader = activeTrack ? (
+    <div className="w-full pt-1 pb-2" style={{ paddingInline: 'var(--screen-x)' }}>
+      <SectionBanner
+        trackOrder={activeTrack.trackOrder}
+        trackTitle={activeTrack.trackTitle}
+        progressPct={activeTrack.progressPct}
+        onOpenTrackSelector={() => setIsTrackSheetOpen(true)}
+        onOpenGuide={() => {
+          const firstLesson = levels[0]
+          if (firstLesson) handleReadGuide(firstLesson)
+        }}
+      />
     </div>
-  )
+  ) : null
 
   return (
     <AppShell
@@ -267,6 +238,7 @@ export const LearnPage: React.FC = () => {
           <LearnMap
             trackSlug={activeTrack.trackSlug}
             levels={levels}
+            unlockedLevelId={unlockedLevelId}
             onSelectLevel={handleSelectLevel}
             onReadGuide={handleReadGuide}
             onClaimChest={handleClaimChest}
