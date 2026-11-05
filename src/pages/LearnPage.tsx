@@ -7,7 +7,6 @@ import { useAuth } from '../context/AuthContext'
 import { AppShell } from '../components/AppShell'
 import { BackgroundBlobs } from '../components/BackgroundBlobs'
 import {
-  StatChip,
   SectionBanner,
   LearnMap,
   TrackSelectorSheet,
@@ -197,51 +196,21 @@ export const LearnPage: React.FC = () => {
     navigate('/aprender/guias')
   }
 
-  // Cabeçalho Fixo: Chips soltos (apenas Ofensiva e XP) + Banner compacto de 84px com padding horizontal exato (--screen-x)
-  const fixedHeader = (
-    <div className="w-full flex flex-col gap-2 pt-1 pb-2">
-      {/* Pílulas soltas (sem faixa branca de fundo) */}
-      <div
-        className="flex items-center gap-2"
-        style={{ paddingInline: 'var(--screen-x)' }}
-      >
-        <StatChip
-          variant="streak"
-          value={stats?.streak_count || 1}
-          onClick={() =>
-            toast('Ofensiva Piggy', {
-              description: `${stats?.streak_count || 1} dias seguidos aprendendo! Continue firme.`,
-            })
-          }
-        />
-        <StatChip
-          variant="xp"
-          value={stats?.xp_points || 0}
-          onClick={() =>
-            toast('Pontos de Experiência (XP)', {
-              description: `${stats?.xp_points || 0} XP acumulados com suas lições.`,
-            })
-          }
-        />
-      </div>
-
-      {/* Banner da Trilha Atual com largura inteira da coluna menos o padding */}
-      {activeTrack && (
-        <div style={{ paddingInline: 'var(--screen-x)' }}>
-          <SectionBanner
-            trackOrder={activeTrack.trackOrder}
-            trackTitle={activeTrack.trackTitle}
-            progressPct={activeTrack.progressPct}
-            onOpenTrackSelector={() => setIsTrackSheetOpen(true)}
-            onOpenGuide={() => {
-              const firstLesson = levels[0]
-              if (firstLesson) handleReadGuide(firstLesson)
-            }}
-          />
-        </div>
-      )}
+  // Cabeçalho Fixo V2: Banner da Trilha Atual (112-128px) com padding horizontal exato (--screen-x)
+  const fixedHeader = activeTrack ? (
+    <div className="w-full pt-1 pb-2" style={{ paddingInline: 'var(--screen-x)' }}>
+      <SectionBanner
+        trackOrder={activeTrack.trackOrder}
+        trackTitle={activeTrack.trackTitle}
+        progressPct={activeTrack.progressPct}
+        onOpenTrackSelector={() => setIsTrackSheetOpen(true)}
+        onOpenGuide={() => {
+          const firstLesson = levels[0]
+          if (firstLesson) handleReadGuide(firstLesson)
+        }}
+      />
     </div>
-  )
+  ) : null
 
   return (
     <AppShell
