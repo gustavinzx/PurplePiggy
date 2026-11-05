@@ -18,6 +18,8 @@ import {
   Camera,
   RotateCcw,
   X,
+  Landmark,
+  SlidersHorizontal,
 } from 'lucide-react'
 import { toast } from 'sonner'
 
@@ -29,8 +31,14 @@ export const ProfilePage: React.FC = () => {
   const [isAboutModalOpen, setIsAboutModalOpen] = useState(false)
   const [isPrivacyModalOpen, setIsPrivacyModalOpen] = useState(false)
   const [isNotificationsModalOpen, setIsNotificationsModalOpen] = useState(false)
+  const [isPreferencesModalOpen, setIsPreferencesModalOpen] = useState(false)
   const [isResettingDemo, setIsResettingDemo] = useState(false)
   const [isSavingProfile, setIsSavingProfile] = useState(false)
+
+  // Estados de preferências
+  const [prefCurrency, setPrefCurrency] = useState('BRL')
+  const [prefHideDecimals, setPrefHideDecimals] = useState(false)
+  const [prefSoundAlerts, setPrefSoundAlerts] = useState(true)
 
   // Form states para edição
   const [editName, setEditName] = useState(profile?.full_name || '')
@@ -143,7 +151,11 @@ export const ProfilePage: React.FC = () => {
   }
 
   return (
-    <AppShell showNav={true} className="py-5 flex flex-col gap-4 font-nunito">
+    <AppShell
+      showNav={true}
+      className="py-5 flex flex-col gap-3.5 font-nunito overflow-y-auto"
+      contentStyle={{ paddingBottom: 'calc(var(--nav-height) + env(safe-area-inset-bottom, 0px) + 28px)' }}
+    >
       {/* Título da tela */}
       <div className="w-full min-w-0 pt-1">
         <h1 className="text-[22px] font-extrabold text-[#432171] font-nunito tracking-tight mb-0.5">
@@ -171,7 +183,10 @@ export const ProfilePage: React.FC = () => {
                 )}
               </div>
             </div>
-            <label className="absolute -bottom-1 -right-1 bg-[#7D2BD6] text-white p-1 rounded-full cursor-pointer hover:bg-[#6D28C9] shadow-xs transition-colors">
+            <label
+              className="absolute -bottom-1 -right-1 bg-[#7D2BD6] text-white p-1 rounded-full cursor-pointer hover:bg-[#6D28C9] shadow-xs transition-colors"
+              title="Trocar foto"
+            >
               <Camera className="w-3 h-3" />
               <input
                 type="file"
@@ -192,7 +207,7 @@ export const ProfilePage: React.FC = () => {
           </div>
         </div>
 
-        {/* Botão Secundário na cor rosa oficial da marca (#FF79A8) */}
+        {/* Botão Editar: pílula lilás clara com texto roxo (#7D2BD6 sobre #F3E8FF) */}
         <button
           onClick={() => {
             setEditName(profile?.full_name || '')
@@ -200,36 +215,37 @@ export const ProfilePage: React.FC = () => {
             setEditInitialBalance(profile?.initial_balance?.toString() || '0')
             setIsEditModalOpen(true)
           }}
-          className="text-xs font-bold text-white bg-[#FF79A8] hover:bg-[#FF6096] active:scale-95 px-3.5 py-1.5 rounded-full shadow-xs transition-all shrink-0 cursor-pointer"
+          className="text-xs font-bold text-[#7D2BD6] bg-[#F3E8FF] hover:bg-[#E9D5FF] active:scale-95 px-3.5 py-1.5 rounded-full shadow-xs transition-all shrink-0 cursor-pointer"
         >
           Editar
         </button>
       </div>
 
-      {/* Card de Conquistas & Medalhas do Usuário */}
-      <div className="bg-white rounded-[22px] p-3.5 border border-lilac/15 shadow-card flex items-center justify-between">
+      {/* Card de Conquistas & Evolução */}
+      <div className="bg-white rounded-[24px] p-3.5 border border-lilac/15 shadow-card flex items-center justify-between">
         <div className="flex items-center gap-3 min-w-0">
-          <div className="w-10 h-10 rounded-2xl bg-[#FEDA70]/25 flex items-center justify-center shrink-0">
-            <Mascot size="xs" pose="medal" />
+          <div className="w-10 h-10 rounded-2xl bg-[#F3E8FF] flex items-center justify-center shrink-0">
+            <Mascot size="xs" pose="head" alt="Mascote conquistas" />
           </div>
           <div className="min-w-0">
             <h3 className="text-xs font-extrabold text-[#432171] leading-tight">Conquistas & Evolução</h3>
             <p className="text-[11px] font-semibold text-[#7D6A9C] truncate">
-              Ofensiva ativa e metas em progresso contínuo.
+              Ofensiva ativa e metas em progresso.
             </p>
           </div>
         </div>
-        <span className="text-[11px] font-black text-[#432171] bg-gradient-to-r from-[#FEDA70]/30 to-[#CF91F6]/25 border border-[#FEDA70]/70 px-2.5 py-1 rounded-full shrink-0">
+        <span className="text-[11px] font-extrabold text-[#7D2BD6] bg-[#F3E8FF] px-3 py-1 rounded-full whitespace-nowrap shrink-0">
           Nível 3
         </span>
       </div>
 
-      {/* Seção Minha Conta */}
-      <div className="bg-white rounded-[22px] p-3 border border-lilac/15 shadow-card flex flex-col divide-y divide-lilac/10">
+      {/* Seção Minha Conta (5 itens dentro de 1 card com divisores) */}
+      <div className="bg-white rounded-[24px] p-3 border border-lilac/15 shadow-card flex flex-col divide-y divide-[#F0EBF8]">
         <div className="text-[11px] font-black text-[#7D6A9C] uppercase tracking-wider px-2 pt-1 pb-2">
           Minha conta
         </div>
 
+        {/* 1. Dados pessoais */}
         <button
           onClick={() => setIsEditModalOpen(true)}
           className="py-2.5 px-2 flex items-center justify-between text-left hover:bg-[#F8F5FC] rounded-xl transition-colors cursor-pointer"
@@ -243,6 +259,21 @@ export const ProfilePage: React.FC = () => {
           <ChevronRight className="w-4 h-4 text-[#7D6A9C]" />
         </button>
 
+        {/* 2. Preferências */}
+        <button
+          onClick={() => setIsPreferencesModalOpen(true)}
+          className="py-2.5 px-2 flex items-center justify-between text-left hover:bg-[#F8F5FC] rounded-xl transition-colors cursor-pointer"
+        >
+          <div className="flex items-center gap-3">
+            <div className="w-7 h-7 rounded-lg bg-[#F3E8FF] text-[#7D2BD6] flex items-center justify-center">
+              <SlidersHorizontal className="w-4 h-4" />
+            </div>
+            <span className="text-xs font-bold text-[#432171]">Preferências</span>
+          </div>
+          <ChevronRight className="w-4 h-4 text-[#7D6A9C]" />
+        </button>
+
+        {/* 3. Notificações */}
         <button
           onClick={() => setIsNotificationsModalOpen(true)}
           className="py-2.5 px-2 flex items-center justify-between text-left hover:bg-[#F8F5FC] rounded-xl transition-colors cursor-pointer"
@@ -256,6 +287,7 @@ export const ProfilePage: React.FC = () => {
           <ChevronRight className="w-4 h-4 text-[#7D6A9C]" />
         </button>
 
+        {/* 4. Privacidade e segurança */}
         <button
           onClick={() => setIsPrivacyModalOpen(true)}
           className="py-2.5 px-2 flex items-center justify-between text-left hover:bg-[#F8F5FC] rounded-xl transition-colors cursor-pointer"
@@ -269,6 +301,7 @@ export const ProfilePage: React.FC = () => {
           <ChevronRight className="w-4 h-4 text-[#7D6A9C]" />
         </button>
 
+        {/* 5. Sobre o PurplePiggy */}
         <button
           onClick={() => setIsAboutModalOpen(true)}
           className="py-2.5 px-2 flex items-center justify-between text-left hover:bg-[#F8F5FC] rounded-xl transition-colors cursor-pointer"
@@ -284,7 +317,7 @@ export const ProfilePage: React.FC = () => {
       </div>
 
       {/* Seção Conexões Financeiras */}
-      <div className="bg-white rounded-[22px] p-3 border border-lilac/15 shadow-card flex flex-col">
+      <div className="bg-white rounded-[24px] p-3 border border-lilac/15 shadow-card flex flex-col">
         <div className="text-[11px] font-black text-[#7D6A9C] uppercase tracking-wider px-2 pt-1 pb-2">
           Conexões financeiras
         </div>
@@ -294,12 +327,12 @@ export const ProfilePage: React.FC = () => {
           className="py-2.5 px-2 flex items-center justify-between text-left hover:bg-[#F8F5FC] rounded-xl transition-colors cursor-pointer"
         >
           <div className="flex items-center gap-3">
-            <div className="w-7 h-7 rounded-lg bg-[#F3E8FF] text-[#7D2BD6] flex items-center justify-center">
-              <Settings className="w-4 h-4" />
+            <div className="w-7 h-7 rounded-lg bg-[#FEF3C7] text-amber-600 flex items-center justify-center">
+              <Landmark className="w-4 h-4" />
             </div>
             <div>
               <div className="text-xs font-bold text-[#432171]">Open Finance</div>
-              <div className="text-[10px] text-[#7D6A9C] font-semibold">Contas bancárias e consentimentos</div>
+              <div className="text-[10px] text-[#7D6A9C] font-semibold">Contas e consentimentos</div>
             </div>
           </div>
           <div className="flex items-center gap-2">
@@ -313,7 +346,7 @@ export const ProfilePage: React.FC = () => {
 
       {/* Restaurar dados se estiver no modo demo */}
       {isDemo && (
-        <div className="bg-[#FEF3C7]/60 border border-[#FEDA70] rounded-[22px] p-3.5 flex items-center justify-between">
+        <div className="bg-[#FEF3C7]/60 border border-[#FEDA70] rounded-[24px] p-3.5 flex items-center justify-between">
           <div className="flex items-center gap-2.5 min-w-0">
             <div className="w-8 h-8 rounded-xl bg-[#FEDA70] text-[#78350F] flex items-center justify-center shrink-0">
               <Sparkles className="w-4 h-4" />
@@ -336,8 +369,8 @@ export const ProfilePage: React.FC = () => {
         </div>
       )}
 
-      {/* Botão Sair da conta (Layout oficial) */}
-      <div className="pt-1">
+      {/* Botão Sair da conta (visível ao rolar até o fim) */}
+      <div className="pt-2 pb-4">
         <button
           onClick={handleSignOut}
           className="w-full py-3 px-4 rounded-full border border-rose-300 text-rose-600 hover:bg-rose-50/80 active:scale-95 font-nunito font-extrabold text-sm flex items-center justify-center gap-2 transition-all shadow-xs cursor-pointer"
@@ -537,6 +570,84 @@ export const ProfilePage: React.FC = () => {
                 <strong>Conformidade LGPD:</strong> Você tem total autonomia para visualizar, editar ou solicitar a exclusão definitiva dos seus dados a qualquer momento.
               </p>
             </div>
+          </div>
+        </div>
+      )}
+      {/* Modal: Preferências */}
+      {isPreferencesModalOpen && (
+        <div className="fixed inset-0 z-50 bg-deep/60 backdrop-blur-xs flex items-center justify-center p-4 animate-fadeIn">
+          <div className="bg-white rounded-[26px] p-6 w-full max-w-sm shadow-2xl border border-lilac/20">
+            <div className="flex items-center justify-between pb-3 border-b border-lilac/15 mb-4">
+              <h3 className="text-base font-extrabold text-[#432171] font-nunito">
+                Preferências
+              </h3>
+              <button
+                onClick={() => setIsPreferencesModalOpen(false)}
+                className="p-1 rounded-full text-[#7D6A9C] hover:text-[#432171] cursor-pointer"
+              >
+                <X className="w-5 h-5" />
+              </button>
+            </div>
+
+            <div className="flex flex-col gap-4 mb-5">
+              <div>
+                <label className="block text-xs font-bold text-[#7D6A9C] mb-1">Moeda padrão</label>
+                <select
+                  value={prefCurrency}
+                  onChange={(e) => setPrefCurrency(e.target.value)}
+                  className="w-full h-11 px-4 bg-bg border border-lilac/30 rounded-2xl text-[#432171] font-bold text-sm focus:outline-none focus:border-primary"
+                >
+                  <option value="BRL">Real brasileiro (R$ - BRL)</option>
+                  <option value="USD">Dólar americano ($ - USD)</option>
+                  <option value="EUR">Euro (€ - EUR)</option>
+                </select>
+              </div>
+
+              <label className="flex items-center justify-between cursor-pointer">
+                <div>
+                  <div className="text-xs font-bold text-[#432171]">Ocultar centavos</div>
+                  <div className="text-[10px] text-[#7D6A9C]">Arredondar valores no dashboard</div>
+                </div>
+                <input
+                  type="checkbox"
+                  checked={prefHideDecimals}
+                  onChange={(e) => setPrefHideDecimals(e.target.checked)}
+                  className="w-5 h-5 accent-primary cursor-pointer"
+                />
+              </label>
+
+              <label className="flex items-center justify-between cursor-pointer">
+                <div>
+                  <div className="text-xs font-bold text-[#432171]">Alertas com som</div>
+                  <div className="text-[10px] text-[#7D6A9C]">Efeitos sonoros ao registrar transação</div>
+                </div>
+                <input
+                  type="checkbox"
+                  checked={prefSoundAlerts}
+                  onChange={(e) => setPrefSoundAlerts(e.target.checked)}
+                  className="w-5 h-5 accent-primary cursor-pointer"
+                />
+              </label>
+
+              <div>
+                <div className="text-xs font-bold text-[#432171] mb-1">Tema visual</div>
+                <div className="w-full h-11 px-4 bg-[#F8F5FC] border border-lilac/30 rounded-2xl text-[#7D6A9C] font-bold text-xs flex items-center justify-between">
+                  <span>Lilás Claro (V2 Padrão)</span>
+                  <span className="text-[10px] bg-[#DCFCE7] text-[#15803D] px-2 py-0.5 rounded-full font-bold">Ativo</span>
+                </div>
+              </div>
+            </div>
+
+            <Button
+              size="md"
+              fullWidth
+              onClick={() => {
+                toast.success('Preferências salvas com sucesso!')
+                setIsPreferencesModalOpen(false)
+              }}
+            >
+              Salvar preferências
+            </Button>
           </div>
         </div>
       )}
