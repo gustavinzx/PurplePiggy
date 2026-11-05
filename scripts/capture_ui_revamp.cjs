@@ -16,7 +16,8 @@ async function main() {
   const demoBtn = page.locator('text=Ver modo demonstração');
   await demoBtn.click();
   await page.waitForURL('**/inicio', { timeout: 10000 });
-  await page.waitForTimeout(2000);
+  // Aguarda o toast de boas-vindas desaparecer completamente
+  await page.waitForTimeout(4500);
 
   // Início
   console.log('Capturing Início...');
