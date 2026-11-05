@@ -17,6 +17,7 @@ export type MascotPose =
   | 'loading'
   | 'success'
   | 'search'
+  | 'wink'
 
 export const MASCOT_SIZES = {
   xs: { width: 40, height: 40, className: 'w-10 h-10' },
@@ -125,6 +126,11 @@ export const POSE_MANIFEST: Record<MascotPose, PoseMeta> = {
     src: '/assets/mascot/pig-search.png',
     src2x: '/assets/mascot/pig-search@2x.png',
     alt: 'Mascote PurplePiggy — Observando com lupa curiosa',
+  },
+  wink: {
+    src: '/assets/mascot/pig-wink.png',
+    src2x: '/assets/mascot/pig-wink.webp',
+    alt: 'Mascote PurplePiggy — Dando piscadinha com moeda e brilho',
   },
 }
 
