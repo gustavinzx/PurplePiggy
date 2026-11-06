@@ -84,3 +84,51 @@ export function useAndroidBackButton(): void {
     }
   }, [navigate, location])
 }
+
+
+/**
+ * Hook para escutar Deep Links no aplicativo nativo (ex: purplepiggy://redefinir-senha ou https://purplepiggy.app/redefinir-senha)
+ */
+export function useDeepLinks(): void {
+  const navigate = useNavigate()
+
+  useEffect(() => {
+    if (!Capacitor.isNativePlatform()) return
+
+    const listenerPromise = CapApp.addListener('appUrlOpen', (data: { url: string }) => {
+      try {
+        const urlStr = data.url
+        // Tratar deep links de redefinição de senha e navegação geral
+        if (urlStr.includes('redefinir-senha')) {
+          const hashIdx = urlStr.indexOf('#')
+          const queryIdx = urlStr.indexOf('?')
+          const fragment = hashIdx >= 0 ? urlStr.substring(hashIdx) : ''
+          const query = queryIdx >= 0 && (hashIdx < 0 || queryIdx < hashIdx) 
+            ? urlStr.substring(queryIdx, hashIdx >= 0 ? hashIdx : undefined) 
+            : ''
+          navigate(`/redefinir-senha${query}${fragment}`)
+          return
+        }
+
+        const url = new URL(urlStr)
+        const path = url.pathname || '/'
+        const hash = url.hash || ''
+        const search = url.search || ''
+
+        if (path && path !== '/') {
+          navigate(`${path}${search}${hash}`)
+        }
+      } catch {
+        const slug = data.url.split('://').pop() || ''
+        if (slug.includes('redefinir-senha')) {
+          const suffix = slug.substring(slug.indexOf('redefinir-senha'))
+          navigate(`/${suffix}`)
+        }
+      }
+    })
+
+    return () => {
+      listenerPromise.then((handle: PluginListenerHandle) => handle.remove()).catch(() => {})
+    }
+  }, [navigate])
+}

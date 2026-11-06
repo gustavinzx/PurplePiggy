@@ -33,6 +33,10 @@ dist-ssr
 # Android build artifacts
 *.apk
 *.aab
+keystore.properties
+*.keystore
+*.jks
+android/app/build/
 
 # Temporary Supabase files
 supabase/.temp/

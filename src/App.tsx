@@ -6,7 +6,8 @@ import { AuthGate } from './components/AuthGate'
 import { initNotificationsChannel } from './lib/nativeNotifications'
 import { isSupabaseConfigured } from './lib/supabase'
 import { AlertTriangle } from 'lucide-react'
-import { useAndroidBackButton } from './lib/capacitor'
+import { useAndroidBackButton, useDeepLinks } from './lib/capacitor'
+import { OfflineBanner } from './components/OfflineBanner'
 
 import { SplashPage } from './pages/SplashPage'
 import { WelcomePage } from './pages/WelcomePage'
@@ -34,6 +35,7 @@ import { InAppUpdateModal } from './components/InAppUpdateModal'
 
 const AndroidShellHandler: React.FC = () => {
   useAndroidBackButton()
+  useDeepLinks()
   return null
 }
 
@@ -67,6 +69,7 @@ export const App: React.FC = () => {
   return (
     <BrowserRouter>
       <AndroidShellHandler />
+      <OfflineBanner />
       <AuthProvider>
         <Toaster position="top-center" richColors />
         <InAppUpdateModal />
