@@ -12,7 +12,7 @@ export interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElemen
  * Componente Button canônico do PurplePiggy.
  * 100% customizado, sem bibliotecas externas:
  * - Primário: formato pílula (rounded-full), degradê roxo horizontal, texto branco bold, sombra suave e sutil brilho superior.
- * - Secundário: fundo branco com contorno roxo e texto roxo bold.
+ * - Secundário: usa o rosa oficial #FF79A8.
  * - Destrutivo: fundo branco com contorno rosa-vermelho e texto rosa-vermelho bold.
  * - Link: texto puro sem moldura (ex: "Entrar", "Já tem uma conta? Entrar").
  * Estados: active:scale-[0.98], disabled e loading com spinner.
@@ -32,7 +32,7 @@ export const Button: React.FC<ButtonProps> = ({
 
   const baseStyles = isLink
     ? 'inline-flex items-center justify-center font-bold font-sans text-deep hover:text-primary hover:underline transition-colors duration-150 select-none p-0 h-auto disabled:opacity-50 disabled:pointer-events-none'
-    : 'relative inline-flex items-center justify-center font-extrabold font-sans rounded-pill transition-all duration-150 active:scale-[0.98] disabled:opacity-50 disabled:pointer-events-none disabled:active:scale-100 select-none overflow-hidden'
+    : 'relative inline-flex items-center justify-center font-extrabold font-sans rounded-pill transition-all duration-150 active:scale-[0.98] disabled:opacity-50 disabled:pointer-events-none disabled:active:scale-100 select-none overflow-hidden cursor-pointer'
 
   const sizeStyles = isLink
     ? {
@@ -50,13 +50,13 @@ export const Button: React.FC<ButtonProps> = ({
     primary:
       'bg-gradient-to-r from-btn-primary-start to-btn-primary-end text-white shadow-button border-t border-white/25 hover:brightness-105 active:shadow-none active:brightness-95',
     secondary:
-      'border-2 border-btn-secondary-border bg-white text-btn-secondary-border hover:bg-btn-secondary-border/5 active:bg-btn-secondary-border/10',
+      'bg-[#FF79A8] text-white border-2 border-[#FF79A8] shadow-[0_6px_16px_rgba(255,121,168,0.3)] hover:bg-[#FF6096] active:brightness-95',
     outline:
-      'border-2 border-btn-secondary-border bg-white text-btn-secondary-border hover:bg-btn-secondary-border/5 active:bg-btn-secondary-border/10',
+      'border-2 border-[#FF79A8] bg-[#FFF0F6] text-[#D6336C] hover:bg-[#FF79A8] hover:text-white active:brightness-95',
     destructive:
       'border-2 border-danger bg-white text-danger hover:bg-danger/5 active:bg-danger/10',
     pink:
-      'bg-pink text-white hover:brightness-105 shadow-sm active:brightness-95',
+      'bg-[#FF79A8] text-white hover:bg-[#FF6096] shadow-[0_6px_16px_rgba(255,121,168,0.3)] active:brightness-95',
     ghost:
       'text-deep hover:bg-lilac/10 active:bg-lilac/20',
     link: '',

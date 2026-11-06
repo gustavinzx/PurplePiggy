@@ -128,9 +128,8 @@ export const POSE_MANIFEST: Record<MascotPose, PoseMeta> = {
     alt: 'Mascote PurplePiggy — Observando com lupa curiosa',
   },
   wink: {
-    src: '/assets/mascot/pig-wink.png',
-    src2x: '/assets/mascot/pig-wink.webp',
-    alt: 'Mascote PurplePiggy — Dando piscadinha com moeda e brilho',
+    src: '/assets/mascot/pig-head.png',
+    alt: 'Mascote PurplePiggy — Cabeça oficial',
   },
 }
 

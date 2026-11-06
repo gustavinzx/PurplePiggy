@@ -86,9 +86,8 @@
     },
     {
       "id": "wink",
-      "file": "/assets/mascot/pig-wink.png",
-      "file_webp": "/assets/mascot/pig-wink.webp",
-      "description": "Mascote dando piscadinha com moeda e brilho. Uso: Início e Aprender"
+      "file": "/assets/mascot/pig-head.png",
+      "description": "Cabeça oficial com moeda no topo (PurplePiggy)."
     }
   ],
   "goal_icons": [

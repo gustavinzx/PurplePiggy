@@ -148,6 +148,47 @@ describe('Motor do Quiz (Prompt N8 - Funções Puras e Reducer)', () => {
     expect(state.correctCount).toBe(2)
   })
 
+  it('Passo 1: deve empurrar questão com erro para o fim da fila e só concluir ao esvaziar', () => {
+    let state = quizEngineReducer(INITIAL_QUIZ_STATE, {
+      type: 'START_QUIZ',
+      questions: mockQuestions, // 2 questões
+      initialHearts: 3,
+    })
+
+    // 1. Erra a Questão 1
+    state = quizEngineReducer(state, { type: 'SELECT_ANSWER', answer: 2 }) // Errada
+    state = quizEngineReducer(state, { type: 'VERIFY_ANSWER' })
+
+    expect(state.status).toBe('incorrect')
+    expect(state.questions.length).toBe(3) // mock-1 clonada no final (índice 2)
+    expect(state.questions[2].id).toContain('retry')
+
+    // Avança para a Questão 2
+    state = quizEngineReducer(state, { type: 'NEXT_QUESTION' })
+    expect(state.currentIndex).toBe(1)
+    expect(state.status).toBe('answering')
+
+    // 2. Acerta a Questão 2
+    state = quizEngineReducer(state, { type: 'SELECT_ANSWER', answer: 1 }) // Correta
+    state = quizEngineReducer(state, { type: 'VERIFY_ANSWER' })
+    expect(state.status).toBe('correct')
+
+    // Avança para a Questão 3 (que é a Questão 1 reaparecendo no fim da fila)
+    state = quizEngineReducer(state, { type: 'NEXT_QUESTION' })
+    expect(state.currentIndex).toBe(2)
+    expect(state.status).toBe('answering')
+    expect(state.questions[state.currentIndex].prompt).toBe(mockQuestions[0].prompt)
+
+    // 3. Agora acerta a questão de repetição
+    state = quizEngineReducer(state, { type: 'SELECT_ANSWER', answer: 0 }) // Correta
+    state = quizEngineReducer(state, { type: 'VERIFY_ANSWER' })
+    expect(state.status).toBe('correct')
+
+    // Avança e conclui porque a fila esvaziou!
+    state = quizEngineReducer(state, { type: 'NEXT_QUESTION' })
+    expect(state.status).toBe('completed')
+  })
+
   it('deve calcular corretamente a barra de progresso elástica', () => {
     expect(calculateQuizProgress(0, 4)).toBe(0)
     expect(calculateQuizProgress(1, 4)).toBe(25)

@@ -20,6 +20,7 @@ import { learnService } from '../features/learn/services/learnService'
 import { LearnQuestion } from '../features/learn/questions'
 import { Mascot } from '../components/Mascot'
 import confetti from 'canvas-confetti'
+import { toast } from 'sonner'
 
 const OPTION_LETTERS = ['A', 'B', 'C', 'D']
 
@@ -38,6 +39,7 @@ export const LessonPage: React.FC = () => {
   const [resolvedTrackSlug, setResolvedTrackSlug] = useState<string>('')
   const [questions, setQuestions] = useState<LearnQuestion[]>([])
   const [showExitDialog, setShowExitDialog] = useState(false)
+  const [initialHearts, setInitialHearts] = useState<number>(3)
 
   // Estados de Conclusão e Resumo do Nível (Prompt N11)
   const [isLevelFinished, setIsLevelFinished] = useState(false)
@@ -89,9 +91,14 @@ export const LessonPage: React.FC = () => {
         setResolvedTrackSlug(targetTrack)
         setResolvedLessonSlug(targetLesson)
 
-        // Carrega as questões para a lição
+        // Carrega as questões para a lição e as estatísticas de vida
         const loadedQuestions = learnService.getQuestionsForLesson(targetLesson)
         setQuestions(loadedQuestions)
+
+        const userStats = await learnService.getStats()
+        if (userStats && typeof userStats.hearts === 'number') {
+          setInitialHearts(Math.max(1, userStats.hearts))
+        }
       } catch (err) {
         console.error('Erro ao resolver lição:', err)
       } finally {
@@ -118,6 +125,7 @@ export const LessonPage: React.FC = () => {
   } = useQuizEngine({
     questions,
     lessonSlug: resolvedLessonSlug,
+    initialHearts,
     autoSubmitOnCompletion: false,
   })
 
@@ -251,10 +259,26 @@ export const LessonPage: React.FC = () => {
             Suas vidas acabaram por hoje!
           </h1>
           <p className="font-nunito text-sm text-gray-600 max-w-xs mx-auto">
-            Não desanime! Errar faz parte do aprendizado. Respire fundo e tente novamente quando quiser.
+            Não desanime! Errar faz parte do aprendizado. Você pode recarregar suas vidas com Moedas Piggy ou tentar novamente quando descansar.
           </p>
         </div>
-        <div className="pb-4">
+        <div className="pb-4 space-y-3">
+          <ChunkyButton
+            variant="secondary"
+            size="lg"
+            className="w-full"
+            onClick={async () => {
+              const res = await learnService.rechargeHearts()
+              if (res.success) {
+                toast.success('Vidas recarregadas com sucesso! ❤️')
+                window.location.reload()
+              } else {
+                toast.error(res.message || 'Moedas insuficientes para recarregar!')
+              }
+            }}
+          >
+            RECARREGAR VIDAS (+3)
+          </ChunkyButton>
           <ChunkyButton
             variant="primary"
             size="lg"
@@ -287,17 +311,31 @@ export const LessonPage: React.FC = () => {
       <main className="flex-1 px-5 py-2 flex flex-col justify-center space-y-5">
         {currentQ && (
           <>
-            {/* Balão com Mascote Idea */}
-            <div className="flex items-start gap-3 bg-white p-4 rounded-3xl border border-purple-100 shadow-sm animate-fadeIn">
-              <div className="w-14 h-14 flex-shrink-0 drop-shadow">
-                <Mascot pose="idea" className="w-full h-full object-contain" priority />
+            {/* Balão de Fala Comic com Mascote Expressivo */}
+            <div className="flex items-end gap-3 animate-fadeIn">
+              <div className="w-16 h-16 shrink-0 -mb-1 drop-shadow-md transition-transform duration-300">
+                <Mascot
+                  pose={
+                    status === 'correct'
+                      ? 'trophy'
+                      : status === 'incorrect'
+                      ? 'retry'
+                      : 'idea'
+                  }
+                  className="w-full h-full object-contain"
+                  priority
+                />
               </div>
-              <div className="flex-1 pt-1">
-                <h2 className="font-nunito font-extrabold text-base sm:text-lg text-[#3B0764] leading-snug">
+              <div className="relative flex-1 bg-white p-4.5 rounded-3xl border-2 border-purple-200/90 shadow-sm">
+                {/* Triângulo do balão apontando para o mascote */}
+                <div className="absolute -left-2.5 bottom-4 w-0 h-0 border-t-[8px] border-t-transparent border-b-[8px] border-b-transparent border-r-[10px] border-r-purple-200/90" />
+                <div className="absolute -left-2 bottom-4 w-0 h-0 border-t-[7px] border-t-transparent border-b-[7px] border-b-transparent border-r-[9px] border-r-white" />
+
+                <h2 className="font-nunito font-extrabold text-base sm:text-lg text-[#33105D] leading-snug">
                   {currentQ.prompt}
                 </h2>
                 {currentQ.contextText && (
-                  <p className="font-nunito text-xs text-gray-500 mt-1 leading-relaxed">
+                  <p className="font-nunito font-semibold text-xs text-[#7D6A9C] mt-1.5 leading-relaxed bg-[#FAF6FF] p-2.5 rounded-xl border border-purple-100">
                     {currentQ.contextText}
                   </p>
                 )}

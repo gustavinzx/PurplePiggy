@@ -24,9 +24,22 @@ export const ConceptMatchingView: React.FC<ConceptMatchingViewProps> = ({
   isCorrect = false,
   onAnswerChange,
 }) => {
-  // Shuffled right-side items
+  // Shuffled right-side items (garante que nunca fique na mesma ordem da coluna esquerda)
   const [shuffledRights] = useState<string[]>(() => {
-    return [...question.pairs.map((p) => p.right)].sort(() => Math.random() - 0.5)
+    const originals = question.pairs.map((p) => p.right)
+    if (originals.length <= 1) return originals
+    const copy = [...originals]
+    for (let i = copy.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1))
+      const temp = copy[i]
+      copy[i] = copy[j]
+      copy[j] = temp
+    }
+    // Se por acaso sorteou igual à ordem original, rotaciona 1 posição
+    if (copy.every((val, idx) => val === originals[idx])) {
+      return [...copy.slice(1), copy[0]]
+    }
+    return copy
   })
 
   const [selectedLeft, setSelectedLeft] = useState<string | null>(null)

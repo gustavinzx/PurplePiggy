@@ -9,15 +9,6 @@ import { CategoryCircle } from '../components/CategoryIcon'
 import { formatCurrency } from '../lib/format'
 import {
   ArrowLeft,
-  ShoppingCart,
-  Home,
-  Bus,
-  HeartPulse,
-  Users,
-  Sparkles,
-  ShoppingBag,
-  GraduationCap,
-  CircleEllipsis,
   Calendar,
   CreditCard,
   Tag,
@@ -28,6 +19,18 @@ import type { Database } from '../types/database.types'
 
 type Transaction = Database['public']['Tables']['transactions']['Row']
 type Category = Database['public']['Tables']['categories']['Row']
+
+function parseCurrencyInput(raw: string): number {
+  const cleaned = raw.trim().replace(/[^\d.,-]/g, '')
+  if (!cleaned) return NaN
+  if (cleaned.includes(',') && cleaned.includes('.')) {
+    return parseFloat(cleaned.replace(/\./g, '').replace(',', '.'))
+  }
+  if (cleaned.includes(',')) {
+    return parseFloat(cleaned.replace(',', '.'))
+  }
+  return parseFloat(cleaned)
+}
 
 export const TransactionDetailPage: React.FC = () => {
   const { id } = useParams<{ id: string }>()
@@ -41,6 +44,7 @@ export const TransactionDetailPage: React.FC = () => {
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false)
 
   // Form states
+  const [type, setType] = useState<'expense' | 'income'>('expense')
   const [description, setDescription] = useState('')
   const [amount, setAmount] = useState('')
   const [categoryId, setCategoryId] = useState('')
@@ -74,6 +78,7 @@ export const TransactionDetailPage: React.FC = () => {
       }
 
       setTransaction(tx)
+      setType(tx.type === 'income' ? 'income' : 'expense')
       setDescription(tx.description)
       setAmount(tx.amount.toString())
       setCategoryId(tx.category_id)
@@ -87,12 +92,20 @@ export const TransactionDetailPage: React.FC = () => {
     }
   }
 
+  const goBack = () => {
+    if (window.history.length > 2) {
+      navigate(-1)
+    } else {
+      navigate('/gastos')
+    }
+  }
+
   const handleSave = async (e: React.FormEvent) => {
     e.preventDefault()
     if (!transaction || !user) return
 
-    const numAmount = parseFloat(amount.replace(',', '.'))
-    if (!numAmount || numAmount <= 0) {
+    const numAmount = parseCurrencyInput(amount)
+    if (!numAmount || numAmount <= 0 || isNaN(numAmount)) {
       toast.error('Informe um valor válido maior que zero.')
       return
     }
@@ -102,6 +115,7 @@ export const TransactionDetailPage: React.FC = () => {
       const { error } = await supabase
         .from('transactions')
         .update({
+          type,
           description: description.trim(),
           amount: numAmount,
           category_id: categoryId,
@@ -114,8 +128,8 @@ export const TransactionDetailPage: React.FC = () => {
 
       if (error) throw error
 
-      toast.success('Lançamento atualizado')
-      navigate('/gastos')
+      toast.success('Lançamento atualizado com sucesso!')
+      goBack()
     } catch (err) {
       console.error(err)
       toast.error('Não conseguimos salvar agora. Tente de novo.')
@@ -136,7 +150,7 @@ export const TransactionDetailPage: React.FC = () => {
       if (error) throw error
 
       toast.success('Lançamento excluído com sucesso.')
-      navigate('/gastos')
+      goBack()
     } catch (err) {
       console.error(err)
       toast.error('Erro ao excluir lançamento.')
@@ -144,29 +158,6 @@ export const TransactionDetailPage: React.FC = () => {
   }
 
   const currentCat = categories.find((c) => c.id === categoryId)
-
-  const getCategoryIcon = (iconName?: string) => {
-    switch (iconName) {
-      case 'Home':
-        return <Home className="w-8 h-8" />
-      case 'ShoppingCart':
-        return <ShoppingCart className="w-8 h-8" />
-      case 'Bus':
-        return <Bus className="w-8 h-8" />
-      case 'HeartPulse':
-        return <HeartPulse className="w-8 h-8" />
-      case 'Users':
-        return <Users className="w-8 h-8" />
-      case 'GraduationCap':
-        return <GraduationCap className="w-8 h-8" />
-      case 'Sparkles':
-        return <Sparkles className="w-8 h-8" />
-      case 'ShoppingBag':
-        return <ShoppingBag className="w-8 h-8" />
-      default:
-        return <CircleEllipsis className="w-8 h-8" />
-    }
-  }
 
   if (loading || !transaction) {
     return (
@@ -176,17 +167,18 @@ export const TransactionDetailPage: React.FC = () => {
     )
   }
 
-  const isIncome = transaction.type === 'income'
+  const isIncome = type === 'income'
+  const parsedPreviewAmount = parseCurrencyInput(amount)
 
   return (
-    <AppShell showNav={false} className="px-5 py-6 flex flex-col justify-between bg-white relative">
+    <AppShell showNav={false} className="px-5 py-6 flex flex-col justify-between bg-white relative pb-12">
       <div>
         {/* Header com botão voltar e mascote espiando */}
         <div className="flex items-center justify-between mb-4">
           <div className="flex items-center gap-3">
             <button
-              onClick={() => navigate('/gastos')}
-              className="p-2 -ml-2 rounded-full hover:bg-lilac/10 text-deep transition-colors"
+              onClick={goBack}
+              className="p-2 -ml-2 rounded-full hover:bg-lilac/10 text-deep transition-colors cursor-pointer"
               aria-label="Voltar"
             >
               <ArrowLeft className="w-6 h-6" />
@@ -200,10 +192,10 @@ export const TransactionDetailPage: React.FC = () => {
           </div>
         </div>
 
-        {/* Card Destaque (reproduzindo exatamente o layout) */}
+        {/* Card Destaque */}
         <div className="bg-bg rounded-[26px] p-6 flex flex-col items-center text-center mb-6 border border-lilac/15">
           <CategoryCircle
-            name={currentCat?.slug || currentCat?.icon || currentCat?.name || "outros"}
+            name={currentCat?.slug || currentCat?.icon || currentCat?.name || 'outros'}
             size="lg"
             className="mb-3"
           />
@@ -218,20 +210,56 @@ export const TransactionDetailPage: React.FC = () => {
             }`}
           >
             {isIncome ? '+ ' : '- '}
-            {formatCurrency(Number(amount) || transaction.amount)}
+            {formatCurrency(!isNaN(parsedPreviewAmount) && parsedPreviewAmount > 0 ? parsedPreviewAmount : transaction.amount)}
           </div>
 
-          <span
-            className={`text-xs font-bold px-3 py-1 rounded-full ${
-              isIncome ? 'bg-success/15 text-success' : 'bg-pink/20 text-danger'
-            }`}
-          >
-            {isIncome ? 'Receita' : 'Despesa'}
-          </span>
+          <div className="flex items-center gap-2">
+            <span
+              className={`text-xs font-bold px-3 py-1 rounded-full ${
+                isIncome ? 'bg-success/15 text-success' : 'bg-pink/20 text-danger'
+              }`}
+            >
+              {isIncome ? 'Receita' : 'Despesa'}
+            </span>
+            {transaction.source === 'open_finance' && (
+              <span className="text-[11px] font-extrabold text-[#7D2BD6] bg-[#F3E8FF] px-2.5 py-1 rounded-full">
+                Open Finance
+              </span>
+            )}
+          </div>
         </div>
 
         {/* Formulário de Edição */}
         <form onSubmit={handleSave} className="flex flex-col gap-3.5">
+          {/* Seletor Despesa / Receita */}
+          <div>
+            <label className="block text-xs font-bold text-textSec mb-1">Tipo de lançamento</label>
+            <div className="grid grid-cols-2 gap-2 p-1 bg-bg rounded-2xl border border-lilac/25">
+              <button
+                type="button"
+                onClick={() => setType('expense')}
+                className={`py-2 rounded-xl text-xs font-extrabold transition-all cursor-pointer ${
+                  type === 'expense'
+                    ? 'bg-danger text-white shadow-xs'
+                    : 'text-textSec hover:text-deep'
+                }`}
+              >
+                - Despesa (Gasto)
+              </button>
+              <button
+                type="button"
+                onClick={() => setType('income')}
+                className={`py-2 rounded-xl text-xs font-extrabold transition-all cursor-pointer ${
+                  type === 'income'
+                    ? 'bg-success text-white shadow-xs'
+                    : 'text-textSec hover:text-deep'
+                }`}
+              >
+                + Receita (Entrada)
+              </button>
+            </div>
+          </div>
+
           {/* Descrição */}
           <div>
             <label className="block text-xs font-bold text-textSec mb-1">Descrição</label>
@@ -267,8 +295,8 @@ export const TransactionDetailPage: React.FC = () => {
           <div>
             <label className="block text-xs font-bold text-textSec mb-1">Valor (R$)</label>
             <input
-              type="number"
-              step="0.01"
+              type="text"
+              inputMode="decimal"
               value={amount}
               onChange={(e) => setAmount(e.target.value)}
               className="w-full h-11 px-4 bg-bg border border-lilac/30 rounded-2xl text-deep font-bold text-sm focus:outline-none focus:border-primary"

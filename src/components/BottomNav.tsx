@@ -103,7 +103,7 @@ export const BottomNav: React.FC<BottomNavProps> = ({ className = '', isFixed = 
 
   return (
     <nav
-      className={`${positionClass} bg-white/95 backdrop-blur-lg border-t border-lilac/15 shadow-nav rounded-t-nav ${className}`}
+      className={`${positionClass} bg-[#DEEEFC]/95 backdrop-blur-lg border-t border-[#C4E1FA] shadow-nav rounded-t-nav ${className}`}
     >
       <div className="flex items-center justify-around h-16 px-2">
         {navItems.map((item) => {
@@ -115,17 +115,21 @@ export const BottomNav: React.FC<BottomNavProps> = ({ className = '', isFixed = 
               className={({ isActive }) =>
                 `flex flex-col items-center justify-center flex-1 h-full py-1 transition-all duration-150 select-none ${
                   isActive
-                    ? 'text-primary-dark font-extrabold'
-                    : 'text-textSec hover:text-deep font-semibold opacity-75 hover:opacity-100'
+                    ? 'text-[#7D2BD6] font-extrabold'
+                    : 'text-[#5A487A] hover:text-[#432171] font-semibold opacity-85 hover:opacity-100'
                 }`
               }
             >
               {({ isActive }) => (
                 <>
-                  <div className="flex items-center justify-center w-6 h-6">
+                  <div
+                    className={`flex items-center justify-center w-9 h-7 rounded-full transition-colors ${
+                      isActive ? 'bg-white/85 shadow-2xs text-[#7D2BD6]' : ''
+                    }`}
+                  >
                     <ItemIcon active={isActive} />
                   </div>
-                  <span className={`text-[10px] leading-tight mt-1 font-sans ${isActive ? 'font-extrabold' : 'font-semibold'}`}>
+                  <span className={`text-[10px] leading-tight mt-0.5 font-sans ${isActive ? 'font-extrabold' : 'font-semibold'}`}>
                     {item.label}
                   </span>
                 </>

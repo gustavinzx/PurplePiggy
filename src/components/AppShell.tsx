@@ -16,9 +16,8 @@ export interface AppShellProps {
 
 /**
  * AppShell unificado:
- * Garante largura constante (100% até var(--app-max-width)), alinhamento centralizado
- * e espaçamento horizontal padronizado (var(--screen-x)) em TODOS os estados (carregamento,
- * esqueleto, vazio, erro e dados).
+ * Garante largura constante (100% até var(--app-max-width)), alinhamento centralizado,
+ * rolagem vertical fluida nas telas e espaçamento horizontal padronizado (var(--screen-x)).
  */
 export const AppShell: React.FC<AppShellProps> = ({
   children,
@@ -31,6 +30,9 @@ export const AppShell: React.FC<AppShellProps> = ({
   contentClassName = '',
   contentStyle = {},
 }) => {
+  const hasCustomOverflow =
+    contentClassName.includes('overflow-hidden') || className.includes('overflow-hidden')
+
   return (
     <div className="relative min-h-[100vh] min-h-[100dvh] h-[100dvh] w-full flex justify-center selection:bg-lilac selection:text-white overflow-hidden bg-bg">
       {/* Atmosphere de fundo cobrindo todo o viewport desktop */}
@@ -54,13 +56,9 @@ export const AppShell: React.FC<AppShellProps> = ({
         {/* Manchas orgânicas da identidade visual interna (blobs suaves nos cantos) */}
         {variant !== 'splash' && (
           <div className="absolute inset-0 pointer-events-none overflow-hidden -z-0 select-none" aria-hidden="true">
-            {/* Mancha superior lilás */}
             <div className="absolute -top-16 -left-16 w-64 h-64 rounded-full bg-[#EEDEFB]/70 blur-3xl" />
-            {/* Mancha superior azul bebê */}
             <div className="absolute -top-12 -right-12 w-60 h-60 rounded-full bg-[#DEEEFC]/70 blur-3xl" />
-            {/* Mancha suave intermediária */}
             <div className="absolute top-1/2 -right-24 w-72 h-72 rounded-full bg-[#F5E6FC]/50 blur-3xl" />
-            {/* Mancha inferior lilás */}
             <div className="absolute -bottom-16 -left-12 w-64 h-64 rounded-full bg-[#E9D8FF]/60 blur-3xl" />
           </div>
         )}
@@ -72,15 +70,17 @@ export const AppShell: React.FC<AppShellProps> = ({
           </header>
         )}
 
-        {/* Conteúdo da Tela: largura 100%, nunca depende do conteúdo */}
+        {/* Conteúdo da Tela com rolagem vertical nativa suave */}
         <main
-          className={`flex-1 flex flex-col w-full min-w-0 relative z-10 ${className} ${contentClassName}`}
+          className={`flex-1 flex flex-col w-full min-w-0 relative ${
+            hasCustomOverflow ? '' : 'overflow-y-auto overflow-x-hidden'
+          } ${className} ${contentClassName}`}
           style={{
             width: '100%',
             minWidth: 0,
             paddingInline: 'var(--screen-x)',
             paddingBottom: showNav
-              ? 'calc(var(--nav-height) + env(safe-area-inset-bottom, 0px) + 16px)'
+              ? 'calc(var(--nav-height) + env(safe-area-inset-bottom, 0px) + 24px)'
               : undefined,
             ...contentStyle,
           }}

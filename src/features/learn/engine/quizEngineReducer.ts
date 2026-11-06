@@ -60,9 +60,22 @@ export function quizEngineReducer(state: QuizState, action: QuizAction): QuizSta
         }
       } else {
         const nextHearts = Math.max(0, state.hearts - 1)
+        
+        // Passo 1: Lógica de "Fim da Fila" (Spaced Repetition / Queue Retry)
+        // Se a usuária errar, clonamos a questão e colocamos no final do array.
+        // A lição só termina quando todas forem acertadas e a fila esvaziar.
+        const retryQuestion = {
+          ...currentQ,
+          id: `${currentQ.id}-retry-${state.mistakesCount + 1}`,
+        }
+        const updatedQuestions = [...state.questions, retryQuestion]
+
+        const isDead = nextHearts === 0
+
         return {
           ...state,
-          status: nextHearts === 0 ? 'game_over' : 'incorrect',
+          questions: updatedQuestions,
+          status: isDead ? 'game_over' : 'incorrect',
           validation,
           hearts: nextHearts,
           mistakesCount: state.mistakesCount + 1,

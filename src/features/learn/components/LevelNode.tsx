@@ -1,5 +1,5 @@
 // src/features/learn/components/LevelNode.tsx
-// Nó como Ilha Flutuante V2 (island-done, island-current, island-rock) com sobreposições em código
+// Nó circular 3D tátil do Mapa Sinuoso (Desafio Piggy - Dimensões e Posição Absoluta)
 import React from 'react'
 
 export type LevelNodeStatus =
@@ -15,12 +15,7 @@ interface LevelNodeProps {
   levelNumber: number
   title: string
   status: LevelNodeStatus
-  size_w?: number
-  size_h?: number
-  size?: number // retrocompatibilidade
-  stars?: number // 1 a 3 estrelas para nível concluído
-  isFirstLocked?: boolean
-  isUnlocking?: boolean
+  size: number
   onClick: () => void
   style?: React.CSSProperties
   className?: string
@@ -30,12 +25,7 @@ export const LevelNode: React.FC<LevelNodeProps> = ({
   levelNumber,
   title,
   status,
-  size_w = 112,
-  size_h = 88,
   size,
-  stars = 3,
-  isFirstLocked = false,
-  isUnlocking = false,
   onClick,
   style = {},
   className = '',
@@ -46,25 +36,6 @@ export const LevelNode: React.FC<LevelNodeProps> = ({
   const isChest = status === 'chest' || status === 'chest_claimed'
   const isTrophy = status === 'trophy' || status === 'trophy_completed'
 
-  const effectiveW = isCurrent ? 140 : size_w || size || 112
-  const effectiveH = isCurrent ? 108 : size_h || size || 88
-
-  // Classes de flutuação em fases distintas (respeitando prefers-reduced-motion)
-  const floatClass = isCurrent
-    ? 'animate-island-1'
-    : levelNumber % 3 === 0
-    ? 'animate-island-0'
-    : levelNumber % 3 === 1
-    ? 'animate-island-1'
-    : 'animate-island-2'
-
-  // Asset de ilha correspondente
-  const getIslandSrc = () => {
-    if (isLocked) return '/assets/learn/island-rock.webp'
-    if (isCurrent) return '/assets/learn/island-current.webp'
-    return '/assets/learn/island-done.webp'
-  }
-
   let ariaLabel = `Nível ${levelNumber}: ${title}`
   if (isCurrent) ariaLabel += ' (Nível Atual - Começar)'
   else if (isCompleted) ariaLabel += ' (Concluído)'
@@ -72,159 +43,145 @@ export const LevelNode: React.FC<LevelNodeProps> = ({
   else if (isChest) ariaLabel += ' (Baú de Tesouro)'
   else if (isTrophy) ariaLabel += ' (Troféu da Trilha)'
 
+  // Renderização do conteúdo interno (sempre contido DENTRO do círculo do nó)
+  const renderContent = () => {
+    if (isCompleted) {
+      return (
+        <img
+          src="/assets/icons/icon-check-nivel.png"
+          alt="Concluído"
+          className="w-6 h-6 object-contain drop-shadow"
+          loading="lazy"
+          width={24}
+          height={24}
+        />
+      )
+    }
+
+    if (isCurrent) {
+      return (
+        <span className="font-nunito font-black text-xl text-white drop-shadow-sm">
+          {levelNumber}
+        </span>
+      )
+    }
+
+    if (isChest) {
+      const isClaimed = status === 'chest_claimed'
+      return (
+        <img
+          src={isClaimed ? '/assets/icons/icon-bau-aberto.png' : '/assets/icons/icon-bau.png'}
+          alt="Baú"
+          className={`w-7 h-7 object-contain drop-shadow ${
+            isClaimed ? 'opacity-80' : 'animate-bounce-subtle'
+          }`}
+          loading="lazy"
+          width={28}
+          height={28}
+        />
+      )
+    }
+
+    if (isTrophy) {
+      return (
+        <img
+          src="/assets/icons/icon-trofeu.png"
+          alt="Troféu"
+          className="w-7 h-7 object-contain drop-shadow"
+          loading="lazy"
+          width={28}
+          height={28}
+        />
+      )
+    }
+
+    // Bloqueado: o cadeado fica DENTRO do nó, não flutuando
+    return (
+      <img
+        src="/assets/icons/icon-cadeado.png"
+        alt="Bloqueado"
+        className="w-5 h-5 object-contain opacity-70"
+        loading="lazy"
+        width={20}
+        height={20}
+      />
+    )
+  }
+
+  // Estilos da base circular tátil com bisel 3D
+  const getNodeStyles = () => {
+    if (isCurrent) {
+      return 'bg-gradient-to-b from-[#8E2DE2] to-[#7D2BD6] border-[#7D2BD6] border-b-[5px] border-b-[#5B21B6] shadow-md shadow-purple-500/30'
+    }
+    if (isCompleted) {
+      return 'bg-[#7D2BD6] border-[#6D28D9] border-b-[5px] border-b-[#5B21B6] shadow-sm shadow-purple-900/10'
+    }
+    if (isChest) {
+      if (status === 'chest_claimed') {
+        return 'bg-[#F3E8FF] border-[#E9D5FF] border-b-[4px] border-b-[#D8B4FE]'
+      }
+      return 'bg-gradient-to-b from-[#FCD34D] to-[#F59E0B] border-[#F59E0B] border-b-[5px] border-b-[#D97706] shadow-md shadow-amber-500/25'
+    }
+    if (isTrophy) {
+      if (status === 'trophy_completed') {
+        return 'bg-gradient-to-b from-[#F59E0B] to-[#D97706] border-[#D97706] border-b-[5px] border-b-[#B45309] shadow-md shadow-amber-600/30'
+      }
+      return 'bg-[#F3E8FF] border-[#E9D5FF] border-b-[4px] border-b-[#D8B4FE]'
+    }
+    // Locked
+    return 'bg-[#F3E8FF] border-[#E9D5FF] border-b-[4px] border-b-[#DDD6FE] cursor-not-allowed opacity-85'
+  }
+
   return (
     <div
-      onClick={onClick}
-      role="button"
-      tabIndex={0}
-      aria-label={ariaLabel}
       style={{
-        width: `${effectiveW}px`,
+        width: `${size}px`,
+        height: `${size}px`,
         ...style,
       }}
-      className={`absolute z-10 flex flex-col items-center select-none cursor-pointer group transition-transform active:scale-95 ${
-        isLocked ? 'cursor-not-allowed opacity-90' : ''
-      } ${className}`}
+      className="absolute flex items-center justify-center select-none z-10"
     >
-      {/* Ilha flutuante e sobreposições */}
+      {/* Pedestal / Ilha flutuante 3D embaixo do nó */}
       <div
-        className={`relative flex items-center justify-center ${floatClass} ${
-          isUnlocking ? 'animate-unlock-glow' : ''
-        }`}
+        className="absolute -bottom-2 w-[124%] h-5 rounded-full bg-gradient-to-b from-[#EEDEFB] via-[#DFC6FF] to-[#C49BFA]/70 shadow-sm -z-10 pointer-events-none"
+        aria-hidden="true"
+      />
+
+      <button
+        type="button"
+        aria-label={ariaLabel}
+        onClick={onClick}
         style={{
-          width: `${effectiveW}px`,
-          height: `${effectiveH}px`,
+          width: `${size}px`,
+          height: `${size}px`,
         }}
+        className={`w-full h-full rounded-full flex items-center justify-center transition-all duration-150 select-none ${getNodeStyles()} ${
+          !isLocked
+            ? 'active:translate-y-[2px] active:border-b-[2px] cursor-pointer'
+            : 'active:scale-95'
+        } ${className}`}
       >
-        {/* Imagem da ilha */}
-        <img
-          src={getIslandSrc()}
-          alt=""
-          className="w-full h-full object-contain pointer-events-none drop-shadow-md"
-          loading="lazy"
-        />
+        {renderContent()}
+      </button>
 
-        {/* 1. Nível Concluído: Selo verde de check no topo da ilha */}
-        {isCompleted && (
-          <div className="absolute top-1 left-1/2 -translate-x-1/2 flex items-center justify-center">
-            <div className="w-8 h-8 rounded-full bg-[#15803D] border-2 border-white flex items-center justify-center shadow-md">
-              <svg
-                className="w-5 h-5 text-white"
-                fill="none"
-                viewBox="0 0 24 24"
-                stroke="currentColor"
-                strokeWidth={3}
-              >
-                <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
-              </svg>
-            </div>
-          </div>
-        )}
-
-        {/* 2. Nível Atual: Círculo roxo com número e rótulo "Atual" */}
-        {isCurrent && (
-          <>
-            <div className="absolute top-2 left-1/2 -translate-x-1/2 flex flex-col items-center justify-center">
-              <div className="w-12 h-12 rounded-full bg-gradient-to-b from-[#7D2BD6] via-[#6D28C9] to-[#5B21B6] border-2 border-white text-white flex flex-col items-center justify-center shadow-lg animate-pulseGlow">
-                <span className="font-nunito font-black text-[18px] leading-none">
-                  {levelNumber}
-                </span>
-                <span className="text-[7.5px] font-extrabold uppercase tracking-wider text-purple-200 leading-none mt-0.5">
-                  Atual
-                </span>
-              </div>
-            </div>
-
-            {/* Moeda decorativa (coin-1) ao lado do nó atual */}
-            <img
-              src="/assets/coins/coin-1.png"
-              alt=""
-              className="w-7 h-7 object-contain absolute -right-2 top-2 drop-shadow-sm pointer-events-none animate-bounce-subtle"
-              width={28}
-              height={28}
-            />
-          </>
-        )}
-
-        {/* 3. Bloqueado: Cadeado sobre a pedra */}
-        {isLocked && !isChest && !isTrophy && (
-          <div className="absolute top-4 left-1/2 -translate-x-1/2 flex items-center justify-center">
-            <img
-              src="/assets/icons/icon-cadeado.png"
-              alt="Bloqueado"
-              className="w-7 h-7 object-contain opacity-80 drop-shadow-xs"
-              width={28}
-              height={28}
-            />
-          </div>
-        )}
-
-        {/* 4. Baú de Tesouro */}
-        {isChest && (
-          <div className="absolute top-2 left-1/2 -translate-x-1/2 flex items-center justify-center">
-            <img
-              src={
-                status === 'chest_claimed'
-                  ? '/assets/icons/icon-bau-aberto.png'
-                  : '/assets/icons/icon-bau.png'
-              }
-              alt="Baú de moedas"
-              className={`w-9 h-9 object-contain drop-shadow ${
-                status === 'chest_claimed' ? 'opacity-80' : 'animate-bounce-subtle'
-              }`}
-              width={36}
-              height={36}
-            />
-          </div>
-        )}
-
-        {/* 5. Troféu Final */}
-        {isTrophy && (
-          <div className="absolute top-1 left-1/2 -translate-x-1/2 flex items-center justify-center">
-            <img
-              src="/assets/icons/icon-trofeu.png"
-              alt="Troféu da Trilha"
-              className="w-9 h-9 object-contain drop-shadow animate-bounce-subtle"
-              width={36}
-              height={36}
-            />
-          </div>
-        )}
-      </div>
-
-      {/* Rótulo abaixo da ilha */}
-      <div className="w-full flex flex-col items-center text-center mt-0.5">
-        {/* Nível Concluído: 1 a 3 estrelas douradas de maestria + título do nível */}
-        {isCompleted && (
-          <div className="flex flex-col items-center">
-            <div className="flex items-center gap-0.5 -mt-1 mb-0.5">
-              {Array.from({ length: 3 }).map((_, i) => (
-                <img
-                  key={i}
-                  src="/assets/icons/icon-goal-star.webp"
-                  alt=""
-                  className={`w-3.5 h-3.5 object-contain ${
-                    i < stars ? 'opacity-100 drop-shadow-xs' : 'opacity-25 grayscale'
-                  }`}
-                  width={14}
-                  height={14}
-                />
-              ))}
-            </div>
-            <span className="text-[11px] font-extrabold text-[#432171] leading-tight line-clamp-2 max-w-[120px]">
-              {title}
-            </span>
-          </div>
-        )}
-
-        {/* Primeiro bloqueado: rótulo "Próxima etapa bloqueada" */}
-        {isLocked && isFirstLocked && (
-          <span className="inline-block text-[10px] font-extrabold text-[#7D6A9C] bg-white/80 px-2 py-0.5 rounded-full border border-lilac/25 leading-tight shadow-2xs mt-0.5">
-            Próxima etapa bloqueada
-          </span>
-        )}
-      </div>
+      {/* Badge ou etiqueta de status */}
+      {isCurrent && (
+        <span className="absolute -bottom-5.5 bg-[#432171] text-white text-[9px] font-black uppercase tracking-wider px-2 py-0.5 rounded-full shadow-xs border border-purple-300 whitespace-nowrap pointer-events-none z-20">
+          Atual
+        </span>
+      )}
+      {isCompleted && (
+        <span className="absolute -bottom-5.5 bg-white text-[#15803D] text-[9px] font-black tracking-wider px-2 py-0.5 rounded-full shadow-xs border border-green-200 whitespace-nowrap pointer-events-none z-20 flex items-center gap-0.5">
+          ✓ Concluído
+        </span>
+      )}
+      {isLocked && !isChest && !isTrophy && (
+        <span className="absolute -bottom-5 bg-white/95 text-[#7D6A9C] text-[8px] font-bold px-1.5 py-0.5 rounded-full border border-purple-100 whitespace-nowrap pointer-events-none opacity-80">
+          Bloqueado
+        </span>
+      )}
     </div>
   )
 }
+
 export default LevelNode

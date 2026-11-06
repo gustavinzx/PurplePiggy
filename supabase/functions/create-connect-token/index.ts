@@ -1,5 +1,5 @@
 // supabase/functions/create-connect-token/index.ts
-// Supabase Edge Function para geração segura de connectToken da Pluggy
+// Supabase Edge Function para geração segura de connectToken da Pluggy (incluindo suporte a Sandbox e Produção)
 import { serve } from 'https://deno.land/std@0.168.0/http/server.ts'
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2.39.0'
 
@@ -19,7 +19,6 @@ interface RequestBody {
 }
 
 serve(async (req) => {
-  // Tratamento de CORS Preflight
   if (req.method === 'OPTIONS') {
     return new Response('ok', { headers: corsHeaders })
   }
@@ -30,8 +29,7 @@ serve(async (req) => {
 
     const supabase = createClient(supabaseUrl, supabaseAnonKey)
 
-    // 1. Identificação do usuário logado via JWT no header Authorization
-    let clientUserId = 'demo-user'
+    let clientUserId = 'purplepiggy-user'
     const authHeader = req.headers.get('Authorization')
     if (authHeader) {
       const jwtToken = authHeader.replace(/^Bearer\s+/i, '').trim()
@@ -43,7 +41,6 @@ serve(async (req) => {
       }
     }
 
-    // 2. Leitura das credenciais secretas da Pluggy
     const pluggyClientId =
       Deno.env.get('PLUGGY_CLIENT_ID') || '379a488b-3ed2-4e90-b703-abf8462a29a2'
     const pluggyClientSecret =
@@ -60,7 +57,6 @@ serve(async (req) => {
       )
     }
 
-    // 3. Autenticação na Pluggy (Obter apiKey temporária válida por 2 horas)
     const authResponse = await fetch(`${pluggyApiUrl}/auth`, {
       method: 'POST',
       headers: {
@@ -87,7 +83,6 @@ serve(async (req) => {
 
     const { apiKey } = await authResponse.json()
 
-    // 4. Criação do Connect Token
     let reqBody: RequestBody = {}
     try {
       reqBody = await req.json()
@@ -130,7 +125,7 @@ serve(async (req) => {
     return new Response(
       JSON.stringify({
         accessToken: tokenData.accessToken,
-        connectToken: tokenData.accessToken, // alias conveniente
+        connectToken: tokenData.accessToken,
       }),
       {
         status: 200,

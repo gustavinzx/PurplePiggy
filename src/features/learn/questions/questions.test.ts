@@ -71,6 +71,23 @@ describe('Banco de Questões do Desafio Piggy (Prompt N7)', () => {
     }
   })
 
+  it('não deve ter todas as respostas corretas na primeira posição (correctIndex variado e embaralhamento ativo)', () => {
+    const choiceQuestions = all.filter(
+      (q) => q.typology === 'multiple_choice' || q.typology === 'scenario_choice'
+    ) as Array<MultipleChoiceQuestion | ScenarioChoiceQuestion>
+
+    const nonZeroCount = choiceQuestions.filter((q) => q.correctIndex !== 0).length
+    expect(nonZeroCount).toBe(choiceQuestions.length)
+
+    // Verifica que getQuestionsByLesson mantém a validação exata após embaralhar
+    const lessonQuestions = getQuestionsByLesson('para-onde-vai-meu-dinheiro')
+    for (const q of lessonQuestions) {
+      if (q.typology === 'multiple_choice' || q.typology === 'scenario_choice') {
+        expect(validateAnswer(q, q.correctIndex).isCorrect).toBe(true)
+      }
+    }
+  })
+
   it('deve validar corretamente questões de Múltipla Escolha Rápida (multiple_choice)', () => {
     const mc = all.find((q) => q.typology === 'multiple_choice') as MultipleChoiceQuestion
     expect(mc).toBeDefined()

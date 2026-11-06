@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 48 48" width="48" height="48">
+  <rect width="48" height="48" rx="12" fill="#CC092F"/>
+  <!-- Bradesco two curved branches and trunk -->
+  <path d="M22.5 16c-3 0-5.5 2.5-5.5 5.5v12h3.5v-12c0-1.1.9-2 2-2h1.5v-3.5h-1.5z" fill="#FFFFFF"/>
+  <path d="M25.5 16c3 0 5.5 2.5 5.5 5.5v12h-3.5v-12c0-1.1-.9-2-2-2H24v-3.5h1.5z" fill="#FFFFFF"/>
+  <rect x="22.5" y="24" width="3" height="9.5" fill="#FFFFFF"/>
+  <circle cx="24" cy="13" r="2" fill="#FFFFFF"/>
+</svg>

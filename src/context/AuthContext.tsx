@@ -93,7 +93,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const signIn = async (email: string, password: string) => {
     try {
       const { error } = await supabase.auth.signInWithPassword({
-        email,
+        email: email.trim().toLowerCase(),
         password,
       })
       if (error) return { error }
@@ -105,26 +105,50 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
   const signUp = async (email: string, password: string, fullName: string) => {
     try {
+      const normalizedEmail = email.trim().toLowerCase()
+
+      // 1. Verificar previamente se já existe uma conta com este e-mail
+      try {
+        const { data: exists } = await (supabase.rpc as any)('check_email_exists', {
+          p_email: normalizedEmail,
+        })
+        if (exists === true) {
+          return {
+            error: new Error('Este e-mail já está cadastrado no PurplePiggy.'),
+          }
+        }
+      } catch (rpcErr) {
+        console.warn('Falha ao checar e-mail via RPC (continuando com signUp):', rpcErr)
+      }
+
       const { data, error } = await supabase.auth.signUp({
-        email,
+        email: normalizedEmail,
         password,
         options: {
           data: {
-            full_name: fullName,
+            full_name: fullName.trim(),
             is_demo: false,
           },
         },
       })
       if (error) return { error }
 
-      // Garantir que o perfil existe mesmo se o trigger demorar
+      // Quando o Supabase retorna identities vazio, o e-mail já estava cadastrado
+      if (data.user && Array.isArray(data.user.identities) && data.user.identities.length === 0) {
+        return {
+          error: new Error('Este e-mail já está cadastrado no PurplePiggy.'),
+        }
+      }
+
+      // Garantir que o perfil existe mesmo se o trigger demorar, iniciando com saldo 0.00
       if (data.user) {
         try {
           await supabase.from('profiles').upsert({
             id: data.user.id,
-            full_name: fullName,
-            email: email,
+            full_name: fullName.trim(),
+            email: normalizedEmail,
             is_demo: false,
+            initial_balance: 0,
           })
         } catch (profileErr) {
           console.warn('Perfil será sincronizado pelo trigger do banco:', profileErr)

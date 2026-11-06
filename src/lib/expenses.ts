@@ -7,6 +7,8 @@ export interface ExpenseItem {
   category_id: string
   occurred_on: string
   description: string
+  created_at?: string
+  connection_id?: string | null
 }
 
 export interface CategoryInfo {
@@ -48,13 +50,30 @@ const MONTH_SHORT_NAMES = [
   'Jul', 'Ago', 'Set', 'Out', 'Nov', 'Dez'
 ]
 
-const CATEGORY_COLORS = [
-  '#7D2BD6', // Roxo principal
-  '#F5B83D', // Ouro / Dourado
-  '#CF91F6', // Lilás
-  '#2FBF71', // Verde
-  '#F472B6', // Rosa / Outras
+export const CATEGORY_COLORS = [
+  '#7D2BD6', // 1. Roxo (Moradia)
+  '#FF79A8', // 2. Rosa (Alimentação)
+  '#F5B83D', // 3. Amarelo / Ouro (Transporte)
+  '#60A5FA', // 4. Azul (Outros)
+  '#CF91F6', // 5. Lilás
 ]
+
+export function getCategoryChartColor(categoryNameOrSlug: string, index: number): string {
+  const key = (categoryNameOrSlug || '').toLowerCase()
+  if (key.includes('moradia') || key.includes('casa') || key.includes('aluguel') || key.includes('conta')) {
+    return '#7D2BD6'
+  }
+  if (key.includes('alimenta') || key.includes('mercado') || key.includes('comida') || key.includes('restaurante')) {
+    return '#FF79A8'
+  }
+  if (key.includes('transporte') || key.includes('uber') || key.includes('combust')) {
+    return '#F5B83D'
+  }
+  if (key.includes('outro') || key.includes('lazer') || key.includes('saúde') || key.includes('saude')) {
+    return '#60A5FA'
+  }
+  return CATEGORY_COLORS[index % CATEGORY_COLORS.length]
+}
 
 /**
  * 1. getMonthlySeries:
@@ -235,19 +254,20 @@ export function getTopCategories(
   // Ordenar decrescente
   const sorted = Object.entries(catSums).sort((a, b) => b[1] - a[1])
 
-  // Separar até 4 categorias + Outras
-  const top4 = sorted.slice(0, 4)
+  // Separar até 4 categorias principais + Outras (seguindo as cores do print 3: Moradia, Alimentação, Transporte, Outros)
+  const topCategories = sorted.slice(0, 4)
   const rest = sorted.slice(4)
 
-  const slices: CategorySlice[] = top4.map(([catId, amt], idx) => {
+  const slices: CategorySlice[] = topCategories.map(([catId, amt], idx) => {
     const cat = categories[catId]
+    const catName = cat?.name || 'Geral'
     const pct = Math.round((amt / totalAmount) * 100)
     return {
       id: catId,
-      name: cat?.name || 'Geral',
+      name: catName,
       amount: Number(amt.toFixed(2)),
       percentage: pct,
-      color: CATEGORY_COLORS[idx % CATEGORY_COLORS.length],
+      color: getCategoryChartColor(cat?.slug || catName, idx),
     }
   })
 
@@ -255,11 +275,11 @@ export function getTopCategories(
     const restTotal = rest.reduce((sum, [, amt]) => sum + amt, 0)
     const restPct = Math.max(1, 100 - slices.reduce((sum, s) => sum + s.percentage, 0))
     slices.push({
-      id: 'outras',
+      id: 'outros',
       name: 'Outras',
       amount: Number(restTotal.toFixed(2)),
       percentage: restPct,
-      color: CATEGORY_COLORS[4],
+      color: '#60A5FA',
     })
   }
 

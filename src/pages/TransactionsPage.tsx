@@ -30,6 +30,7 @@ import {
   Filter,
 } from 'lucide-react'
 import type { Database } from '../types/database.types'
+import { getBankNameFromTransaction, getBankLogo } from '../lib/openFinance'
 
 type Transaction = Database['public']['Tables']['transactions']['Row']
 type Category = Database['public']['Tables']['categories']['Row']
@@ -60,6 +61,7 @@ export const TransactionsPage: React.FC = () => {
   const [allSearchTerm, setAllSearchTerm] = useState('')
   const [allCategoryFilter, setAllCategoryFilter] = useState('all')
   const [allSortOrder, setAllSortOrder] = useState<'recent' | 'amount_desc' | 'amount_asc'>('recent')
+  const [bankMap, setBankMap] = useState<Record<string, string>>({})
 
   useEffect(() => {
     if (user) {
@@ -84,9 +86,23 @@ export const TransactionsPage: React.FC = () => {
         .from('transactions')
         .select('*')
         .eq('user_id', user.id)
-        .order('occurred_on', { ascending: false })
+        .order('occurred_on', { ascending: false }).order('created_at', { ascending: false })
       if (errTxs) throw errTxs
       setTransactions(txs || [])
+
+      // Carregar nomes dos bancos conectados para diferenciar no extrato
+      const { data: bankConns } = await supabase
+        .from('bank_connections')
+        .select('id, institution_name')
+        .eq('user_id', user.id)
+
+      const bMap: Record<string, string> = {}
+      bankConns?.forEach((bc) => {
+        if (bc.id && bc.institution_name) {
+          bMap[bc.id] = bc.institution_name
+        }
+      })
+      setBankMap(bMap)
     } catch (err: any) {
       console.error('Erro ao carregar despesas:', err)
       setError(err.message || 'Falha ao carregar despesas.')
@@ -128,7 +144,11 @@ export const TransactionsPage: React.FC = () => {
     if (!activeMonthKey) return []
     return expenseTransactions
       .filter((t) => t.occurred_on.startsWith(activeMonthKey))
-      .sort((a, b) => new Date(b.occurred_on).getTime() - new Date(a.occurred_on).getTime())
+      .sort((a, b) => {
+        const dDiff = new Date(b.occurred_on).getTime() - new Date(a.occurred_on).getTime()
+        if (dDiff !== 0) return dDiff
+        return new Date(b.created_at || 0).getTime() - new Date(a.created_at || 0).getTime()
+      })
   }, [expenseTransactions, activeMonthKey])
 
   // As 3 despesas mais recentes para exibição imediata
@@ -493,6 +513,48 @@ export const TransactionsPage: React.FC = () => {
             </svg>
           </div>
         </div>
+
+        {/* Barra empilhada + Legenda idêntica ao Print 3 (Roxo, Rosa #FF79A8, Amarelo, Azul) */}
+        {topCategoriesResult.categories.length > 0 && (
+          <div className="mt-4 pt-3.5 border-t border-[#F3EBF9] flex flex-col gap-3">
+            {/* Barra segmentada */}
+            <div className="w-full h-3 rounded-full bg-[#F3E8FF] overflow-hidden flex min-w-0">
+              {topCategoriesResult.categories.map((cat) => (
+                <div
+                  key={cat.id}
+                  className="h-full first:rounded-l-full last:rounded-r-full transition-all duration-500"
+                  style={{
+                    width: `${cat.percentage}%`,
+                    backgroundColor: cat.color,
+                  }}
+                />
+              ))}
+            </div>
+
+            {/* Lista com pontinhos de cor, nomes e percentuais */}
+            <div className="flex flex-col gap-2">
+              {topCategoriesResult.categories.map((cat) => (
+                <div key={cat.id} className="flex items-center justify-between text-[12.5px]">
+                  <div className="flex items-center gap-2.5 min-w-0">
+                    <span
+                      className="w-3 h-3 rounded-full shrink-0"
+                      style={{ backgroundColor: cat.color }}
+                    />
+                    <span className="font-extrabold text-[#432171] truncate">{cat.name}</span>
+                  </div>
+                  <div className="flex items-center gap-2.5 shrink-0 ml-2">
+                    <span className="text-[11.5px] font-bold text-[#7D6A9C]">
+                      {formatCurrency(cat.amount)}
+                    </span>
+                    <span className="font-black text-[#432171] min-w-[36px] text-right">
+                      {cat.percentage}%
+                    </span>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
       </Card>
 
       {/* 6. "Transações recentes" + "Ver todas >" (SÓ DESPESAS do período!) */}
@@ -546,8 +608,21 @@ export const TransactionsPage: React.FC = () => {
                         <div className="text-[14px] font-bold text-[#432171] leading-tight truncate">
                           {tx.description}
                         </div>
-                        <div className="text-[11px] font-semibold text-[#7D6A9C] truncate mt-0.5">
-                          {formatTransactionDate(tx.occurred_on, catName)}
+                        <div className="flex items-center gap-1.5 truncate mt-0.5">
+                          <span className="text-[11px] font-semibold text-[#7D6A9C]">
+                            {formatTransactionDate(tx.occurred_on, catName)}
+                          </span>
+                          {(() => {
+                            const bankName = getBankNameFromTransaction(tx as any, bankMap)
+                            if (!bankName) return null
+                            const logo = getBankLogo(bankName)
+                            return (
+                              <span className="inline-flex items-center gap-1 text-[9px] font-black px-1.5 py-0.5 rounded-full bg-[#FAF5FF] text-[#5B21B6] border border-purple-200/60 shrink-0">
+                                {logo && <img src={logo} alt="" className="w-3 h-3 rounded-xs object-contain" />}
+                                <span>{bankName}</span>
+                              </span>
+                            )
+                          })()}
                         </div>
                       </div>
                     </div>
@@ -679,8 +754,21 @@ export const TransactionsPage: React.FC = () => {
                           <div className="text-[14px] font-bold text-[#432171] truncate">
                             {tx.description}
                           </div>
-                          <div className="text-[11px] font-semibold text-[#7D6A9C] truncate">
-                            {formatTransactionDate(tx.occurred_on, catName)}
+                          <div className="flex items-center gap-1.5 truncate mt-0.5">
+                            <span className="text-[11px] font-semibold text-[#7D6A9C]">
+                              {formatTransactionDate(tx.occurred_on, catName)}
+                            </span>
+                            {(() => {
+                              const bankName = getBankNameFromTransaction(tx as any, bankMap)
+                              if (!bankName) return null
+                              const logo = getBankLogo(bankName)
+                              return (
+                                <span className="inline-flex items-center gap-1 text-[9px] font-black px-1.5 py-0.5 rounded-full bg-[#FAF5FF] text-[#5B21B6] border border-purple-200/60 shrink-0">
+                                  {logo && <img src={logo} alt="" className="w-3 h-3 rounded-xs object-contain" />}
+                                  <span>{bankName}</span>
+                                </span>
+                              )
+                            })()}
                           </div>
                         </div>
                       </div>

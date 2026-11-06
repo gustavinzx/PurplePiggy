@@ -24,8 +24,11 @@ import {
   TrendingUp,
   TrendingDown,
   Bell,
+  Plus,
+  Calculator,
 } from 'lucide-react'
 import type { Database } from '../types/database.types'
+import { getBankNameFromTransaction, getBankLogo } from '../lib/openFinance'
 
 type Transaction = Database['public']['Tables']['transactions']['Row']
 type Category = Database['public']['Tables']['categories']['Row']
@@ -43,10 +46,12 @@ export const DashboardPage: React.FC = () => {
   const [budgets, setBudgets] = useState<Budget[]>([])
   const [contributions, setContributions] = useState<Contribution[]>([])
   const [alerts, setAlerts] = useState<AlertNotification[]>([])
+  const [unreadAlertsCount, setUnreadAlertsCount] = useState<number>(0)
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
   const [hideBalance, setHideBalance] = useState(profile?.hide_balance ?? false)
   const [isNotificationsOpen, setIsNotificationsOpen] = useState(false)
+  const [bankMap, setBankMap] = useState<Record<string, string>>({})
 
   // Modal de transação
   const [isModalOpen, setIsModalOpen] = useState(false)
@@ -83,7 +88,7 @@ export const DashboardPage: React.FC = () => {
         .from('transactions')
         .select('*')
         .eq('user_id', user.id)
-        .order('occurred_on', { ascending: false })
+        .order('occurred_on', { ascending: false }).order('created_at', { ascending: false })
       if (errTxs) throw errTxs
       const txList = txs || []
       setTransactions(txList)
@@ -106,6 +111,20 @@ export const DashboardPage: React.FC = () => {
       const bList = bData || []
       setBudgets(bList)
 
+      // Conexões de bancos (Open Finance)
+      const { data: bankConns } = await supabase
+        .from('bank_connections')
+        .select('id, institution_name')
+        .eq('user_id', user.id)
+
+      const bMap: Record<string, string> = {}
+      bankConns?.forEach((bc) => {
+        if (bc.id && bc.institution_name) {
+          bMap[bc.id] = bc.institution_name
+        }
+      })
+      setBankMap(bMap)
+
       // 5. Aportes em metas
       const { data: cData } = await supabase
         .from('goal_contributions')
@@ -117,22 +136,39 @@ export const DashboardPage: React.FC = () => {
       // Calcular gastos por categoria do mês atual para os alertas
       const currentMonth = new Date().toISOString().slice(0, 7)
       const expensesByCat: Record<string, number> = {}
+      let totalCardSpent = 0
       txList
         .filter((t) => t.type === 'expense' && t.occurred_on.startsWith(currentMonth))
         .forEach((t) => {
           expensesByCat[t.category_id] = (expensesByCat[t.category_id] || 0) + Number(t.amount)
+          if (t.payment_method === 'credit_card') {
+            totalCardSpent += Number(t.amount)
+          }
         })
 
-      // Calcular alertas via seletor puro
+      // Calcular alertas via seletor puro respeitando as preferências do Perfil
       const computedAlerts = getAlerts(
         bList,
         expensesByCat,
         gList,
         catMap,
         cList,
-        currentMonth
+        currentMonth,
+        {
+          notifyBudget: profile?.notify_budget ?? true,
+          notifyGoals: profile?.notify_goals ?? true,
+          notifyLearning: profile?.notify_learning ?? false,
+          cardAlertLimit: Number(profile?.card_alert_limit || 0),
+          totalCardSpent,
+        }
       )
       setAlerts(computedAlerts)
+      try {
+        const dismissed: string[] = JSON.parse(localStorage.getItem('pp_dismissed_alert_ids') || '[]')
+        setUnreadAlertsCount(computedAlerts.filter((a) => !dismissed.includes(a.id)).length)
+      } catch {
+        setUnreadAlertsCount(computedAlerts.length)
+      }
     } catch (err: any) {
       console.error('Erro ao carregar dados do dashboard:', err)
       setError(err.message || 'Falha ao carregar dados.')
@@ -143,14 +179,72 @@ export const DashboardPage: React.FC = () => {
 
   // Cálculos financeiros reais
   const initialBalance = Number(profile?.initial_balance ?? 0)
-  const availableBalance = calculateAvailableBalance(initialBalance, transactions)
+  const availableBalance = calculateAvailableBalance(initialBalance, transactions.filter((t) => t.occurred_on.startsWith(new Date().toISOString().slice(0, 7))))
   const monthlySummary = calculateMonthlySummary(transactions, new Date())
 
   // Meta de reserva de emergência
   const emergencyGoal = goals.find((g) => g.category === 'emergency') || goals.find((g) => g.name.toLowerCase().includes('reserva'))
-  const emergencySaved = emergencyGoal ? Number(emergencyGoal.saved_amount) : 6000
-  const emergencyTarget = emergencyGoal ? Number(emergencyGoal.target_amount) : 10000
-  const emergencyPct = emergencyTarget > 0 ? Math.round((emergencySaved / emergencyTarget) * 100) : 60
+  const emergencySaved = emergencyGoal ? Number(emergencyGoal.saved_amount) : 0
+  const emergencyTarget = emergencyGoal ? Number(emergencyGoal.target_amount) : 0
+  const emergencyPct = emergencyTarget > 0 ? Math.min(100, Math.round((emergencySaved / emergencyTarget) * 100)) : 0
+
+  // Painel de gastos: consolidado por categorias do mês atual
+  const currentMonth = new Date().toISOString().slice(0, 7)
+  const currentMonthExpenses = transactions.filter(
+    (t) => t.type === 'expense' && t.occurred_on.startsWith(currentMonth)
+  )
+
+  const expensesByCategory: Record<string, number> = {}
+  currentMonthExpenses.forEach((t) => {
+    expensesByCategory[t.category_id] =
+      (expensesByCategory[t.category_id] || 0) + Number(t.amount)
+  })
+
+  const totalPainelGastos = currentMonthExpenses.reduce(
+    (acc, t) => acc + Number(t.amount),
+    0
+  )
+
+  // Ordenar categorias de gastos do maior para o menor e aplicar as 4 cores da referência (Roxo, Rosa #FF79A8, Amarelo, Azul)
+  const sortedExpenseCategories = Object.entries(expensesByCategory).sort((a, b) => b[1] - a[1])
+  const top3Categories = sortedExpenseCategories.slice(0, 3)
+  const restCategories = sortedExpenseCategories.slice(3)
+
+  const getSegmentColor = (catNameOrSlug: string, idx: number): string => {
+    const k = (catNameOrSlug || '').toLowerCase()
+    if (k.includes('moradia') || k.includes('casa') || k.includes('aluguel') || k.includes('conta')) return '#7D2BD6'
+    if (k.includes('alimenta') || k.includes('mercado') || k.includes('comida') || k.includes('restaurante')) return '#FF79A8'
+    if (k.includes('transporte') || k.includes('uber') || k.includes('combust')) return '#F5B83D'
+    if (k.includes('outro') || k.includes('lazer') || k.includes('saúde') || k.includes('saude')) return '#60A5FA'
+    const palette = ['#7D2BD6', '#FF79A8', '#F5B83D', '#60A5FA']
+    return palette[idx % palette.length]
+  }
+
+  const painelSegments = top3Categories.map(([catId, amount], idx) => {
+    const cat = categories[catId]
+    const catName = cat?.name || 'Geral'
+    const pct = totalPainelGastos > 0 ? Math.round((amount / totalPainelGastos) * 100) : 0
+    return {
+      id: catId,
+      name: catName,
+      amount,
+      pct,
+      color: getSegmentColor(cat?.slug || catName, idx),
+    }
+  })
+
+  if (restCategories.length > 0 && totalPainelGastos > 0) {
+    const restSum = restCategories.reduce((acc, [, amt]) => acc + amt, 0)
+    const restPct = Math.max(1, 100 - painelSegments.reduce((acc, s) => acc + s.pct, 0))
+    painelSegments.push({
+      id: 'outros',
+      name: 'Outros',
+      amount: restSum,
+      pct: restPct,
+      color: '#60A5FA',
+    })
+  }
+
 
   // Meta em destaque (seletor puro: não-reserva, por prazo e progresso)
   const featuredGoal = getFeaturedGoal(goals)
@@ -203,12 +297,12 @@ export const DashboardPage: React.FC = () => {
   }
 
   return (
-    <AppShell showNav={true} className="relative pt-3 flex flex-col gap-3 select-none pb-24">
+    <AppShell showNav={true} className="relative pt-7 flex flex-col gap-3 select-none pb-24">
       {/* Fundo com manchas orgânicas lilás */}
       <BackgroundBlobs showSparkles={false} />
 
       {/* 1. Cabeçalho */}
-      <div className="w-full flex items-start justify-between min-w-0 px-0.5">
+      <div className="w-full flex items-start justify-between min-w-0 px-0.5 mt-3">
         <div className="min-w-0 flex-1 pr-3">
           <h1 className="text-[22px] font-extrabold text-[#432171] font-nunito tracking-tight leading-tight truncate">
             Olá, {firstName}! 👋
@@ -218,7 +312,7 @@ export const DashboardPage: React.FC = () => {
           </p>
         </div>
 
-        {/* Botão de notificações: círculo branco de 40px com sino e ponto roxo condicional */}
+        {/* Botão de notificações: círculo branco de 40px com sino e contador de alertas */}
         <button
           type="button"
           onClick={() => setIsNotificationsOpen(true)}
@@ -226,11 +320,13 @@ export const DashboardPage: React.FC = () => {
           className="relative w-10 h-10 rounded-full bg-white shadow-card border border-lilac/20 flex items-center justify-center text-[#432171] hover:bg-[#F8F5FC] active:scale-95 transition-all shrink-0 cursor-pointer"
         >
           <Bell className="w-5 h-5 text-[#432171]" />
-          {alerts.length > 0 && (
+          {unreadAlertsCount > 0 && (
             <span
               data-testid="notification-dot"
-              className="absolute top-2 right-2 w-2 h-2 rounded-full bg-[#7D2BD6] ring-2 ring-white"
-            />
+              className="absolute -top-0.5 -right-0.5 min-w-[18px] h-[18px] px-1 rounded-full bg-[#7D2BD6] text-white text-[10px] font-black flex items-center justify-center ring-2 ring-white"
+            >
+              {unreadAlertsCount}
+            </span>
           )}
         </button>
       </div>
@@ -272,7 +368,7 @@ export const DashboardPage: React.FC = () => {
       )}
 
       {/* 2. Card de Saldo em degradê roxo com Mascote pig-wink ancorado no topo */}
-      <div className="relative w-full mt-[72px] min-w-0" data-testid="balance-card-container">
+      <div className="relative w-full mt-[38px] min-w-0" data-testid="balance-card-container">
         {/* Mascote pig-wink: ~128px, cerca de 35% dentro do card e 65% acima */}
         <div
           data-testid="mascot-wink-container"
@@ -388,7 +484,7 @@ export const DashboardPage: React.FC = () => {
 
         {/* Card Despesas */}
         <Card variant="white" size="sm" className="w-full flex items-center gap-2.5 p-3.5 rounded-[20px] min-w-0">
-          <div className="w-9 h-9 rounded-xl bg-[#FCE7F3] text-[#BE185D] flex items-center justify-center shrink-0">
+          <div className="w-9 h-9 rounded-xl bg-[#FEF3C7] text-[#D97706] flex items-center justify-center shrink-0">
             <TrendingDown className="w-5 h-5" strokeWidth={2.3} />
           </div>
           <div className="flex flex-col min-w-0 flex-1">
@@ -405,6 +501,123 @@ export const DashboardPage: React.FC = () => {
           </div>
         </Card>
       </div>
+
+      {/* 4. Atalhos Rápidos Interativos (+ Gasto, + Receita, Simulador) */}
+      <div className="w-full grid grid-cols-3 gap-2.5 min-w-0">
+        <button
+          type="button"
+          onClick={() => {
+            setModalType('expense')
+            setIsModalOpen(true)
+          }}
+          className="w-full bg-white hover:bg-[#FAF6FD] border border-[#F0EBF8] rounded-[20px] py-2.5 px-2 flex items-center justify-center gap-1.5 text-[12px] font-extrabold text-[#432171] transition-all shadow-card hover:scale-[1.02] active:scale-95 min-w-0 cursor-pointer"
+        >
+          <div className="w-6 h-6 rounded-full bg-[#FCE7F3] text-[#BE185D] flex items-center justify-center shrink-0">
+            <Plus className="w-3.5 h-3.5" strokeWidth={2.8} />
+          </div>
+          <span className="truncate">+ Gasto</span>
+        </button>
+
+        <button
+          type="button"
+          onClick={() => {
+            setModalType('income')
+            setIsModalOpen(true)
+          }}
+          className="w-full bg-white hover:bg-[#FAF6FD] border border-[#F0EBF8] rounded-[20px] py-2.5 px-2 flex items-center justify-center gap-1.5 text-[12px] font-extrabold text-[#432171] transition-all shadow-card hover:scale-[1.02] active:scale-95 min-w-0 cursor-pointer"
+        >
+          <div className="w-6 h-6 rounded-full bg-[#DCFCE7] text-[#15803D] flex items-center justify-center shrink-0">
+            <Plus className="w-3.5 h-3.5" strokeWidth={2.8} />
+          </div>
+          <span className="truncate">+ Receita</span>
+        </button>
+
+        <button
+          type="button"
+          onClick={() => navigate('/simulador')}
+          className="w-full bg-white hover:bg-[#FAF6FD] border border-[#F0EBF8] rounded-[20px] py-2.5 px-2 flex items-center justify-center gap-1.5 text-[12px] font-extrabold text-[#432171] transition-all shadow-card hover:scale-[1.02] active:scale-95 min-w-0 cursor-pointer"
+        >
+          <div className="w-6 h-6 rounded-full bg-[#F3E8FF] text-[#7D2BD6] flex items-center justify-center shrink-0">
+            <Calculator className="w-3.5 h-3.5" strokeWidth={2.8} />
+          </div>
+          <span className="truncate">Simulador</span>
+        </button>
+      </div>
+
+      {/* 5. Card "Painel de gastos" com link Este mês > e barra segmentada multicolorida */}
+      <Card
+        variant="white"
+        size="default"
+        onClick={() => navigate('/gastos')}
+        className="w-full rounded-[24px] p-4.5 border border-[#F0EBF8] shadow-card cursor-pointer hover:border-primary/25 transition-all min-w-0"
+      >
+        <div className="flex items-center justify-between mb-1.5 min-w-0">
+          <span className="text-[14px] font-extrabold text-[#432171] block leading-tight">Painel de gastos</span>
+          <div className="flex items-center gap-3 shrink-0">
+            <Link
+              to="/orcamento"
+              onClick={(e) => e.stopPropagation()}
+              className="text-[11px] font-extrabold text-[#7D6A9C] hover:text-[#7D2BD6] bg-[#F5EEFF] px-2.5 py-0.5 rounded-full transition-colors"
+            >
+              Orçamento
+            </Link>
+            <Link
+              to="/gastos"
+              onClick={(e) => e.stopPropagation()}
+              className="text-[12px] font-extrabold text-[#7D2BD6] hover:text-[#5B21B6] flex items-center gap-0.5"
+            >
+              <span>Este mês</span>
+              <ChevronRight className="w-3.5 h-3.5 text-[#7D2BD6]" strokeWidth={2.5} />
+            </Link>
+          </div>
+        </div>
+
+        {/* Valor consolidado */}
+        <div className="text-[20px] font-black text-[#432171] mb-2.5 truncate min-w-0 font-nunito leading-tight">
+          {loading ? (
+            <span className="inline-block w-24 h-6 bg-gray-200 rounded animate-pulse" />
+          ) : hideBalance ? (
+            '••••••••'
+          ) : (
+            formatCurrency(totalPainelGastos > 0 ? totalPainelGastos : monthlySummary.expense)
+          )}
+        </div>
+
+        {/* Barra empilhada multicolorida por categorias (Roxo, Rosa #FF79A8, Amarelo, Azul) */}
+        <div className="w-full h-3 rounded-full bg-[#F3E8FF] overflow-hidden flex min-w-0">
+          {painelSegments.length > 0 && totalPainelGastos > 0 ? (
+            painelSegments.map((seg) => (
+              <div
+                key={seg.id}
+                className="h-full first:rounded-l-full last:rounded-r-full transition-all duration-500"
+                style={{
+                  width: `${(seg.amount / totalPainelGastos) * 100}%`,
+                  backgroundColor: seg.color,
+                }}
+              />
+            ))
+          ) : null}
+        </div>
+
+        {/* Legenda das categorias e porcentagens igual ao print 3 enviado */}
+        {painelSegments.length > 0 && totalPainelGastos > 0 && (
+          <div className="mt-3 flex flex-col gap-1.5">
+            {painelSegments.map((seg) => (
+              <div key={seg.id} className="flex items-center justify-between text-[12px]">
+                <div className="flex items-center gap-2 min-w-0">
+                  <span
+                    className="w-2.5 h-2.5 rounded-full shrink-0"
+                    style={{ backgroundColor: seg.color }}
+                  />
+                  <span className="font-bold text-[#432171] truncate">{seg.name}</span>
+                </div>
+                <span className="font-extrabold text-[#7D6A9C] shrink-0 ml-2">{seg.pct}%</span>
+              </div>
+            ))}
+          </div>
+        )}
+      </Card>
+
 
       {/* 4. Card "Reserva de emergência" */}
       <Card
@@ -555,8 +768,21 @@ export const DashboardPage: React.FC = () => {
                         <div className="text-[14px] font-bold text-[#432171] leading-tight truncate">
                           {tx.description}
                         </div>
-                        <div className="text-[11px] font-semibold text-[#7D6A9C] truncate mt-0.5">
-                          {formatTransactionDate(tx.occurred_on, catName)}
+                        <div className="flex items-center gap-1.5 truncate mt-0.5">
+                          <span className="text-[11px] font-semibold text-[#7D6A9C]">
+                            {formatTransactionDate(tx.occurred_on, catName)}
+                          </span>
+                          {(() => {
+                            const bankName = getBankNameFromTransaction(tx, bankMap)
+                            if (!bankName) return null
+                            const logo = getBankLogo(bankName)
+                            return (
+                              <span className="inline-flex items-center gap-1 text-[9px] font-black px-1.5 py-0.5 rounded-full bg-[#FAF5FF] text-[#5B21B6] border border-purple-200/60 shrink-0">
+                                {logo && <img src={logo} alt="" className="w-3 h-3 rounded-xs object-contain" />}
+                                <span>{bankName}</span>
+                              </span>
+                            )
+                          })()}
                         </div>
                       </div>
                     </div>
@@ -588,6 +814,7 @@ export const DashboardPage: React.FC = () => {
         isOpen={isNotificationsOpen}
         onClose={() => setIsNotificationsOpen(false)}
         alerts={alerts}
+        onDismissCountChange={setUnreadAlertsCount}
       />
 
       {/* Modal de Transação (usado se o usuário clicar para adicionar no estado vazio) */}

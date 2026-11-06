@@ -50,19 +50,20 @@ export const QuizTopBar: React.FC<QuizTopBarProps> = ({
         </div>
       </div>
 
-      {/* Indicador de Corações */}
-      <div className="flex items-center gap-1 pl-1">
+      {/* Indicador de Corações (100% transparente, sem fundo branco, sem box-shadow ou filtros) */}
+      <div className="flex items-center gap-1.5 pl-1 bg-transparent">
         {Array.from({ length: maxHearts }).map((_, idx) => {
           const isAlive = idx < hearts
           return (
-            <Heart
-              key={idx}
-              className={`w-5 h-5 transition-transform duration-200 ${
-                isAlive
-                  ? 'fill-[#E5487A] text-[#E5487A] scale-100 animate-pulseGlow'
-                  : 'fill-transparent text-[#D8C2FF] scale-90'
-              }`}
-            />
+            <div key={idx} className="w-6 h-6 flex items-center justify-center bg-transparent">
+              <Heart
+                className={`w-5 h-5 transition-transform duration-200 ${
+                  isAlive
+                    ? 'fill-[#E5487A] text-[#E5487A] scale-100'
+                    : 'fill-transparent text-[#D8C2FF] stroke-[2] scale-90 opacity-50'
+                }`}
+              />
+            </div>
           )
         })}
       </div>
