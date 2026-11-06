@@ -89,7 +89,48 @@ export const DiagnosticPage: React.FC = () => {
   }
 
   const skipDiagnostic = async () => {
-    navigate('/inicio')
+    if (!user) return
+    setIsSubmitting(true)
+    try {
+      // 1. Atualizar perfil com diagnostic_done = true para liberar o acesso ao app
+      const { error: profileError } = await supabase
+        .from('profiles')
+        .update({
+          diagnostic_done: true,
+        })
+        .eq('id', user.id)
+
+      if (profileError) {
+        console.error('Erro ao pular diagnóstico:', profileError)
+      }
+
+      // 2. Garantir orçamento inicial zerado para o mês atual caso não exista
+      const curMonth = new Date().toISOString().slice(0, 7) + '-01'
+      const { data: existingBudgets } = await supabase
+        .from('budgets')
+        .select('id')
+        .eq('user_id', user.id)
+        .eq('month', curMonth)
+        .is('category_id', null)
+        .maybeSingle()
+
+      if (!existingBudgets) {
+        await supabase.from('budgets').insert({
+          user_id: user.id,
+          month: curMonth,
+          limit_amount: 0,
+          category_id: null,
+        })
+      }
+
+      await refreshProfile()
+      navigate('/inicio')
+    } catch (err) {
+      console.error('Falha ao pular diagnóstico:', err)
+      toast.error('Erro ao pular diagnóstico. Tente novamente.')
+    } finally {
+      setIsSubmitting(false)
+    }
   }
 
   const finishDiagnostic = async () => {

@@ -52,6 +52,7 @@ export const DashboardPage: React.FC = () => {
   const [hideBalance, setHideBalance] = useState(profile?.hide_balance ?? false)
   const [isNotificationsOpen, setIsNotificationsOpen] = useState(false)
   const [bankMap, setBankMap] = useState<Record<string, string>>({})
+  const [totalBankBalance, setTotalBankBalance] = useState<number | null>(null)
 
   // Modal de transação
   const [isModalOpen, setIsModalOpen] = useState(false)
@@ -114,7 +115,7 @@ export const DashboardPage: React.FC = () => {
       // Conexões de bancos (Open Finance)
       const { data: bankConns } = await supabase
         .from('bank_connections')
-        .select('id, institution_name')
+        .select('id, institution_name, balance, status')
         .eq('user_id', user.id)
 
       const bMap: Record<string, string> = {}
@@ -124,6 +125,14 @@ export const DashboardPage: React.FC = () => {
         }
       })
       setBankMap(bMap)
+
+      const activeConns = (bankConns || []).filter((bc) => bc.status === 'active' && bc.balance != null)
+      if (activeConns.length > 0) {
+        const sumBank = activeConns.reduce((acc, bc) => acc + Number(bc.balance || 0), 0)
+        setTotalBankBalance(Number(sumBank.toFixed(2)))
+      } else {
+        setTotalBankBalance(null)
+      }
 
       // 5. Aportes em metas
       const { data: cData } = await supabase
@@ -179,7 +188,12 @@ export const DashboardPage: React.FC = () => {
 
   // Cálculos financeiros reais
   const initialBalance = Number(profile?.initial_balance ?? 0)
-  const availableBalance = calculateAvailableBalance(initialBalance, transactions.filter((t) => t.occurred_on.startsWith(new Date().toISOString().slice(0, 7))))
+  const computedBalance = calculateAvailableBalance(
+    initialBalance,
+    transactions.filter((t) => t.occurred_on.startsWith(new Date().toISOString().slice(0, 7)))
+  )
+  // Se o usuário possui contas bancárias ativas via Open Finance, priorizar o saldo real consolidado das instituições
+  const availableBalance = totalBankBalance !== null ? totalBankBalance : computedBalance
   const monthlySummary = calculateMonthlySummary(transactions, new Date())
 
   // Meta de reserva de emergência

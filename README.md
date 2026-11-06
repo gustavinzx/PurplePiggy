@@ -96,6 +96,22 @@ supabase functions deploy recover-password
 
 ---
 
+## 🚀 Publicar nova versão (APK + atualização in-app)
+
+O bucket `releases` é público só para leitura (download do APK). Upload e registro em `app_releases` exigem a **service_role**, para que ninguém com a chave anon consiga trocar o APK.
+
+1. Copie a chave em **Supabase → Project Settings → API Keys → service_role**.
+2. Adicione ao `.env` local (o arquivo já está no `.gitignore`; nunca commite):
+   ```
+   SUPABASE_SERVICE_ROLE_KEY=...
+   ```
+3. Rode:
+   ```bash
+   node scripts/release_app.cjs --version 2.4.0 --notes "O que mudou"
+   ```
+
+---
+
 ## 🔑 Configuração Local (.env)
 
 Copie o arquivo de exemplo na raiz do projeto:

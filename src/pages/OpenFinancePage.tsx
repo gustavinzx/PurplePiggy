@@ -69,7 +69,8 @@ export const OpenFinancePage: React.FC = () => {
   const [_consents, setConsents] = useState<OpenFinanceConsent[]>([])
   const [_loading, setLoading] = useState(true)
   const [connecting, setConnecting] = useState(false)
-  const [isSyncing, setIsSyncing] = useState(false)
+  const [syncingItemId, setSyncingItemId] = useState<string | null>(null)
+  const [isSyncingAll, setIsSyncingAll] = useState(false)
   const [isManaging, setIsManaging] = useState(false)
 
   // Modal nativo de conexão direta via Open Finance (sem depender de iframe bloqueado no Android)
@@ -95,19 +96,16 @@ export const OpenFinancePage: React.FC = () => {
     }
   }, [user])
 
-  // Quando o usuário volta do aplicativo do banco para o PurplePiggy, sincronizar automaticamente!
+  // Quando o usuário volta do aplicativo do banco para o PurplePiggy após autorizar OAuth
   useEffect(() => {
     const onVisibilityChange = () => {
-      if (document.visibilityState === 'visible' && user && (pendingItemId || activeConnection?.provider_ref)) {
-        const refToSync = pendingItemId || activeConnection?.provider_ref
-        if (refToSync && !isSyncing) {
-          handleSyncByItemId(refToSync, true)
-        }
+      if (document.visibilityState === 'visible' && user && pendingItemId && !syncingItemId) {
+        handleSyncByItemId(pendingItemId, true)
       }
     }
     document.addEventListener('visibilitychange', onVisibilityChange)
     return () => document.removeEventListener('visibilitychange', onVisibilityChange)
-  }, [user, pendingItemId, activeConnection, isSyncing])
+  }, [user, pendingItemId, syncingItemId])
 
   const loadOpenFinanceData = async () => {
     if (!user) return
@@ -133,16 +131,16 @@ export const OpenFinancePage: React.FC = () => {
     }
   }
 
-  const handleSyncByItemId = async (itemId: string, silentIfPending = false) => {
+  const handleSyncByItemId = async (itemId: string, silentIfPending = false, instName?: string) => {
     if (!user || !itemId) return
-    setIsSyncing(true)
+    setSyncingItemId(itemId)
     try {
       const res = await syncPluggyTransactions(user.id, itemId)
       if (res.oauthUrl) {
         setPendingOAuthUrl(res.oauthUrl)
       }
       if (res.success && !res.pendingAuth) {
-        toast.success(res.message || 'Saldo e extrato sincronizados com sucesso!')
+        toast.success(res.message || `${instName || 'Conta'}: saldo e extrato sincronizados com sucesso!`)
         setShowDirectModal(false)
         setPendingItemId(null)
         setPendingOAuthUrl(null)
@@ -160,14 +158,34 @@ export const OpenFinancePage: React.FC = () => {
         toast.error(err.message || 'Erro ao sincronizar extrato da instituição.')
       }
     } finally {
-      setIsSyncing(false)
+      setSyncingItemId(null)
     }
   }
 
   const handleManualSync = async (conn?: BankConnection) => {
     const target = conn || activeConnection
     if (!user || !target?.provider_ref) return
-    await handleSyncByItemId(target.provider_ref, false)
+    await handleSyncByItemId(target.provider_ref, false, target.institution_name)
+  }
+
+  const handleSyncAll = async () => {
+    if (!user) return
+    setIsSyncingAll(true)
+    try {
+      const res = await syncPluggyTransactions(user.id)
+      if (res.success && !res.pendingAuth) {
+        toast.success(res.message || 'Todas as contas conectadas foram sincronizadas!')
+        await refreshProfile()
+        await loadOpenFinanceData()
+      } else {
+        toast.info(res.message || 'Sincronização concluída.')
+        await loadOpenFinanceData()
+      }
+    } catch (err: any) {
+      toast.error(err.message || 'Erro ao sincronizar contas.')
+    } finally {
+      setIsSyncingAll(false)
+    }
   }
 
   const handleCreateDirectOAuth = async (e: React.FormEvent) => {
@@ -296,15 +314,29 @@ export const OpenFinancePage: React.FC = () => {
               <span className="text-xs font-black text-[#7D6A9C] uppercase tracking-wider">
                 Suas contas conectadas ({connections.filter((c) => c.status === 'active').length})
               </span>
-              <button
-                type="button"
-                onClick={openBankSelectorModal}
-                disabled={connecting}
-                className="text-xs font-extrabold text-[#7D2BD6] hover:underline flex items-center gap-1 cursor-pointer shrink-0"
-              >
-                <Plus className="w-3.5 h-3.5" />
-                <span>Adicionar banco</span>
-              </button>
+              <div className="flex items-center gap-2.5">
+                {connections.filter((c) => c.status === 'active').length > 1 && (
+                  <button
+                    type="button"
+                    onClick={handleSyncAll}
+                    disabled={isSyncingAll || syncingItemId !== null}
+                    className="text-xs font-extrabold text-[#7D2BD6] hover:underline flex items-center gap-1 cursor-pointer shrink-0 disabled:opacity-50"
+                    title="Sincronizar todas as contas de uma vez"
+                  >
+                    <RefreshCw className={`w-3 h-3 ${isSyncingAll ? 'animate-spin' : ''}`} />
+                    <span>Sincronizar todas</span>
+                  </button>
+                )}
+                <button
+                  type="button"
+                  onClick={openBankSelectorModal}
+                  disabled={connecting}
+                  className="text-xs font-extrabold text-[#7D2BD6] hover:underline flex items-center gap-1 cursor-pointer shrink-0"
+                >
+                  <Plus className="w-3.5 h-3.5" />
+                  <span>Adicionar banco</span>
+                </button>
+              </div>
             </div>
 
             {connections
@@ -348,12 +380,12 @@ export const OpenFinancePage: React.FC = () => {
                         <button
                           type="button"
                           onClick={() => handleManualSync(conn)}
-                          disabled={isSyncing}
+                          disabled={syncingItemId === conn.provider_ref || isSyncingAll}
                           className="flex items-center gap-1 text-[10px] font-bold text-primary hover:text-deep transition-colors bg-baby/60 hover:bg-baby px-2.5 py-1 rounded-full cursor-pointer disabled:opacity-50 whitespace-nowrap"
-                          title="Sincronizar extrato bancário agora"
+                          title="Sincronizar extrato bancário desta conta"
                         >
-                          <RefreshCw className={`w-3 h-3 ${isSyncing ? 'animate-spin' : ''} shrink-0`} />
-                          <span>{isSyncing ? 'Sincronizando...' : 'Sincronizar'}</span>
+                          <RefreshCw className={`w-3 h-3 ${(syncingItemId === conn.provider_ref || isSyncingAll) ? 'animate-spin' : ''} shrink-0`} />
+                          <span>{(syncingItemId === conn.provider_ref || isSyncingAll) ? 'Sincronizando...' : 'Sincronizar'}</span>
                         </button>
                       </div>
                     </div>
@@ -637,13 +669,13 @@ export const OpenFinancePage: React.FC = () => {
 
                 <button
                   type="button"
-                  onClick={() => handleSyncByItemId(pendingItemId, false)}
-                  disabled={isSyncing}
+                  onClick={() => handleSyncByItemId(pendingItemId, false, pendingBankName)}
+                  disabled={syncingItemId !== null || isSyncingAll}
                   className="w-full py-3 px-3 rounded-full bg-gradient-to-r from-[#7D2BD6] to-[#9333EA] text-white font-extrabold text-xs shadow-xs transition-all flex items-center justify-center gap-2 cursor-pointer disabled:opacity-60 text-center"
                 >
-                  <RefreshCw className={`w-4 h-4 ${isSyncing ? 'animate-spin' : ''} shrink-0`} />
+                  <RefreshCw className={`w-4 h-4 ${syncingItemId === pendingItemId ? 'animate-spin' : ''} shrink-0`} />
                   <span className="truncate">
-                    {isSyncing
+                    {syncingItemId === pendingItemId
                       ? 'Sincronizando extrato...'
                       : '2. Já autorizei · Sincronizar agora'}
                   </span>
