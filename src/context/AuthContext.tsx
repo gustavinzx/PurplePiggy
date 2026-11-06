@@ -164,20 +164,40 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     try {
       setIsLoading(true)
       // Login anônimo do Supabase para garantir ambiente isolado por visitante
-      const { data, error } = await supabase.auth.signInAnonymously()
+      let authUser = null
+      const { data: anonData, error: anonError } = await supabase.auth.signInAnonymously()
 
-      if (error) {
-        console.error('Falha no login demo anônimo:', error)
-        return { error }
+      if (!anonError && anonData?.user) {
+        authUser = anonData.user
+      } else {
+        // Fallback resiliente: cria conta demonstrativa isolada e autenticada por visitante
+        console.warn('Login anônimo desativado no Supabase, usando conta demonstrativa isolada:', anonError?.message)
+        const demoEmail = 'demo.' + Date.now() + '.' + Math.random().toString(36).slice(2, 8) + '@demo.purplepiggy.app'
+        const demoPassword = 'DemoPiggy!' + Math.random().toString(36).slice(2, 10)
+        const { data: signUpData, error: signUpError } = await supabase.auth.signUp({
+          email: demoEmail,
+          password: demoPassword,
+          options: {
+            data: {
+              full_name: 'Ana Oliveira',
+              is_demo: true,
+            },
+          },
+        })
+        if (signUpError) {
+          console.error('Falha no fallback de conta demo:', signUpError)
+          return { error: signUpError }
+        }
+        authUser = signUpData.user
       }
 
-      if (data.user) {
+      if (authUser) {
         try {
           await supabase.rpc('seed_demo_data')
         } catch (seedErr) {
           console.warn('Aviso ao inicializar seed demo:', seedErr)
         }
-        await fetchProfile(data.user.id)
+        await fetchProfile(authUser.id)
       }
       return { error: null }
     } catch (err) {

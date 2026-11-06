@@ -226,9 +226,20 @@ serve(async (req) => {
 
     const clientUserId = userData.user.id
 
-    const pluggyClientId = Deno.env.get('PLUGGY_CLIENT_ID')
-    const pluggyClientSecret = Deno.env.get('PLUGGY_CLIENT_SECRET')
+    let pluggyClientId = Deno.env.get('PLUGGY_CLIENT_ID')
+    let pluggyClientSecret = Deno.env.get('PLUGGY_CLIENT_SECRET')
     const pluggyApiUrl = Deno.env.get('PLUGGY_API_URL') || 'https://api.pluggy.ai'
+
+    if (!pluggyClientId || !pluggyClientSecret) {
+      try {
+        const { data: dbId } = await supabase.rpc('get_app_secret', { p_name: 'PLUGGY_CLIENT_ID' })
+        const { data: dbSec } = await supabase.rpc('get_app_secret', { p_name: 'PLUGGY_CLIENT_SECRET' })
+        if (dbId) pluggyClientId = dbId
+        if (dbSec) pluggyClientSecret = dbSec
+      } catch (secErr) {
+        console.warn('[create-connect-token] Falha ao recuperar credenciais seguras do banco:', secErr)
+      }
+    }
 
     if (!pluggyClientId || !pluggyClientSecret) {
       if (!pluggyClientId) console.error('[create-connect-token] Variável ausente: PLUGGY_CLIENT_ID')
