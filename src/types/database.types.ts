@@ -414,6 +414,8 @@ export type Database = {
           id: string
           initial_balance: number
           is_demo: boolean
+          leaderboard_opt_in: boolean
+          leaderboard_nickname: string | null
           notify_budget: boolean
           notify_goals: boolean
           notify_learning: boolean
@@ -432,6 +434,8 @@ export type Database = {
           id: string
           initial_balance?: number
           is_demo?: boolean
+          leaderboard_opt_in?: boolean
+          leaderboard_nickname?: string | null
           notify_budget?: boolean
           notify_goals?: boolean
           notify_learning?: boolean
@@ -450,6 +454,8 @@ export type Database = {
           id?: string
           initial_balance?: number
           is_demo?: boolean
+          leaderboard_opt_in?: boolean
+          leaderboard_nickname?: string | null
           notify_budget?: boolean
           notify_goals?: boolean
           notify_learning?: boolean
@@ -696,6 +702,9 @@ export type Database = {
       buy_streak_shield: { Args: Record<string, never>; Returns: Json }
       record_user_mistake: { Args: { p_exercise_id: string; p_concept_tag?: string }; Returns: Json }
       get_user_review_exercises: { Args: { p_limit?: number }; Returns: Json }
+      deduct_learn_heart: { Args: Record<string, never>; Returns: number }
+      recharge_learn_hearts: { Args: Record<string, never>; Returns: Json }
+      get_or_create_learn_stats: { Args: Record<string, never>; Returns: Json }
       get_weekly_leaderboard: { Args: { p_limit?: number }; Returns: Json }
     }
   }

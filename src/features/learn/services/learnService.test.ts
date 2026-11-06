@@ -104,4 +104,25 @@ describe('Serviço do Módulo Aprender (learnService - Prompt N5)', () => {
     expect(topMistakes[1].exercise_id).toBe('ex-2')
     expect(topMistakes[1].mistake_count).toBe(1)
   })
-})
+  it('deve debitar vida e recarregar vidas via RPC ou fallback sem update direto', async () => {
+    const remaining = await learnService.deductHeart()
+    expect(remaining).toBe(2)
+
+    await learnService.claimChest('organizacao-financeira', 1)
+    const recharge = await learnService.rechargeHearts()
+    expect(recharge.success).toBe(true)
+    expect(recharge.hearts).toBe(3)
+  })
+
+  it('deve proteger dados do ranking e devolver campos seguros (LGPD)', async () => {
+    const leaderboard = await learnService.getWeeklyLeaderboard(10)
+    expect(Array.isArray(leaderboard)).toBe(true)
+    for (const entry of leaderboard) {
+      expect(entry).toHaveProperty('rank')
+      expect(entry).toHaveProperty('nickname')
+      expect(entry).toHaveProperty('weekly_xp')
+      expect(entry).toHaveProperty('is_current_user')
+      expect(entry.nickname).not.toContain('@')
+    }
+  })
+});

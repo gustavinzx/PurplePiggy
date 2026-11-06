@@ -31,11 +31,11 @@ export interface ReviewExercise {
 
 export interface LeaderboardEntry {
   rank: number
-  user_id: string
-  display_name: string
-  avatar_url: string | null
+  nickname: string
   weekly_xp: number
   is_current_user: boolean
+  display_name?: string
+  avatar_url?: string | null
 }
 
 export interface LessonCompletionResult {
@@ -271,28 +271,14 @@ export const learnService = {
    */
   async rechargeHearts(): Promise<{ success: boolean; message?: string; hearts?: number; piggy_coins?: number }> {
     try {
-      const current = await this.getStats()
-      if (current.piggy_coins < 30) {
-        return { success: false, message: 'Você precisa de 30 moedas para recarregar' }
-      }
-      if (current.hearts >= 3) {
-        return { success: false, message: 'Suas vidas já estão cheias!' }
-      }
-
-      const { data, error } = await supabase
-        .from('learn_user_stats')
-        .update({
-          hearts: 3,
-          piggy_coins: current.piggy_coins - 30,
-          updated_at: new Date().toISOString(),
-        })
-        .select('*')
-        .single()
-
-      if (!error && data) {
-        const stats = data as unknown as LearnStats
-        saveLocalStats(stats)
-        return { success: true, hearts: 3, piggy_coins: stats.piggy_coins }
+      const { data, error } = await supabase.rpc('recharge_learn_hearts')
+      if (!error && data && (data as any).success) {
+        const res = data as { success: boolean; hearts: number; piggy_coins: number }
+        const current = getLocalStats()
+        current.hearts = res.hearts
+        current.piggy_coins = res.piggy_coins
+        saveLocalStats(current)
+        return { success: true, hearts: res.hearts, piggy_coins: res.piggy_coins }
       }
     } catch {
       // fallback
@@ -316,21 +302,12 @@ export const learnService = {
    */
   async deductHeart(): Promise<number> {
     try {
-      const current = await this.getStats()
-      const nextHearts = Math.max(0, (current.hearts ?? 3) - 1)
-      const { data, error } = await supabase
-        .from('learn_user_stats')
-        .update({
-          hearts: nextHearts,
-          updated_at: new Date().toISOString(),
-        })
-        .select('hearts')
-        .single()
-
-      if (!error && data) {
-        current.hearts = data.hearts
+      const { data, error } = await supabase.rpc('deduct_learn_heart')
+      if (!error && typeof data === 'number') {
+        const current = getLocalStats()
+        current.hearts = data
         saveLocalStats(current)
-        return data.hearts
+        return data
       }
     } catch {
       // fallback
@@ -435,7 +412,14 @@ export const learnService = {
         p_limit: limit,
       })
       if (!error && Array.isArray(data)) {
-        return data as unknown as LeaderboardEntry[]
+        return (data as any[]).map((row) => ({
+          rank: Number(row.rank),
+          nickname: String(row.nickname || 'Anônima'),
+          display_name: String(row.nickname || 'Anônima'),
+          weekly_xp: Number(row.weekly_xp || 0),
+          is_current_user: Boolean(row.is_current_user),
+          avatar_url: null,
+        }))
       }
     } catch {
       // fallback

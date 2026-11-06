@@ -133,6 +133,9 @@ export const ProfilePage: React.FC = () => {
   const [prefSoundAlerts, setPrefSoundAlerts] = useState(() => localStorage.getItem('pp_pref_sound') !== 'false')
   const [hideBalance, setHideBalance] = useState<boolean>(profile?.hide_balance ?? false)
   const [soundEnabled, setSoundEnabled] = useState<boolean>(() => localStorage.getItem('pp_pref_sound') !== 'false')
+  const [leaderboardOptIn, setLeaderboardOptIn] = useState<boolean>(profile?.leaderboard_opt_in ?? false)
+  const [leaderboardNickname, setLeaderboardNickname] = useState<string>(profile?.leaderboard_nickname || '')
+  const [isSavingPrivacy, setIsSavingPrivacy] = useState(false)
 
   // Form states para edição abrangente do perfil
   const [editName, setEditName] = useState(profile?.full_name || '')
@@ -297,6 +300,44 @@ export const ProfilePage: React.FC = () => {
       toast.error(err?.message || 'Não foi possível salvar o perfil.')
     } finally {
       setIsSavingProfile(false)
+    }
+  }
+
+  useEffect(() => {
+    if (profile) {
+      setLeaderboardOptIn(profile.leaderboard_opt_in ?? false)
+      setLeaderboardNickname(profile.leaderboard_nickname || '')
+    }
+  }, [profile])
+
+  const handleSaveLeaderboardPrivacy = async (e: React.FormEvent) => {
+    e.preventDefault()
+    if (!user) return
+
+    const sanitized = leaderboardNickname.trim().replace(/@/g, '')
+    if (leaderboardOptIn && (sanitized.length < 3 || sanitized.length > 20)) {
+      toast.error('O apelido no ranking deve ter entre 3 e 20 caracteres.')
+      return
+    }
+
+    setIsSavingPrivacy(true)
+    try {
+      const { error } = await supabase
+        .from('profiles')
+        .update({
+          leaderboard_opt_in: leaderboardOptIn,
+          leaderboard_nickname: sanitized || null,
+          updated_at: new Date().toISOString(),
+        })
+        .eq('id', user.id)
+
+      if (error) throw error
+      toast.success('Privacidade do ranking atualizada com sucesso!')
+      await refreshProfile()
+    } catch {
+      toast.error('Erro ao atualizar privacidade do ranking.')
+    } finally {
+      setIsSavingPrivacy(false)
     }
   }
 
@@ -1355,6 +1396,52 @@ export const ProfilePage: React.FC = () => {
               >
                 Esqueceu a senha atual? Redefinir com código por e-mail
               </button>
+            </form>
+
+            {/* Ranking Semanal & Privacidade LGPD (Prompt 3) */}
+            <form onSubmit={handleSaveLeaderboardPrivacy} className="flex flex-col gap-3 mb-4 pb-4 border-b border-lilac/15">
+              <div className="text-xs font-extrabold text-[#33105D] flex items-center gap-1.5">
+                <Trophy className="w-4 h-4 text-[#7D2BD6]" />
+                Ranking de Estudos e Privacidade
+              </div>
+
+              <label className="flex items-center justify-between cursor-pointer p-3 bg-lilac/10 rounded-2xl border border-lilac/20">
+                <div>
+                  <div className="text-xs font-bold text-[#432171]">Aparecer no ranking semanal</div>
+                  <div className="text-[10px] text-textSec">Desativado por padrão para sua privacidade</div>
+                </div>
+                <input
+                  type="checkbox"
+                  checked={leaderboardOptIn}
+                  onChange={(e) => setLeaderboardOptIn(e.target.checked)}
+                  className="w-5 h-5 accent-primary cursor-pointer"
+                />
+              </label>
+
+              {leaderboardOptIn && (
+                <div className="flex flex-col gap-1.5">
+                  <label className="text-[11px] font-bold text-textSec">
+                    Apelido no ranking (3 a 20 caracteres, sem e-mail)
+                  </label>
+                  <input
+                    type="text"
+                    value={leaderboardNickname}
+                    onChange={(e) => setLeaderboardNickname(e.target.value.replace(/@/g, ''))}
+                    placeholder="Ex: PoupadorNinja"
+                    maxLength={20}
+                    className="w-full h-11 px-3.5 bg-bg border border-lilac/30 rounded-2xl text-deep font-bold text-xs focus:outline-none focus:border-primary"
+                    required={leaderboardOptIn}
+                  />
+                </div>
+              )}
+
+              <p className="text-[10px] text-textSec leading-relaxed">
+                <strong>Privacidade garantida (LGPD):</strong> Seu nome real, e-mail e foto nunca são compartilhados. Apenas seu apelido e XP semanal aparecem para outros participantes.
+              </p>
+
+              <Button type="submit" size="sm" variant="secondary" fullWidth loading={isSavingPrivacy}>
+                Salvar preferências de ranking
+              </Button>
             </form>
 
             <div className="flex flex-col gap-2.5 text-xs text-deep/85 leading-relaxed font-semibold mb-4">
