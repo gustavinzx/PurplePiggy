@@ -9,6 +9,28 @@ const memoryCache = new Map<string, CacheEntry>()
 const CACHE_KEY_PREFIX = 'pp_avatar_signed_'
 
 /**
+ * Limpa todo o cache de URLs assinadas de avatares privados em memória e no localStorage.
+ * Deve ser chamado em AuthContext.signOut para evitar exposição em celulares compartilhados.
+ */
+export function clearAvatarCache(): void {
+  memoryCache.clear()
+  try {
+    const keysToRemove: string[] = []
+    for (let i = 0; i < localStorage.length; i++) {
+      const key = localStorage.key(i)
+      if (key && key.startsWith(CACHE_KEY_PREFIX)) {
+        keysToRemove.push(key)
+      }
+    }
+    for (const key of keysToRemove) {
+      localStorage.removeItem(key)
+    }
+  } catch {
+    // Ambiente sem localStorage ou bloqueado
+  }
+}
+
+/**
  * Extrai o caminho do arquivo no bucket 'avatars' a partir de um path relativo ou URL completa do Supabase.
  */
 export function extractAvatarStoragePath(avatarUrlOrPath?: string | null): string | null {
