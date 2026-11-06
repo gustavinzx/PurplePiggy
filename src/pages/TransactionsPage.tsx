@@ -5,7 +5,7 @@ import { useAuth } from '../context/AuthContext'
 import { AppShell } from '../components/AppShell'
 import { Mascot } from '../components/Mascot'
 import { Card } from '../components/Card'
-import { CategoryCircle } from '../components/CategoryIcon'
+import { CategoryCircle, CategoryIcon } from '../components/CategoryIcon'
 import { BackgroundBlobs } from '../components/BackgroundBlobs'
 import { TransactionModal } from '../components/TransactionModal'
 import {
@@ -25,6 +25,7 @@ import {
   ArrowDown,
   ArrowUp,
   Plus,
+  Sparkles,
   Search,
   X,
   Filter,
@@ -56,6 +57,9 @@ export const TransactionsPage: React.FC = () => {
   const [isAddModalOpen, setIsAddModalOpen] = useState(false)
   const [isMonthPickerOpen, setIsMonthPickerOpen] = useState(false)
   const [isAllTransactionsOpen, setIsAllTransactionsOpen] = useState(false)
+  const [isCategoryModalOpen, setIsCategoryModalOpen] = useState(false)
+  const [selectedCategory, setSelectedCategory] = useState<string>('all')
+  const [typeFilter, setTypeFilter] = useState<'all' | 'expense' | 'income'>('all')
 
   // Filtros internos da modal "Ver todas"
   const [allSearchTerm, setAllSearchTerm] = useState('')
@@ -707,6 +711,14 @@ export const TransactionsPage: React.FC = () => {
 
             {/* Filtro por Categoria e Ordenação */}
             <div className="flex items-center gap-2 mb-3 overflow-x-auto pb-1 text-xs">
+              <button
+                type="button"
+                onClick={() => setIsCategoryModalOpen(true)}
+                className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg border border-[#E9D5FF] bg-[#F8F5FC] text-[#432171] font-bold text-xs hover:bg-[#F3E8FF] transition-colors shrink-0"
+              >
+                <Filter className="w-3.5 h-3.5 text-primary" />
+                <span>{selectedCategory === 'all' ? 'Categorias' : (categories[selectedCategory]?.name || 'Categoria')}</span>
+              </button>
               <select
                 value={allCategoryFilter}
                 onChange={(e) => setAllCategoryFilter(e.target.value)}
@@ -822,6 +834,7 @@ export const TransactionsPage: React.FC = () => {
               <button
                 onClick={() => {
                   setSelectedCategory('all')
+                  setAllCategoryFilter('all')
                   setIsCategoryModalOpen(false)
                 }}
                 className={`w-full text-left px-3.5 py-2.5 rounded-xl text-xs font-bold flex items-center justify-between transition-colors ${
@@ -844,6 +857,7 @@ export const TransactionsPage: React.FC = () => {
                   key={c.id}
                   onClick={() => {
                     setSelectedCategory(c.id)
+                    setAllCategoryFilter(c.id)
                     setIsCategoryModalOpen(false)
                   }}
                   className={`w-full text-left px-3.5 py-2.5 rounded-xl text-xs font-bold flex items-center justify-between transition-colors ${
@@ -866,8 +880,9 @@ export const TransactionsPage: React.FC = () => {
             <div className="pt-3 border-t border-lilac/10 mt-2">
               <button
                 onClick={() => {
-                  setPeriod('all')
+                  setSearchParams({ periodo: 'mes' })
                   setSelectedCategory('all')
+                  setAllCategoryFilter('all')
                   setTypeFilter('all')
                   setIsCategoryModalOpen(false)
                 }}

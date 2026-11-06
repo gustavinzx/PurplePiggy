@@ -4,6 +4,7 @@ import { Toaster } from 'sonner'
 import { AuthProvider } from './context/AuthContext'
 import { AuthGate } from './components/AuthGate'
 import { initNotificationsChannel } from './lib/nativeNotifications'
+import { useAndroidBackButton } from './lib/capacitor'
 
 import { SplashPage } from './pages/SplashPage'
 import { WelcomePage } from './pages/WelcomePage'

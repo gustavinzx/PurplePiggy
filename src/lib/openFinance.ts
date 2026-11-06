@@ -35,9 +35,13 @@ export interface SyncPluggyResult {
   itemId?: string
   oauthUrl?: string | null
   institutionName?: string
-  syncedAccounts: number
-  syncedTransactions: number
-  message: string
+  syncedAccounts?: number
+  syncedTransactions?: number
+  accountsCount?: number
+  transactionsCount?: number
+  totalBalance?: number
+  message?: string
+  error?: string
 }
 
 export interface CreateOAuthItemResult {
@@ -53,15 +57,6 @@ export interface OpenFinanceConnectOptions {
   onError?: (error: any) => void
   onClose?: () => void
   itemId?: string
-}
-
-export interface SyncPluggyResult {
-  success: boolean
-  institutionName: string
-  accountsCount: number
-  transactionsCount: number
-  totalBalance: number
-  error?: string
 }
 
 const PLUGGY_SCRIPT_URL = 'https://cdn.pluggy.ai/pluggy-connect/v2.5.0/pluggy-connect.js'

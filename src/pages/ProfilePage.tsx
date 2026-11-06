@@ -28,6 +28,7 @@ import {
   X,
   Landmark,
   SlidersHorizontal,
+  Settings,
   Flame,
   Trophy,
   Star,
@@ -130,6 +131,8 @@ export const ProfilePage: React.FC = () => {
   const [prefCurrency, setPrefCurrency] = useState(() => localStorage.getItem('pp_pref_currency') || 'BRL')
   const [prefHideDecimals, setPrefHideDecimals] = useState(() => localStorage.getItem('pp_pref_hide_decimals') === 'true')
   const [prefSoundAlerts, setPrefSoundAlerts] = useState(() => localStorage.getItem('pp_pref_sound') !== 'false')
+  const [hideBalance, setHideBalance] = useState<boolean>(profile?.hide_balance ?? false)
+  const [soundEnabled, setSoundEnabled] = useState<boolean>(() => localStorage.getItem('pp_pref_sound') !== 'false')
 
   // Form states para edição abrangente do perfil
   const [editName, setEditName] = useState(profile?.full_name || '')
@@ -168,6 +171,7 @@ export const ProfilePage: React.FC = () => {
       setNotifyGoals(profile.notify_goals ?? true)
       setNotifyLearning(profile.notify_learning ?? false)
       setCardAlertLimit(profile.card_alert_limit ? String(profile.card_alert_limit) : '1500')
+      if (typeof profile.hide_balance === 'boolean') setHideBalance(profile.hide_balance)
     }
   }, [profile])
 
@@ -1225,6 +1229,7 @@ export const ProfilePage: React.FC = () => {
                     .eq('id', user.id)
                   refreshProfile()
                 }
+                localStorage.setItem('pp_pref_sound', String(soundEnabled))
                 toast.success('Preferências salvas com sucesso!')
                 setIsPreferencesModalOpen(false)
               }}

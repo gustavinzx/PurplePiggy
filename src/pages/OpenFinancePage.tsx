@@ -230,9 +230,10 @@ export const OpenFinancePage: React.FC = () => {
       await openPluggyConnect(user.id, {
         onSuccess: async (item, syncResult) => {
           setConnecting(false)
+          const syncedCount = syncResult?.syncedTransactions ?? syncResult?.transactionsCount ?? 0
           const syncedMsg =
-            syncResult && syncResult.syncedTransactions > 0
-              ? ` (${syncResult.syncedTransactions} lançamentos importados!)`
+            syncedCount > 0
+              ? ` (${syncedCount} lançamentos importados!)`
               : ''
           toast.success(
             `Conta ${item.connector?.name || 'bancária'} conectada via Open Finance!${syncedMsg}`

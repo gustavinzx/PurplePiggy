@@ -1,6 +1,6 @@
 import { useEffect } from 'react'
 import { useNavigate, useLocation } from 'react-router-dom'
-import { Capacitor } from '@capacitor/core'
+import { Capacitor, type PluginListenerHandle } from '@capacitor/core'
 import { StatusBar, Style } from '@capacitor/status-bar'
 import { App as CapApp } from '@capacitor/app'
 import { Keyboard } from '@capacitor/keyboard'
@@ -57,7 +57,7 @@ export function useAndroidBackButton(): void {
 
     let lastBackPress = 0
 
-    const listenerPromise = CapApp.addListener('backButton', ({ canGoBack }) => {
+    const listenerPromise = CapApp.addListener('backButton', ({ canGoBack }: { canGoBack: boolean }) => {
       const pathname = window.location.pathname
       const tabRoots = ['/gastos', '/metas', '/aprender', '/perfil']
       const exitRoots = ['/inicio', '/', '/boas-vindas', '/entrar', '/cadastrar']
@@ -80,7 +80,7 @@ export function useAndroidBackButton(): void {
     })
 
     return () => {
-      listenerPromise.then((handle) => handle.remove()).catch(() => {})
+      listenerPromise.then((handle: PluginListenerHandle) => handle.remove()).catch(() => {})
     }
   }, [navigate, location])
 }
