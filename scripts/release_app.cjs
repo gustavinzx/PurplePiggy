@@ -19,10 +19,13 @@ function getEnv(key) {
 }
 
 const SUPABASE_URL = getEnv('VITE_SUPABASE_URL')
-const SUPABASE_KEY = getEnv('SUPABASE_SERVICE_ROLE_KEY') || getEnv('VITE_SUPABASE_ANON_KEY')
+// Upload do APK e registro em app_releases exigem a service_role (o bucket releases não aceita escrita anônima).
+// Defina SUPABASE_SERVICE_ROLE_KEY no .env local (nunca commitar) ou como variável de ambiente.
+const SUPABASE_KEY = getEnv('SUPABASE_SERVICE_ROLE_KEY')
 
 if (!SUPABASE_URL || !SUPABASE_KEY) {
-  console.error('❌ ERRO: VITE_SUPABASE_URL ou chave de acesso não encontrada no .env ou nas variáveis de ambiente.')
+  console.error('❌ ERRO: VITE_SUPABASE_URL ou SUPABASE_SERVICE_ROLE_KEY ausente no .env ou nas variáveis de ambiente.')
+  console.error('   Pegue a chave em Supabase > Project Settings > API Keys (service_role) e adicione ao .env local.')
   process.exit(1)
 }
 
@@ -171,7 +174,8 @@ export const APP_RELEASE_YEAR = '2026'
   )
 
   if (dbErr) {
-    console.warn('⚠️  Aviso ao atualizar app_releases:', dbErr)
+    console.error('❌ Erro ao registrar a versão em app_releases:', dbErr)
+    process.exit(1)
   }
 
   console.log('\n======================================================')
