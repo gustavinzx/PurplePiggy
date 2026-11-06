@@ -9,13 +9,18 @@ import {
   OptionCard,
   FeedbackPanel,
   ChunkyButton,
+  CelebrationScreen,
 } from '../features/learn/components'
+import { OrderPrioritiesView } from '../features/learn/components/questions/OrderPrioritiesView'
+import { ConceptMatchingView } from '../features/learn/components/questions/ConceptMatchingView'
+import { FillInTheBlankView } from '../features/learn/components/questions/FillInTheBlankView'
+import { ScenarioChoiceView } from '../features/learn/components/questions/ScenarioChoiceView'
 import { useQuizEngine } from '../features/learn/engine'
 import { learnService } from '../features/learn/services/learnService'
 import { LearnQuestion } from '../features/learn/questions'
 import { Mascot } from '../components/Mascot'
 import confetti from 'canvas-confetti'
-import { ChevronUp, ChevronDown, Check } from 'lucide-react'
+import { toast } from 'sonner'
 
 const OPTION_LETTERS = ['A', 'B', 'C', 'D']
 
@@ -34,6 +39,7 @@ export const LessonPage: React.FC = () => {
   const [resolvedTrackSlug, setResolvedTrackSlug] = useState<string>('')
   const [questions, setQuestions] = useState<LearnQuestion[]>([])
   const [showExitDialog, setShowExitDialog] = useState(false)
+  const [initialHearts, setInitialHearts] = useState<number>(3)
 
   // Estados para tipologias interativas
   const [orderedItems, setOrderedItems] = useState<string[]>([])
@@ -45,6 +51,9 @@ export const LessonPage: React.FC = () => {
   const [isLevelFinished, setIsLevelFinished] = useState(false)
   const [completionResult, setCompletionResult] = useState<any>(null)
   const [isTrackCompleted, setIsTrackCompleted] = useState(false)
+  const [resolvedLessonTitle, setResolvedLessonTitle] = useState<string>('')
+  const [resolvedTrackTitle, setResolvedTrackTitle] = useState<string>('')
+  const [nextLessonId, setNextLessonId] = useState<string>('')
 
   // 1. Resolução da Trilha e Lição a partir dos parâmetros de rota
   useEffect(() => {
@@ -54,32 +63,48 @@ export const LessonPage: React.FC = () => {
         const targetTrack = slug || trackSlug || 'organizacao-financeira'
         let targetLesson = lessonSlug || ''
 
-        // Se a rota for /aprender/trilha/:slug/nivel/:n
-        if (!targetLesson && n) {
-          const levelNum = parseInt(n, 10) || 1
-          const { data: contents } = await supabase
-            .from('educational_contents')
-            .select('lesson_slug')
-            .eq('track_slug', targetTrack)
-            .order('lesson_order', { ascending: true })
+        const { data: contents } = await supabase
+          .from('educational_contents')
+          .select('id, lesson_slug, lesson_title, track_title, lesson_order')
+          .eq('track_slug', targetTrack)
+          .order('lesson_order', { ascending: true })
 
-          if (contents && contents[levelNum - 1]) {
-            targetLesson = contents[levelNum - 1].lesson_slug
-          } else if (contents && contents[0]) {
-            targetLesson = contents[0].lesson_slug
+        let foundIdx = -1
+        if (targetLesson && contents) {
+          foundIdx = contents.findIndex((c) => c.lesson_slug === targetLesson)
+        } else if (n && contents) {
+          const levelNum = parseInt(n, 10) || 1
+          foundIdx = levelNum - 1
+        }
+
+        if (contents && contents.length > 0) {
+          const activeItem = contents[foundIdx >= 0 ? foundIdx : 0]
+          targetLesson = activeItem.lesson_slug
+          setResolvedLessonTitle(activeItem.lesson_title)
+          setResolvedTrackTitle(activeItem.track_title)
+
+          const nextItem = contents[(foundIdx >= 0 ? foundIdx : 0) + 1]
+          if (nextItem) {
+            setNextLessonId(nextItem.id)
           }
         }
 
         if (!targetLesson) {
           targetLesson = 'para-onde-vai-meu-dinheiro'
+          setResolvedLessonTitle('Para onde vai meu dinheiro?')
         }
 
         setResolvedTrackSlug(targetTrack)
         setResolvedLessonSlug(targetLesson)
 
-        // Buscar questões reais vinculadas a esta lição
+        // Carrega as questões para a lição e as estatísticas de vida
         const loadedQuestions = learnService.getQuestionsForLesson(targetLesson)
         setQuestions(loadedQuestions)
+
+        const userStats = await learnService.getStats()
+        if (userStats && typeof userStats.hearts === 'number') {
+          setInitialHearts(Math.max(1, userStats.hearts))
+        }
       } catch (err) {
         console.error('Erro ao resolver parâmetros da lição:', err)
       } finally {
@@ -108,7 +133,7 @@ export const LessonPage: React.FC = () => {
   } = useQuizEngine({
     questions,
     lessonSlug: resolvedLessonSlug,
-    initialHearts: 3,
+    initialHearts,
     autoSubmitOnCompletion: false,
   })
 
@@ -239,68 +264,32 @@ export const LessonPage: React.FC = () => {
     )
   }
 
-  // TELA DE CONCLUSÃO DO NÍVEL
+  // TELA DE PARABÉNS V2 (design/v2/06-parabens.png)
   if (isLevelFinished) {
-    const isPerfect = state?.mistakesCount === 0
+    const totalQ = questions.length || state.questions.length || 3
+    const firstTry = Math.max(0, totalQ - state.mistakesCount)
+    const accuracy = totalQ > 0 ? firstTry / totalQ : 1
+    // Estrelas acesas conforme precisão: 3 estrelas se >= 90%, 2 estrelas se >= 60%, 1 estrela caso contrário
+    const calculatedStars = accuracy >= 0.9 ? 3 : accuracy >= 0.6 ? 2 : 1
+    const finalStars = completionResult?.stars || calculatedStars
+
     return (
-      <div className="min-h-screen bg-[#FAF5FF] flex flex-col justify-between max-w-md mx-auto p-6 animate-fadeIn">
-        <div className="pt-8 text-center space-y-4">
-          <div className="w-28 h-28 mx-auto drop-shadow-lg">
-            <Mascot
-              pose={isTrackCompleted ? 'diploma' : isPerfect ? 'trophy' : 'medal'}
-              className="w-full h-full object-contain"
-              priority
-            />
-          </div>
-
-          <div>
-            <span className="text-xs font-black uppercase tracking-wider text-purple-600 bg-purple-100 px-3 py-1 rounded-full">
-              {isTrackCompleted ? 'TRILHA FINALIZADA' : 'NÍVEL CONCLUÍDO'}
-            </span>
-            <h1 className="font-nunito font-black text-2xl sm:text-3xl text-[#3B0764] mt-2">
-              {isTrackCompleted
-                ? 'Trilha concluída! Parabéns!'
-                : isPerfect
-                ? 'Incrível! Tudo de primeira!'
-                : 'Muito bem! Você completou!'}
-            </h1>
-            <p className="font-nunito font-semibold text-sm text-gray-600 mt-1">
-              {isTrackCompleted
-                ? 'Você dominou todos os conceitos desta unidade.'
-                : 'Pequenos passos constantes constroem sua tranquilidade financeira.'}
-            </p>
-          </div>
-
-          <div className="grid grid-cols-2 gap-3 pt-3">
-            <div className="bg-white p-4 rounded-2xl border border-purple-100 shadow-sm flex flex-col items-center text-center">
-              <img src="/assets/icons/icon-xp.png" alt="XP" className="w-8 h-8 object-contain mb-1" />
-              <span className="font-nunito font-black text-lg text-[#7D2BD6]">
-                +{completionResult?.xp_earned || 20} XP
-              </span>
-              <span className="font-nunito font-bold text-xs text-gray-500">Experiência</span>
-            </div>
-
-            <div className="bg-white p-4 rounded-2xl border border-amber-100 shadow-sm flex flex-col items-center text-center">
-              <img src="/assets/coins/coin-1.png" alt="Moedas" className="w-8 h-8 object-contain mb-1" />
-              <span className="font-nunito font-black text-lg text-[#B45309]">
-                +{completionResult?.coins_earned || 10} Moedas
-              </span>
-              <span className="font-nunito font-bold text-xs text-gray-500">Piggy Moedas</span>
-            </div>
-          </div>
-        </div>
-
-        <div className="pb-4">
-          <ChunkyButton
-            variant="success"
-            size="lg"
-            className="w-full text-base font-black tracking-wide"
-            onClick={() => navigate(`/aprender/trilha/${resolvedTrackSlug}`)}
-          >
-            CONTINUAR PARA O MAPA
-          </ChunkyButton>
-        </div>
-      </div>
+      <CelebrationScreen
+        levelTitle={resolvedLessonTitle || 'Primeiros passos'}
+        trackTitle={resolvedTrackTitle}
+        stars={finalStars}
+        xpEarned={completionResult?.xp_earned || 20}
+        firstTryCount={firstTry}
+        totalQuestions={totalQ}
+        isTrackCompleted={isTrackCompleted}
+        isFirstLevelOfDay={Boolean(completionResult?.newly_completed)}
+        streakCount={completionResult?.current_streak || 1}
+        onContinueToMap={() => {
+          navigate(`/aprender/trilha/${resolvedTrackSlug}`, {
+            state: { unlockedLevelId: nextLessonId },
+          })
+        }}
+      />
     )
   }
 
@@ -316,10 +305,26 @@ export const LessonPage: React.FC = () => {
             Suas vidas acabaram por hoje!
           </h1>
           <p className="font-nunito text-sm text-gray-600 max-w-xs mx-auto">
-            Não desanime! Errar faz parte do aprendizado. Respire fundo e tente novamente quando quiser.
+            Não desanime! Errar faz parte do aprendizado. Você pode recarregar suas vidas com Moedas Piggy ou tentar novamente quando descansar.
           </p>
         </div>
-        <div className="pb-4">
+        <div className="pb-4 space-y-3">
+          <ChunkyButton
+            variant="secondary"
+            size="lg"
+            className="w-full"
+            onClick={async () => {
+              const res = await learnService.rechargeHearts()
+              if (res.success) {
+                toast.success('Vidas recarregadas com sucesso! ❤️')
+                window.location.reload()
+              } else {
+                toast.error(res.message || 'Moedas insuficientes para recarregar!')
+              }
+            }}
+          >
+            RECARREGAR VIDAS (+3)
+          </ChunkyButton>
           <ChunkyButton
             variant="primary"
             size="lg"
@@ -352,33 +357,47 @@ export const LessonPage: React.FC = () => {
       <main className="flex-1 px-5 py-2 flex flex-col justify-center space-y-4">
         {currentQ && (
           <>
-            {/* Balão com Mascote Idea */}
-            <div className="flex items-start gap-3 bg-white p-4 rounded-3xl border border-purple-100 shadow-sm animate-fadeIn">
-              <div className="w-14 h-14 shrink-0 drop-shadow">
-                <Mascot pose="idea" className="w-full h-full object-contain" priority />
+            {/* Balão de Fala Comic com Mascote Expressivo */}
+            <div className="flex items-end gap-3 animate-fadeIn">
+              <div className="w-16 h-16 shrink-0 -mb-1 drop-shadow-md transition-transform duration-300">
+                <Mascot
+                  pose={
+                    status === 'correct'
+                      ? 'trophy'
+                      : status === 'incorrect'
+                      ? 'retry'
+                      : 'idea'
+                  }
+                  className="w-full h-full object-contain"
+                  priority
+                />
               </div>
-              <div className="flex-1 pt-1">
-                <h2 className="font-nunito font-extrabold text-base sm:text-lg text-[#3B0764] leading-snug">
+              <div className="relative flex-1 bg-white p-4.5 rounded-3xl border-2 border-purple-200/90 shadow-sm">
+                {/* Triângulo do balão apontando para o mascote */}
+                <div className="absolute -left-2.5 bottom-4 w-0 h-0 border-t-[8px] border-t-transparent border-b-[8px] border-b-transparent border-r-[10px] border-r-purple-200/90" />
+                <div className="absolute -left-2 bottom-4 w-0 h-0 border-t-[7px] border-t-transparent border-b-[7px] border-b-transparent border-r-[9px] border-r-white" />
+
+                <h2 className="font-nunito font-extrabold text-base sm:text-lg text-[#33105D] leading-snug">
                   {currentQ.prompt}
                 </h2>
                 {currentQ.contextText && (
-                  <p className="font-nunito text-xs text-gray-500 mt-1 leading-relaxed">
+                  <p className="font-nunito font-semibold text-xs text-[#7D6A9C] mt-1.5 leading-relaxed bg-[#FAF6FF] p-2.5 rounded-xl border border-purple-100">
                     {currentQ.contextText}
                   </p>
                 )}
               </div>
             </div>
 
-            {/* TIPOLOGIA 1 & 2: multiple_choice e scenario_choice */}
-            {(currentQ.typology === 'multiple_choice' || currentQ.typology === 'scenario_choice') && (
-              <div className="space-y-3 pt-1">
-                {'options' in currentQ &&
-                  (currentQ as any).options.map((optionText: string, idx: number) => {
+            {/* Renderização dinâmica por Tipologia de Questão */}
+            <div className="space-y-3 pt-2">
+              {currentQ.typology === 'multiple_choice' && (
+                <div className="space-y-3">
+                  {currentQ.options.map((optionText: string, idx: number) => {
                     let cardState: 'idle' | 'selected' | 'correct' | 'incorrect' = 'idle'
                     const isSelected = currentAnswer === idx
 
                     if (isValidated) {
-                      if (idx === (currentQ as any).correctIndex) {
+                      if (idx === currentQ.correctIndex) {
                         cardState = 'correct'
                       } else if (isSelected) {
                         cardState = 'incorrect'
@@ -398,163 +417,52 @@ export const LessonPage: React.FC = () => {
                       />
                     )
                   })}
-              </div>
-            )}
-
-            {/* TIPOLOGIA 3: order_priorities (Ordenação com setas táteis) */}
-            {currentQ.typology === 'order_priorities' && (
-              <div className="space-y-2.5 pt-1">
-                {orderedItems.map((itemText: string, idx: number) => (
-                  <div
-                    key={itemText}
-                    className={`flex items-center gap-3 p-3.5 rounded-2xl border-2 border-b-4 transition-all select-none ${
-                      isValidated
-                        ? status === 'correct'
-                          ? 'bg-[#DCFCE7] border-[#2FBF71] border-b-[#1E824C] text-[#15803D]'
-                          : 'bg-[#FCE7F3] border-[#E5487A] border-b-[#BE185D] text-[#BE185D]'
-                        : 'bg-white border-[#E8DEFB] border-b-[#D8C2FF] text-[#432171]'
-                    }`}
-                  >
-                    <span className="w-7 h-7 rounded-full bg-purple-100 text-[#7D2BD6] font-nunito font-black text-xs flex items-center justify-center shrink-0">
-                      {idx + 1}º
-                    </span>
-                    <span className="flex-1 font-nunito font-bold text-xs sm:text-sm leading-snug">
-                      {itemText}
-                    </span>
-                    {!isValidated && (
-                      <div className="flex flex-col gap-1 shrink-0">
-                        <button
-                          type="button"
-                          disabled={idx === 0}
-                          onClick={() => handleMoveOrderItem(idx, -1)}
-                          className="w-7 h-7 rounded-lg bg-purple-50 hover:bg-purple-100 disabled:opacity-20 flex items-center justify-center text-purple-700 active:scale-90 transition-all border border-purple-200"
-                          aria-label="Mover para cima"
-                        >
-                          <ChevronUp className="w-4 h-4" />
-                        </button>
-                        <button
-                          type="button"
-                          disabled={idx === orderedItems.length - 1}
-                          onClick={() => handleMoveOrderItem(idx, 1)}
-                          className="w-7 h-7 rounded-lg bg-purple-50 hover:bg-purple-100 disabled:opacity-20 flex items-center justify-center text-purple-700 active:scale-90 transition-all border border-purple-200"
-                          aria-label="Mover para baixo"
-                        >
-                          <ChevronDown className="w-4 h-4" />
-                        </button>
-                      </div>
-                    )}
-                  </div>
-                ))}
-              </div>
-            )}
-
-            {/* TIPOLOGIA 4: fill_in_the_blank (Completar a frase) */}
-            {currentQ.typology === 'fill_in_the_blank' && (
-              <div className="space-y-4 pt-1">
-                {/* Frase com lacuna destacada */}
-                <div className="bg-white p-4 rounded-2xl border-2 border-[#E8DEFB] border-b-4 border-b-[#D8C2FF] text-center font-nunito font-bold text-sm sm:text-base text-[#3B0764] leading-relaxed">
-                  {((currentQ as any).sentence || '').split('___').map((part: string, i: number, arr: any[]) => (
-                    <React.Fragment key={i}>
-                      {part}
-                      {i < arr.length - 1 && (
-                        <span
-                          className={`inline-block px-3 py-0.5 mx-1 font-nunito font-black rounded-xl border-b-2 transition-all ${
-                            currentAnswer
-                              ? 'bg-[#F6EEFF] text-[#7D2BD6] border-[#7D2BD6]'
-                              : 'bg-purple-100 text-purple-400 border-purple-300'
-                          }`}
-                        >
-                          {currentAnswer ? String(currentAnswer) : '______'}
-                        </span>
-                      )}
-                    </React.Fragment>
-                  ))}
                 </div>
+              )}
 
-                {/* Opções de palavras */}
-                <div className="grid grid-cols-2 gap-2.5">
-                  {((currentQ as any).options || []).map((opt: string) => {
-                    const isSelected = currentAnswer === opt
-                    return (
-                      <button
-                        key={opt}
-                        type="button"
-                        disabled={isValidated}
-                        onClick={() => selectAnswer(opt)}
-                        className={`p-3 rounded-2xl border-2 border-b-4 font-nunito font-extrabold text-xs sm:text-sm transition-all text-center ${
-                          isSelected
-                            ? 'bg-[#F6EEFF] border-[#7D2BD6] border-b-[#5B21B6] text-[#7D2BD6]'
-                            : 'bg-white border-[#E8DEFB] border-b-[#D8C2FF] text-[#432171] active:translate-y-[2px]'
-                        }`}
-                      >
-                        {opt}
-                      </button>
-                    )
-                  })}
-                </div>
-              </div>
-            )}
+              {currentQ.typology === 'scenario_choice' && (
+                <ScenarioChoiceView
+                  question={currentQ}
+                  currentAnswer={typeof currentAnswer === 'number' ? currentAnswer : null}
+                  disabled={!isAnswering}
+                  isValidated={isValidated}
+                  onSelect={(idx) => isAnswering && selectAnswer(idx)}
+                />
+              )}
 
-            {/* TIPOLOGIA 5: concept_matching (Conectar pares) */}
-            {currentQ.typology === 'concept_matching' && (
-              <div className="space-y-3 pt-1">
-                <div className="grid grid-cols-2 gap-2 text-xs">
-                  {/* Coluna da esquerda (Conceitos) */}
-                  <div className="flex flex-col gap-2">
-                    <span className="font-nunito font-bold text-[10px] text-gray-500 uppercase px-1">Conceito</span>
-                    {((currentQ as any).pairs || []).map((pair: any) => {
-                      const isMatched = Boolean(matchedPairs[pair.left])
-                      const isSelected = selectedLeftConcept === pair.left
-                      return (
-                        <button
-                          key={pair.left}
-                          type="button"
-                          disabled={isValidated || isMatched}
-                          onClick={() => handleSelectLeft(pair.left)}
-                          className={`p-2.5 rounded-xl border-2 border-b-3 font-nunito font-bold text-xs text-left transition-all flex items-center justify-between ${
-                            isMatched
-                              ? 'bg-[#DCFCE7] border-[#2FBF71] text-[#15803D]'
-                              : isSelected
-                              ? 'bg-[#F6EEFF] border-[#7D2BD6] text-[#7D2BD6]'
-                              : 'bg-white border-[#E8DEFB] text-[#432171] active:scale-95'
-                          }`}
-                        >
-                          <span className="truncate">{pair.left}</span>
-                          {isMatched && <Check className="w-3.5 h-3.5 text-green-600 shrink-0" />}
-                        </button>
-                      )
-                    })}
-                  </div>
+              {currentQ.typology === 'order_priorities' && (
+                <OrderPrioritiesView
+                  key={currentQ.id}
+                  question={currentQ}
+                  disabled={!isAnswering}
+                  isValidated={isValidated}
+                  isCorrect={status === 'correct'}
+                  onAnswerChange={(orderedItems) => isAnswering && selectAnswer(orderedItems)}
+                />
+              )}
 
-                  {/* Coluna da direita (Definições) */}
-                  <div className="flex flex-col gap-2">
-                    <span className="font-nunito font-bold text-[10px] text-gray-500 uppercase px-1">Exemplo</span>
-                    {shuffledRights.map((rightText: string) => {
-                      const matchedLeft = Object.keys(matchedPairs).find((k) => matchedPairs[k] === rightText)
-                      const isMatched = Boolean(matchedLeft)
-                      return (
-                        <button
-                          key={rightText}
-                          type="button"
-                          disabled={isValidated || isMatched || !selectedLeftConcept}
-                          onClick={() => handleSelectRight(rightText)}
-                          className={`p-2.5 rounded-xl border-2 border-b-3 font-nunito font-bold text-xs text-left transition-all flex items-center justify-between ${
-                            isMatched
-                              ? 'bg-[#DCFCE7] border-[#2FBF71] text-[#15803D]'
-                              : selectedLeftConcept
-                              ? 'bg-purple-50 border-purple-300 text-purple-900 active:scale-95 cursor-pointer'
-                              : 'bg-white border-[#E8DEFB] text-gray-400 cursor-not-allowed'
-                          }`}
-                        >
-                          <span className="line-clamp-2">{rightText}</span>
-                          {isMatched && <Check className="w-3.5 h-3.5 text-green-600 shrink-0" />}
-                        </button>
-                      )
-                    })}
-                  </div>
-                </div>
-              </div>
-            )}
+              {currentQ.typology === 'concept_matching' && (
+                <ConceptMatchingView
+                  key={currentQ.id}
+                  question={currentQ}
+                  disabled={!isAnswering}
+                  isValidated={isValidated}
+                  isCorrect={status === 'correct'}
+                  onAnswerChange={(matches) => isAnswering && selectAnswer(matches)}
+                />
+              )}
+
+              {currentQ.typology === 'fill_in_the_blank' && (
+                <FillInTheBlankView
+                  key={currentQ.id}
+                  question={currentQ}
+                  disabled={!isAnswering}
+                  isValidated={isValidated}
+                  isCorrect={status === 'correct'}
+                  onAnswerChange={(word) => isAnswering && selectAnswer(word)}
+                />
+              )}
+            </div>
           </>
         )}
       </main>

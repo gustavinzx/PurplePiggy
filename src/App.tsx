@@ -3,7 +3,7 @@ import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom'
 import { Toaster } from 'sonner'
 import { AuthProvider } from './context/AuthContext'
 import { AuthGate } from './components/AuthGate'
-import { initCapacitor, useAndroidBackButton } from './lib/capacitor'
+import { initNotificationsChannel } from './lib/nativeNotifications'
 
 import { SplashPage } from './pages/SplashPage'
 import { WelcomePage } from './pages/WelcomePage'
@@ -27,6 +27,7 @@ import { DesignSystemPage } from './pages/DesignSystemPage'
 import { DesignSystemMascotPage } from './pages/DesignSystemMascotPage'
 import { DesignSystemAtmospherePage } from './pages/DesignSystemAtmospherePage'
 import { DesignSystemLearnPage } from './pages/DesignSystemLearnPage'
+import { InAppUpdateModal } from './components/InAppUpdateModal'
 
 const AndroidShellHandler: React.FC = () => {
   useAndroidBackButton()
@@ -35,13 +36,15 @@ const AndroidShellHandler: React.FC = () => {
 
 export const App: React.FC = () => {
   useEffect(() => {
-    initCapacitor()
+    initNotificationsChannel()
   }, [])
+
   return (
     <BrowserRouter>
       <AndroidShellHandler />
       <AuthProvider>
         <Toaster position="top-center" richColors />
+        <InAppUpdateModal />
         <Routes>
           {/* Páginas do Design System */}
           <Route

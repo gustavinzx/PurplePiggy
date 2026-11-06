@@ -1,7 +1,6 @@
 // src/features/learn/components/LevelNode.tsx
-// Nó circular 3D tátil do Mapa Sinuoso (Desafio Piggy - Dimensões Compactas de 60px)
+// Nó circular 3D tátil do Mapa Sinuoso (Desafio Piggy - Dimensões e Posição Absoluta)
 import React from 'react'
-import { Mascot } from '../../../components/Mascot'
 
 export type LevelNodeStatus =
   | 'completed'
@@ -16,8 +15,9 @@ interface LevelNodeProps {
   levelNumber: number
   title: string
   status: LevelNodeStatus
+  size: number
   onClick: () => void
-  flipMascot?: boolean
+  style?: React.CSSProperties
   className?: string
 }
 
@@ -25,8 +25,9 @@ export const LevelNode: React.FC<LevelNodeProps> = ({
   levelNumber,
   title,
   status,
+  size,
   onClick,
-  flipMascot = false,
+  style = {},
   className = '',
 }) => {
   const isLocked = status === 'locked'
@@ -42,78 +43,68 @@ export const LevelNode: React.FC<LevelNodeProps> = ({
   else if (isChest) ariaLabel += ' (Baú de Tesouro)'
   else if (isTrophy) ariaLabel += ' (Troféu da Trilha)'
 
-  // Renderização do conteúdo interno de acordo com o status
+  // Renderização do conteúdo interno (sempre contido DENTRO do círculo do nó)
   const renderContent = () => {
     if (isCompleted) {
       return (
-        <div className="flex flex-col items-center justify-center">
-          <img
-            src="/assets/icons/icon-check-nivel.png"
-            alt="Concluído"
-            className="w-7 h-7 object-contain drop-shadow"
-            loading="lazy"
-            width={28}
-            height={28}
-          />
-        </div>
+        <img
+          src="/assets/icons/icon-check-nivel.png"
+          alt="Concluído"
+          className="w-6 h-6 object-contain drop-shadow"
+          loading="lazy"
+          width={24}
+          height={24}
+        />
       )
     }
 
     if (isCurrent) {
       return (
-        <div className="flex flex-col items-center justify-center">
-          <span className="font-nunito font-black text-xl text-white drop-shadow-sm">
-            {levelNumber}
-          </span>
-        </div>
+        <span className="font-nunito font-black text-xl text-white drop-shadow-sm">
+          {levelNumber}
+        </span>
       )
     }
 
     if (isChest) {
       const isClaimed = status === 'chest_claimed'
       return (
-        <div className="flex flex-col items-center justify-center">
-          <img
-            src={isClaimed ? '/assets/icons/icon-bau-aberto.png' : '/assets/icons/icon-bau.png'}
-            alt="Baú de moedas"
-            className={`w-8 h-8 object-contain drop-shadow ${
-              isClaimed ? 'opacity-80' : 'animate-bounce-subtle'
-            }`}
-            loading="lazy"
-            width={32}
-            height={32}
-          />
-        </div>
+        <img
+          src={isClaimed ? '/assets/icons/icon-bau-aberto.png' : '/assets/icons/icon-bau.png'}
+          alt="Baú"
+          className={`w-7 h-7 object-contain drop-shadow ${
+            isClaimed ? 'opacity-80' : 'animate-bounce-subtle'
+          }`}
+          loading="lazy"
+          width={28}
+          height={28}
+        />
       )
     }
 
     if (isTrophy) {
       return (
-        <div className="flex flex-col items-center justify-center">
-          <img
-            src="/assets/icons/icon-trofeu.png"
-            alt="Troféu"
-            className="w-8 h-8 object-contain drop-shadow"
-            loading="lazy"
-            width={32}
-            height={32}
-          />
-        </div>
-      )
-    }
-
-    // Locked
-    return (
-      <div className="flex flex-col items-center justify-center">
         <img
-          src="/assets/icons/icon-cadeado.png"
-          alt="Bloqueado"
-          className="w-6 h-6 object-contain opacity-70"
+          src="/assets/icons/icon-trofeu.png"
+          alt="Troféu"
+          className="w-7 h-7 object-contain drop-shadow"
           loading="lazy"
           width={24}
           height={24}
         />
-      </div>
+      )
+    }
+
+    // Bloqueado: o cadeado fica DENTRO do nó, não flutuando
+    return (
+      <img
+        src="/assets/icons/icon-cadeado.png"
+        alt="Bloqueado"
+        className="w-5 h-5 object-contain opacity-70"
+        loading="lazy"
+        width={20}
+        height={20}
+      />
     )
   }
 
@@ -142,52 +133,55 @@ export const LevelNode: React.FC<LevelNodeProps> = ({
   }
 
   return (
-    <div className={`relative flex flex-col items-center ${className}`}>
-      {/* Balão flutuante "COMEÇAR!" no nível ativo */}
-      {isCurrent && (
-        <div className="absolute -top-9 z-20 flex flex-col items-center animate-bounce-subtle pointer-events-none">
-          <div className="bg-[#7D2BD6] text-white text-[10px] font-black px-2.5 py-0.5 rounded-full shadow-md tracking-wider uppercase border border-purple-400">
-            COMEÇAR!
-          </div>
-          {/* Triângulo indicador do balão */}
-          <div className="w-0 h-0 border-x-3 border-x-transparent border-t-3 border-t-[#7D2BD6]" />
-        </div>
-      )}
+    <div
+      style={{
+        width: `${size}px`,
+        height: `${size}px`,
+        ...style,
+      }}
+      className="absolute flex items-center justify-center select-none z-10"
+    >
+      {/* Pedestal / Ilha flutuante 3D embaixo do nó */}
+      <div
+        className="absolute -bottom-2 w-[124%] h-5 rounded-full bg-gradient-to-b from-[#EEDEFB] via-[#DFC6FF] to-[#C49BFA]/70 shadow-sm -z-10 pointer-events-none"
+        aria-hidden="true"
+      />
 
-      {/* Mascote pequeno ao lado do nível atual (não ultrapassa as bordas) */}
-      {isCurrent && (
-        <div
-          className={`absolute ${
-            flipMascot ? '-left-11' : '-right-11'
-          } -top-3 z-10 w-11 h-11 pointer-events-none drop-shadow`}
-        >
-          <Mascot pose="head" className="w-full h-full object-contain" priority />
-        </div>
-      )}
-
-      {/* 3 Estrelas de Maestria douradas acima de nó concluído */}
-      {isCompleted && (
-        <div className="absolute -top-2.5 z-10 flex gap-0.5 pointer-events-none">
-          <span className="text-[#F5B83D] text-[9px] leading-none drop-shadow-sm font-bold">•</span>
-          <span className="text-[#F5B83D] text-[11px] -mt-0.5 leading-none drop-shadow-sm font-bold">•</span>
-          <span className="text-[#F5B83D] text-[9px] leading-none drop-shadow-sm font-bold">•</span>
-        </div>
-      )}
-
-      {/* Botão circular chunky com física 3D (60px) */}
       <button
         type="button"
         aria-label={ariaLabel}
         onClick={onClick}
-        className={`w-[60px] h-[60px] rounded-full flex items-center justify-center transition-all duration-150 select-none ${getNodeStyles()} ${
+        style={{
+          width: `${size}px`,
+          height: `${size}px`,
+        }}
+        className={`w-full h-full rounded-full flex items-center justify-center transition-all duration-150 select-none ${getNodeStyles()} ${
           !isLocked
             ? 'active:translate-y-[2px] active:border-b-[2px] cursor-pointer'
             : 'active:scale-95'
-        }`}
+        } ${className}`}
       >
         {renderContent()}
       </button>
-      {/* Sem texto embaixo dos nós para caber 100% no viewport sem corte nem reticências */}
+
+      {/* Badge ou etiqueta de status */}
+      {isCurrent && (
+        <span className="absolute -bottom-5.5 bg-[#432171] text-white text-[9px] font-black uppercase tracking-wider px-2 py-0.5 rounded-full shadow-xs border border-purple-300 whitespace-nowrap pointer-events-none z-20">
+          Atual
+        </span>
+      )}
+      {isCompleted && (
+        <span className="absolute -bottom-5.5 bg-white text-[#15803D] text-[9px] font-black tracking-wider px-2 py-0.5 rounded-full shadow-xs border border-green-200 whitespace-nowrap pointer-events-none z-20 flex items-center gap-0.5">
+          ✓ Concluído
+        </span>
+      )}
+      {isLocked && !isChest && !isTrophy && (
+        <span className="absolute -bottom-5 bg-white/95 text-[#7D6A9C] text-[8px] font-bold px-1.5 py-0.5 rounded-full border border-purple-100 whitespace-nowrap pointer-events-none opacity-80">
+          Bloqueado
+        </span>
+      )}
     </div>
   )
 }
+
+export default LevelNode

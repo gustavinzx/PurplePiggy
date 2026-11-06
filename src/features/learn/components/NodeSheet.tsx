@@ -1,6 +1,7 @@
 // src/features/learn/components/NodeSheet.tsx
-// Gaveta inferior ao tocar em um nó do mapa
+// Gaveta inferior ao tocar em um nó do mapa (com createPortal para ficar sempre acima da BottomNav)
 import React from 'react'
+import { createPortal } from 'react-dom'
 import { X, BookOpen, Sparkles } from 'lucide-react'
 import { ChunkyButton } from './ChunkyButton'
 import { Mascot } from '../../../components/Mascot'
@@ -28,13 +29,18 @@ export const NodeSheet: React.FC<NodeSheetProps> = ({
 }) => {
   if (!isOpen) return null
 
-  return (
-    <div className="fixed inset-0 z-50 flex items-end justify-center bg-black/40 backdrop-blur-sm animate-fadeIn">
+  const sheetContent = (
+    <div className="fixed inset-0 z-[100] flex items-end justify-center bg-black/40 backdrop-blur-sm animate-fadeIn">
       {/* Backdrop click */}
       <div className="absolute inset-0" onClick={onClose} />
 
       {/* Drawer Container */}
-      <div className="relative z-10 w-full max-w-md bg-white rounded-t-3xl p-6 shadow-2xl border-t border-purple-100 animate-slideUp">
+      <div
+        className="relative z-10 w-full max-w-md bg-white rounded-t-3xl p-6 shadow-2xl border-t border-purple-100 animate-slideUp"
+        style={{
+          paddingBottom: 'calc(env(safe-area-inset-bottom, 0px) + 28px)',
+        }}
+      >
         {/* Top handle */}
         <div className="w-12 h-1.5 bg-gray-200 rounded-full mx-auto mb-4" />
 
@@ -43,7 +49,7 @@ export const NodeSheet: React.FC<NodeSheetProps> = ({
           type="button"
           onClick={onClose}
           aria-label="Fechar"
-          className="absolute top-5 right-5 w-8 h-8 rounded-full bg-purple-50 flex items-center justify-center text-purple-700 hover:bg-purple-100 transition-colors"
+          className="absolute top-5 right-5 w-8 h-8 rounded-full bg-purple-50 flex items-center justify-center text-purple-700 hover:bg-purple-100 transition-colors cursor-pointer"
         >
           <X className="w-4 h-4" />
         </button>
@@ -103,7 +109,7 @@ export const NodeSheet: React.FC<NodeSheetProps> = ({
             <button
               type="button"
               onClick={onReadGuide}
-              className="w-full py-2.5 text-center font-nunito font-extrabold text-sm text-[#7D2BD6] hover:bg-purple-50 rounded-xl transition-colors flex items-center justify-center gap-2"
+              className="w-full py-2.5 text-center font-nunito font-extrabold text-sm text-[#7D2BD6] hover:bg-purple-50 rounded-xl transition-colors flex items-center justify-center gap-2 cursor-pointer"
             >
               <BookOpen className="w-4 h-4" />
               Ler Guia do Nível
@@ -113,4 +119,8 @@ export const NodeSheet: React.FC<NodeSheetProps> = ({
       </div>
     </div>
   )
+
+  return typeof document !== 'undefined' ? createPortal(sheetContent, document.body) : sheetContent
 }
+
+export default NodeSheet

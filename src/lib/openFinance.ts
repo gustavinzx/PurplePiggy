@@ -29,8 +29,27 @@ export interface PluggySuccessPayload {
   item: PluggyItem
 }
 
+export interface SyncPluggyResult {
+  success: boolean
+  pendingAuth?: boolean
+  itemId?: string
+  oauthUrl?: string | null
+  institutionName?: string
+  syncedAccounts: number
+  syncedTransactions: number
+  message: string
+}
+
+export interface CreateOAuthItemResult {
+  success: boolean
+  itemId: string
+  institutionName: string
+  oauthUrl: string | null
+  message: string
+}
+
 export interface OpenFinanceConnectOptions {
-  onSuccess?: (item: PluggyItem) => void
+  onSuccess?: (item: PluggyItem, syncResult?: SyncPluggyResult) => void
   onError?: (error: any) => void
   onClose?: () => void
   itemId?: string
@@ -97,27 +116,70 @@ export const fetchPluggyConnectToken = async (itemId?: string): Promise<string> 
 }
 
 /**
- * Sincroniza contas e transações da Pluggy em tempo real com o banco de dados do PurplePiggy.
+ * Dispara a sincronização de transações bancárias da Pluggy (API v2) via Edge Function.
  */
-export const syncPluggyData = async (
-  userId: string,
+export const syncPluggyTransactions = async (
+  userId?: string,
   itemId?: string
 ): Promise<SyncPluggyResult> => {
-  const { data, error } = await supabase.functions.invoke('create-connect-token', {
-    body: {
-      action: 'sync',
-      itemId,
-      userId,
-    },
+  const { data, error } = await supabase.functions.invoke('sync-pluggy-transactions', {
+    body: { action: 'sync', itemId, userId },
   })
 
-  if (error || !data?.success) {
-    const msg = error?.message || data?.error || 'Erro ao sincronizar extrato bancário.'
-    console.error('[OpenFinance] Erro na sincronização:', msg)
-    throw new Error(msg)
+  if (error || !data) {
+    const errorMsg =
+      error?.message ||
+      data?.error ||
+      'Não foi possível sincronizar as transações da Pluggy no momento.'
+    throw new Error(errorMsg)
   }
 
-  return data as SyncPluggyResult
+  return data
+}
+
+/**
+ * Cria um item Open Finance diretamente via API da Pluggy e retorna o link oficial de autorização do banco (sem depender de iframe bloqueado no Android).
+ */
+export const createPluggyOAuthItem = async (
+  userId: string,
+  connectorId: number,
+  cpf: string
+): Promise<CreateOAuthItemResult> => {
+  const { data, error } = await supabase.functions.invoke('sync-pluggy-transactions', {
+    body: { action: 'create_oauth_item', userId, connectorId, cpf },
+  })
+
+  if (error || !data || data.error) {
+    const errorMsg =
+      data?.error ||
+      error?.message ||
+      'Não foi possível gerar o link de autorização do banco. Verifique seu CPF.'
+    throw new Error(errorMsg)
+  }
+
+  return data
+}
+
+/**
+ * Conecta e sincroniza em 1 clique o Pluggy Bank (Sandbox Oficial da API Pluggy)
+ * sem precisar digitar user-ok / password-ok manualmente no iframe.
+ */
+export const connectPluggySandboxDirect = async (
+  userId: string
+): Promise<SyncPluggyResult> => {
+  const { data, error } = await supabase.functions.invoke('sync-pluggy-transactions', {
+    body: { action: 'connect_sandbox', userId },
+  })
+
+  if (error || !data || data.error) {
+    const errorMsg =
+      data?.error ||
+      error?.message ||
+      'Não foi possível sincronizar o Pluggy Bank agora.'
+    throw new Error(errorMsg)
+  }
+
+  return data
 }
 
 /**
@@ -127,11 +189,8 @@ export const persistPluggyConnection = async (
   userId: string,
   item: PluggyItem
 ): Promise<{ connectionId: string }> => {
-  const institutionName = item.connector?.name || 'Instituição Financeira'
-  const isConnected =
-    item.status === 'UPDATED' || item.status === 'UPDATING' || item.status === 'COMPLETED'
+  const institutionName = item.connector?.name || 'Pluggy Bank'
 
-  // 1. Salvar ou atualizar conexão em bank_connections
   const { data: conn, error: connErr } = await supabase
     .from('bank_connections')
     .upsert(
@@ -141,7 +200,7 @@ export const persistPluggyConnection = async (
         account_label: `${institutionName} · Sincronizado via Open Finance`,
         provider: 'pluggy',
         provider_ref: item.id,
-        status: isConnected ? 'active' : 'pending',
+        status: 'active',
         is_demo: false,
       },
       { onConflict: 'user_id,provider_ref' }
@@ -154,7 +213,6 @@ export const persistPluggyConnection = async (
     throw new Error('Não foi possível salvar os dados da conexão bancária.')
   }
 
-  // 2. Registrar o consentimento de 12 meses em open_finance_consents
   const oneYearExpiry = new Date()
   oneYearExpiry.setFullYear(oneYearExpiry.getFullYear() + 1)
 
@@ -170,8 +228,7 @@ export const persistPluggyConnection = async (
 }
 
 /**
- * Abre o widget oficial da Pluggy Connect.
- * Se VITE_OPEN_FINANCE_PROVIDER não for 'pluggy', executa a rotina padrão/mock de desenvolvimento.
+ * Abre o widget oficial da Pluggy Connect (com suporte a Sandbox e bancos reais).
  */
 export const openPluggyConnect = async (
   userId: string,
@@ -186,31 +243,28 @@ export const openPluggyConnect = async (
     return
   }
 
-  // 1. Carrega o script
   await loadPluggyScript()
 
   if (!window.PluggyConnect) {
     throw new Error('O widget da Pluggy não pôde ser instanciado no navegador.')
   }
 
-  // 2. Obtém o connectToken via Supabase Edge Function
   const connectToken = await fetchPluggyConnectToken(options.itemId)
 
-  // 3. Inicializa o PluggyConnect
   const pluggyInstance = new window.PluggyConnect({
     connectToken,
-    includeSandbox: true,
+    includeSandbox: false,
     onSuccess: async (data: PluggySuccessPayload) => {
       try {
         if (data?.item) {
           await persistPluggyConnection(userId, data.item)
-          // Executa sincronização real imediata
+          let syncResult: SyncPluggyResult | undefined
           try {
-            await syncPluggyData(userId, data.item.id)
+            syncResult = await syncPluggyTransactions(userId, data.item.id)
           } catch (syncErr) {
-            console.warn('[OpenFinance] Sincronização pós-conexão em background:', syncErr)
+            console.warn('[OpenFinance] Sincronização inicial em segundo plano:', syncErr)
           }
-          options.onSuccess?.(data.item)
+          options.onSuccess?.(data.item, syncResult)
         }
       } catch (saveError) {
         options.onError?.(saveError)
@@ -225,10 +279,52 @@ export const openPluggyConnect = async (
     },
   })
 
-  // 4. Exibe o modal do widget
   if (typeof pluggyInstance.init === 'function') {
     pluggyInstance.init()
   } else if (typeof pluggyInstance.open === 'function') {
     pluggyInstance.open()
   }
+}
+
+/**
+ * Extrai o nome da instituição bancária de uma transação sincronizada via Open Finance
+ */
+export function getBankNameFromTransaction(
+  tx: { notes?: string | null; account_id?: string | null },
+  bankMap?: Record<string, string>
+): string | null {
+  if (tx.notes && tx.notes.includes('Open Finance (')) {
+    const match = tx.notes.match(/Open Finance \(([^)]+)\)/)
+    if (match && match[1]) {
+      return match[1].trim()
+    }
+  }
+  if (tx.account_id && bankMap && bankMap[tx.account_id]) {
+    return bankMap[tx.account_id]
+  }
+  return null
+}
+
+/**
+ * Retorna o caminho do logo oficial do banco em SVG de alta fidelidade
+ */
+export function getBankLogo(bankName?: string | null): string | null {
+  if (!bankName) return null
+  const lower = bankName.toLowerCase()
+
+  if (lower.includes('nu') || lower.includes('roxinho')) return '/assets/banks/nubank.svg'
+  if (lower.includes('mercado') || lower.includes('mp')) return '/assets/banks/mercadopago.svg'
+  if (lower.includes('itau') || lower.includes('itaú')) return '/assets/banks/itau.svg'
+  if (lower.includes('bradesco')) return '/assets/banks/bradesco.svg'
+  if (lower.includes('inter')) return '/assets/banks/inter.svg'
+  if (lower.includes('brasil') || lower.includes('bb')) return '/assets/banks/bancodobrasil.svg'
+  if (lower.includes('caixa')) return '/assets/banks/caixa.svg'
+  if (lower.includes('santander')) return '/assets/banks/santander.svg'
+  if (lower.includes('c6')) return '/assets/banks/c6bank.svg'
+  if (lower.includes('picpay')) return '/assets/banks/picpay.svg'
+  if (lower.includes('btg')) return '/assets/banks/btg.svg'
+  if (lower.includes('sicredi')) return '/assets/banks/sicredi.svg'
+  if (lower.includes('sicoob')) return '/assets/banks/sicoob.svg'
+
+  return null
 }

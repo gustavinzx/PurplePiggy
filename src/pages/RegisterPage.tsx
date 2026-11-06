@@ -7,7 +7,7 @@ import { useAuth } from '../context/AuthContext'
 import { Mascot } from '../components/Mascot'
 import { AppShell } from '../components/AppShell'
 import { BackgroundBlobs } from '../components/BackgroundBlobs'
-import { ArrowLeft, User, Mail, Lock, ShieldCheck, Eye, EyeOff } from 'lucide-react'
+import { ArrowLeft, User, Mail, Lock, ShieldCheck, Eye, EyeOff, AlertCircle, LogIn, KeyRound } from 'lucide-react'
 import { toast } from 'sonner'
 
 const registerSchema = z
@@ -30,6 +30,7 @@ export const RegisterPage: React.FC = () => {
   const [showPassword, setShowPassword] = useState(false)
   const [showConfirm, setShowConfirm] = useState(false)
   const [isSubmitting, setIsSubmitting] = useState(false)
+  const [duplicateEmail, setDuplicateEmail] = useState<string | null>(null)
 
   const {
     register,
@@ -41,13 +42,20 @@ export const RegisterPage: React.FC = () => {
 
   const onSubmit = async (data: RegisterFormData) => {
     setIsSubmitting(true)
+    setDuplicateEmail(null)
     const { error } = await signUp(data.email, data.password, data.fullName)
     setIsSubmitting(false)
 
     if (error) {
       const msg = error.message.toLowerCase()
-      if (msg.includes('already registered') || msg.includes('user already exists')) {
-        toast.error('Este e-mail já possui cadastro. Que tal entrar na sua conta?')
+      if (
+        msg.includes('already registered') ||
+        msg.includes('user already exists') ||
+        msg.includes('já está cadastrado') ||
+        msg.includes('já possui cadastro')
+      ) {
+        setDuplicateEmail(data.email.trim().toLowerCase())
+        toast.error('Este e-mail já está cadastrado no PurplePiggy.')
       } else if (msg.includes('password') && (msg.includes('weak') || msg.includes('short') || msg.includes('least'))) {
         toast.error('Senha fraca. Use pelo menos 8 caracteres com letras e números.')
       } else {
@@ -90,6 +98,43 @@ export const RegisterPage: React.FC = () => {
           </p>
         </div>
 
+        {/* Card de restrição caso o e-mail já esteja cadastrado */}
+        {duplicateEmail && (
+          <div className="mb-4 rounded-2xl bg-[#FFF5F5] border-2 border-[#FCA5A5] p-4 shadow-sm animate-fadeIn">
+            <div className="flex items-start gap-3">
+              <div className="w-9 h-9 rounded-xl bg-[#FEE2E2] text-[#DC2626] flex items-center justify-center shrink-0">
+                <AlertCircle className="w-5 h-5" />
+              </div>
+              <div className="flex-1 text-left">
+                <h3 className="text-[13px] font-extrabold text-[#991B1B] leading-snug">
+                  Já existe uma conta com este e-mail
+                </h3>
+                <p className="text-[12px] font-bold text-[#7F1D1D]/85 mt-0.5 leading-relaxed">
+                  O endereço <span className="underline font-extrabold">{duplicateEmail}</span> já está registrado no PurplePiggy.
+                </p>
+                <div className="mt-3 flex flex-wrap gap-2">
+                  <button
+                    type="button"
+                    onClick={() => navigate('/entrar')}
+                    className="flex items-center gap-1.5 px-3.5 py-2 rounded-xl bg-[#8E32D8] text-white text-[12px] font-extrabold shadow-xs hover:opacity-95 active:scale-95 transition-all cursor-pointer"
+                  >
+                    <LogIn className="w-3.5 h-3.5" />
+                    Entrar na conta
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => navigate('/recuperar-senha')}
+                    className="flex items-center gap-1.5 px-3.5 py-2 rounded-xl bg-white border border-[#E9D5FF] text-[#6B21A8] text-[12px] font-extrabold hover:bg-[#FAF5FF] active:scale-95 transition-all cursor-pointer"
+                  >
+                    <KeyRound className="w-3.5 h-3.5" />
+                    Recuperar senha
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+        )}
+
         {/* Formulário com Caixas Altas, Espaçosas e Confortáveis */}
         <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-3.5">
           {/* Nome completo */}
@@ -119,10 +164,18 @@ export const RegisterPage: React.FC = () => {
                 <Mail className="w-5 h-5" strokeWidth={2.2} />
               </span>
               <input
-                {...register('email')}
+                {...register('email', {
+                  onChange: () => {
+                    if (duplicateEmail) setDuplicateEmail(null)
+                  },
+                })}
                 type="email"
                 placeholder="E-mail"
-                className="w-full h-14 pl-[58px] pr-5 bg-white border border-[#E9D5FF]/80 rounded-2xl text-deep placeholder:text-[#581C87]/45 font-bold text-[15px] focus:outline-none focus:border-[#8E32D8] focus:ring-4 focus:ring-[#8E32D8]/10 transition-all"
+                className={`w-full h-14 pl-[58px] pr-5 bg-white border rounded-2xl text-deep placeholder:text-[#581C87]/45 font-bold text-[15px] focus:outline-none transition-all ${
+                  duplicateEmail
+                    ? 'border-[#EF4444] focus:border-[#DC2626] focus:ring-4 focus:ring-[#EF4444]/15'
+                    : 'border-[#E9D5FF]/80 focus:border-[#8E32D8] focus:ring-4 focus:ring-[#8E32D8]/10'
+                }`}
               />
             </div>
             {errors.email && (

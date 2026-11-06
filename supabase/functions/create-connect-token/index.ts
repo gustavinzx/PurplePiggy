@@ -1,5 +1,5 @@
 // supabase/functions/create-connect-token/index.ts
-// Supabase Edge Function: Geração de Connect Token e Sincronização Real de Dados da Pluggy
+// Supabase Edge Function para geração segura de connectToken da Pluggy (incluindo suporte a Sandbox e Produção)
 import { serve } from 'https://deno.land/std@0.168.0/http/server.ts'
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2.39.0'
 
@@ -199,8 +199,7 @@ serve(async (req) => {
 
     const supabase = createClient(supabaseUrl, supabaseServiceKey)
 
-    // 1. Identificação do usuário logado via JWT
-    let clientUserId = ''
+    let clientUserId = 'purplepiggy-user'
     const authHeader = req.headers.get('Authorization')
     if (authHeader) {
       const jwtToken = authHeader.replace(/^Bearer\s+/i, '').trim()
@@ -212,18 +211,6 @@ serve(async (req) => {
       }
     }
 
-    let reqBody: RequestBody = {}
-    try {
-      reqBody = await req.json()
-    } catch {
-      reqBody = {}
-    }
-
-    if (!clientUserId && reqBody.userId) {
-      clientUserId = reqBody.userId
-    }
-
-    // 2. Credenciais secretas da Pluggy
     const pluggyClientId =
       Deno.env.get('PLUGGY_CLIENT_ID') || '379a488b-3ed2-4e90-b703-abf8462a29a2'
     const pluggyClientSecret =
@@ -239,7 +226,6 @@ serve(async (req) => {
       )
     }
 
-    // 3. Autenticação na Pluggy (Obter apiKey válida por 2 horas)
     const authResponse = await fetch(`${pluggyApiUrl}/auth`, {
       method: 'POST',
       headers: {
@@ -266,202 +252,11 @@ serve(async (req) => {
 
     const { apiKey } = await authResponse.json()
 
-    // 4. Se a ação for "sync": puxar contas e transações da Pluggy e injetar no PurplePiggy
-    if (reqBody.action === 'sync') {
-      let itemId = reqBody.itemId
-      if (!itemId && clientUserId) {
-        const { data: latestConn } = await supabase
-          .from('bank_connections')
-          .select('provider_ref')
-          .eq('user_id', clientUserId)
-          .eq('provider', 'pluggy')
-          .eq('status', 'active')
-          .order('updated_at', { ascending: false })
-          .limit(1)
-          .maybeSingle()
-        if (latestConn?.provider_ref) {
-          itemId = latestConn.provider_ref
-        }
-      }
-
-      if (!itemId) {
-        return new Response(
-          JSON.stringify({ error: 'Nenhuma conta bancária ativa encontrada para sincronizar.' }),
-          { status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
-        )
-      }
-
-      if (!clientUserId) {
-        return new Response(
-          JSON.stringify({ error: 'Usuário não identificado para salvar transações.' }),
-          { status: 401, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
-        )
-      }
-
-      console.log(`[Pluggy Sync] Iniciando sincronização para user=${clientUserId}, item=${itemId}`)
-
-      // 4.1 Buscar dados do Item (Instituição conectada)
-      let institutionName = 'Instituição Financeira'
-      const itemResponse = await fetch(`${pluggyApiUrl}/items/${itemId}`, {
-        headers: { 'X-API-KEY': apiKey },
-      })
-      if (itemResponse.ok) {
-        const itemData = await itemResponse.json()
-        institutionName = itemData.connector?.name || institutionName
-      }
-
-      // 4.2 Buscar contas do Item
-      const accountsResponse = await fetch(`${pluggyApiUrl}/accounts?itemId=${itemId}`, {
-        headers: { 'X-API-KEY': apiKey },
-      })
-
-      if (!accountsResponse.ok) {
-        const errText = await accountsResponse.text()
-        console.error('[Pluggy Sync] Erro ao buscar contas:', errText)
-        return new Response(
-          JSON.stringify({ error: 'Falha ao buscar contas na Pluggy.', details: errText }),
-          { status: 502, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
-        )
-      }
-
-      const accountsData = await accountsResponse.json()
-      const accounts = accountsData.results || []
-      console.log(`[Pluggy Sync] ${accounts.length} contas encontradas.`)
-
-      // Calcular saldo total líquido
-      let totalBalance = 0
-      for (const acc of accounts) {
-        if (typeof acc.balance === 'number') {
-          // Contas do tipo BANK contam para saldo
-          if (acc.type === 'BANK') {
-            totalBalance += acc.balance
-          }
-        }
-      }
-
-      // 4.3 Mapeamento de categorias existentes no Supabase
-      const { data: dbCategories } = await supabase
-        .from('categories')
-        .select('id, slug')
-        .is('user_id', null)
-
-      const catMap: Record<string, string> = {}
-      dbCategories?.forEach((c) => {
-        catMap[c.slug] = c.id
-      })
-      const defaultCatId = catMap['outros'] || Object.values(catMap)[0]
-
-      // 4.4 Buscar e sincronizar transações de cada conta
-      let insertedTransactionsCount = 0
-
-      for (const acc of accounts) {
-        const txResponse = await fetch(
-          `${pluggyApiUrl}/transactions?accountId=${acc.id}&pageSize=500`,
-          {
-            headers: { 'X-API-KEY': apiKey },
-          }
-        )
-
-        if (txResponse.ok) {
-          const txData = await txResponse.json()
-          const pluggyTransactions = txData.results || []
-          console.log(`[Pluggy Sync] Conta ${acc.id} (${acc.name}): ${pluggyTransactions.length} transações.`)
-
-          for (const pt of pluggyTransactions) {
-            const rawAmount = Number(pt.amount)
-            if (isNaN(rawAmount) || rawAmount === 0) continue
-
-            // No Pluggy, despesas são normalmente valores negativos ou marcadas como DEBIT
-            const isExpense = rawAmount < 0 || pt.type === 'DEBIT'
-            const amount = Math.abs(rawAmount)
-            const type = isExpense ? 'expense' : 'income'
-            const occurredOn = (pt.date || new Date().toISOString()).split('T')[0]
-            const description = (pt.description || 'Transação bancária').trim()
-
-            // Identificar categoria via texto e categoria da Pluggy
-            const matchedSlug = mapPluggyCategory(pt.category, description)
-            const categoryId = catMap[matchedSlug] || defaultCatId
-
-            // Identificar método de pagamento
-            let paymentMethod = 'other'
-            const descUpper = description.toUpperCase()
-            if (descUpper.includes('PIX') || pt.paymentData?.paymentMethod === 'PIX') {
-              paymentMethod = 'pix'
-            } else if (acc.type === 'CREDIT' || acc.subtype === 'CREDIT_CARD') {
-              paymentMethod = 'credit_card'
-            } else if (isExpense) {
-              paymentMethod = 'debit_card'
-            } else {
-              paymentMethod = 'transfer'
-            }
-
-            // Verificar se transação já foi inserida para evitar duplicidade
-            const { data: existing } = await supabase
-              .from('transactions')
-              .select('id')
-              .eq('user_id', clientUserId)
-              .eq('occurred_on', occurredOn)
-              .eq('amount', amount)
-              .eq('description', description)
-              .limit(1)
-
-            if (!existing || existing.length === 0) {
-              const { error: insErr } = await supabase.from('transactions').insert({
-                user_id: clientUserId,
-                category_id: categoryId,
-                type,
-                description,
-                amount,
-                occurred_on: occurredOn,
-                payment_method: paymentMethod,
-                source: 'open_finance',
-                notes: `Sincronizado via Pluggy (${acc.name || institutionName})`,
-              })
-
-              if (!insErr) {
-                insertedTransactionsCount++
-              } else {
-                console.warn('[Pluggy Sync] Erro ao inserir transação:', insErr)
-              }
-            }
-          }
-        }
-      }
-
-      // 4.5 Atualizar conexão bancária
-      await supabase.from('bank_connections').upsert(
-        {
-          user_id: clientUserId,
-          institution_name: institutionName,
-          account_label: `${institutionName} · Sincronizado (${accounts.length} contas)`,
-          provider: 'pluggy',
-          provider_ref: itemId,
-          status: 'active',
-          is_demo: false,
-        },
-        { onConflict: 'user_id,provider_ref' }
-      )
-
-      // 4.6 Atualizar saldo inicial/líquido no perfil do usuário
-      if (totalBalance > 0) {
-        await supabase
-          .from('profiles')
-          .update({ initial_balance: totalBalance })
-          .eq('id', clientUserId)
-      }
-
-      console.log(`[Pluggy Sync] Sincronização concluída com sucesso! ${insertedTransactionsCount} transações adicionadas.`)
-
-      return new Response(
-        JSON.stringify({
-          success: true,
-          institutionName,
-          accountsCount: accounts.length,
-          transactionsCount: insertedTransactionsCount,
-          totalBalance,
-        }),
-        { status: 200, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
-      )
+    let reqBody: RequestBody = {}
+    try {
+      reqBody = await req.json()
+    } catch {
+      reqBody = {}
     }
 
     // 5. Default: Criação do Connect Token para abrir o widget

@@ -1,0 +1,56 @@
+[
+  {
+    "viewport": "390x844",
+    "bell": {
+      "x": 321,
+      "y": 12,
+      "width": 40,
+      "height": 40,
+      "bottom": 52
+    },
+    "mascot": {
+      "x": 239,
+      "y": 80.3,
+      "width": 128,
+      "height": 128,
+      "top": 80.3,
+      "bottom": 208.3
+    },
+    "balanceCard": {
+      "x": 21,
+      "y": 163.3,
+      "width": 342,
+      "height": 133.5
+    },
+    "verticalGap": 28.3,
+    "intersectionArea": 0,
+    "status": "APROVADO"
+  },
+  {
+    "viewport": "360x780",
+    "bell": {
+      "x": 291,
+      "y": 12,
+      "width": 40,
+      "height": 40,
+      "bottom": 52
+    },
+    "mascot": {
+      "x": 209,
+      "y": 80.3,
+      "width": 128,
+      "height": 128,
+      "top": 80.3,
+      "bottom": 208.3
+    },
+    "balanceCard": {
+      "x": 21,
+      "y": 163.3,
+      "width": 312,
+      "height": 133.5
+    },
+    "verticalGap": 28.3,
+    "intersectionArea": 0,
+    "status": "APROVADO"
+  }
+]

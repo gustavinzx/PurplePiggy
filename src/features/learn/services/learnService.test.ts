@@ -68,4 +68,40 @@ describe('Serviço do Módulo Aprender (learnService - Prompt N5)', () => {
     const buyRes = await learnService.buyShield()
     expect(buyRes.success).toBe(false)
   })
+
+  it('deve consumir Streak Freeze e proteger a ofensiva caso o usuário tenha faltado', async () => {
+    // Configura usuário com streak de 5 e 1 escudo, mas cuja última atividade foi há 2 dias
+    const twoDaysAgo = new Date(Date.now() - 2 * 86400000).toISOString().slice(0, 10)
+    mockLocalStorage.setItem(
+      'purplepiggy_learn_stats',
+      JSON.stringify({
+        streak_count: 5,
+        longest_streak: 5,
+        last_activity_date: twoDaysAgo,
+        piggy_coins: 100,
+        xp_points: 200,
+        hearts: 3,
+        streak_shields: 1,
+        active_track_slug: 'organizacao-financeira',
+      })
+    )
+
+    const stats = await learnService.getStats()
+    expect(stats.streak_count).toBe(5) // Ofensiva preservada!
+    expect(stats.streak_shields).toBe(0) // 1 escudo consumido!
+    expect(stats.freeze_used_today).toBe(true)
+  })
+
+  it('deve registrar erros e retornar os exercícios mais errados no Motor de Prática (Passo 3)', async () => {
+    await learnService.recordMistake('ex-1', 'orcamento')
+    await learnService.recordMistake('ex-1', 'orcamento')
+    await learnService.recordMistake('ex-2', 'juros')
+
+    const topMistakes = await learnService.getReviewExercises(5)
+    expect(topMistakes.length).toBeGreaterThanOrEqual(2)
+    expect(topMistakes[0].exercise_id).toBe('ex-1')
+    expect(topMistakes[0].mistake_count).toBe(2)
+    expect(topMistakes[1].exercise_id).toBe('ex-2')
+    expect(topMistakes[1].mistake_count).toBe(1)
+  })
 })

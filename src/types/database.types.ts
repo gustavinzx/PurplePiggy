@@ -9,6 +9,36 @@ export type Json =
 export type Database = {
   public: {
     Tables: {
+      app_releases: {
+        Row: {
+          id: string
+          version_code: number
+          version_name: string
+          download_url: string
+          release_notes: string
+          is_mandatory: boolean
+          created_at: string
+        }
+        Insert: {
+          id?: string
+          version_code: number
+          version_name: string
+          download_url: string
+          release_notes: string
+          is_mandatory?: boolean
+          created_at?: string
+        }
+        Update: {
+          id?: string
+          version_code?: number
+          version_name?: string
+          download_url?: string
+          release_notes?: string
+          is_mandatory?: boolean
+          created_at?: string
+        }
+        Relationships: []
+      }
       bank_connections: {
         Row: {
           account_label: string | null
@@ -18,6 +48,8 @@ export type Database = {
           is_demo: boolean
           provider: string
           provider_ref: string | null
+          balance: number | null
+          last_synced_at: string | null
           status: 'pending' | 'active' | 'revoked' | 'expired' | 'error'
           updated_at: string
           user_id: string
@@ -30,6 +62,8 @@ export type Database = {
           is_demo?: boolean
           provider?: string
           provider_ref?: string | null
+          balance?: number | null
+          last_synced_at?: string | null
           status: 'pending' | 'active' | 'revoked' | 'expired' | 'error'
           updated_at?: string
           user_id: string
@@ -42,6 +76,8 @@ export type Database = {
           is_demo?: boolean
           provider?: string
           provider_ref?: string | null
+          balance?: number | null
+          last_synced_at?: string | null
           status?: 'pending' | 'active' | 'revoked' | 'expired' | 'error'
           updated_at?: string
           user_id?: string
@@ -428,6 +464,8 @@ export type Database = {
           category_id: string
           created_at: string
           description: string
+          external_id: string | null
+          account_id: string | null
           id: string
           notes: string | null
           occurred_on: string
@@ -442,6 +480,8 @@ export type Database = {
           category_id: string
           created_at?: string
           description: string
+          external_id?: string | null
+          account_id?: string | null
           id?: string
           notes?: string | null
           occurred_on: string
@@ -456,6 +496,8 @@ export type Database = {
           category_id?: string
           created_at?: string
           description?: string
+          external_id?: string | null
+          account_id?: string | null
           id?: string
           notes?: string | null
           occurred_on?: string
@@ -652,6 +694,9 @@ export type Database = {
       claim_learn_chest: { Args: { p_track_slug: string; p_chest_index: number }; Returns: Json }
       complete_daily_learn_challenge: { Args: { p_challenge_date?: string }; Returns: Json }
       buy_streak_shield: { Args: Record<string, never>; Returns: Json }
+      record_user_mistake: { Args: { p_exercise_id: string; p_concept_tag?: string }; Returns: Json }
+      get_user_review_exercises: { Args: { p_limit?: number }; Returns: Json }
+      get_weekly_leaderboard: { Args: { p_limit?: number }; Returns: Json }
     }
   }
 }

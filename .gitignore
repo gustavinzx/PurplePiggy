@@ -29,3 +29,10 @@ dist-ssr
 .env.production
 
 .vercel
+
+# Android build artifacts
+*.apk
+*.aab
+
+# Temporary Supabase files
+supabase/.temp/

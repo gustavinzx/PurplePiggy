@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react'
+import { useNavigate } from 'react-router-dom'
 import { supabase } from '../lib/supabase'
 import { useAuth } from '../context/AuthContext'
 import { AppShell } from '../components/AppShell'
@@ -6,19 +7,11 @@ import { Button } from '../components/Button'
 import { Mascot } from '../components/Mascot'
 import { CategoryCircle } from '../components/CategoryIcon'
 import { getBudgetAlertStatus, suggestCategoryLimits } from '../lib/finance'
-import { formatCurrency, formatPercent } from '../lib/format'
+import { formatCurrency } from '../lib/format'
 import {
+  ArrowLeft,
   Sparkles,
-  Sliders,
   Plus,
-  Home,
-  ShoppingCart,
-  Bus,
-  HeartPulse,
-  Users,
-  GraduationCap,
-  ShoppingBag,
-  CircleEllipsis,
   X,
   AlertCircle,
 } from 'lucide-react'
@@ -26,9 +19,9 @@ import { toast } from 'sonner'
 import type { Database } from '../types/database.types'
 
 type Category = Database['public']['Tables']['categories']['Row']
-type Budget = Database['public']['Tables']['budgets']['Row']
 
 export const BudgetPage: React.FC = () => {
+  const navigate = useNavigate()
   const { user } = useAuth()
   const [categories, setCategories] = useState<Category[]>([])
   const [budgets, setBudgets] = useState<Record<string, number>>({})
@@ -120,7 +113,6 @@ export const BudgetPage: React.FC = () => {
   const handleOpenSuggest = async () => {
     if (!user) return
 
-    // Buscar histórico de até 3 meses anteriores
     const threeMonthsAgo = new Date()
     threeMonthsAgo.setMonth(threeMonthsAgo.getMonth() - 3)
     const startDate = threeMonthsAgo.toISOString().split('T')[0]
@@ -155,7 +147,7 @@ export const BudgetPage: React.FC = () => {
     setSavingAdjust(true)
     try {
       for (const [catId, limit] of Object.entries(suggestedLimits)) {
-        await supabase.from('budgets').upsert(
+        const { error } = await supabase.from('budgets').upsert(
           {
             user_id: user.id,
             category_id: catId,
@@ -164,6 +156,7 @@ export const BudgetPage: React.FC = () => {
           },
           { onConflict: 'user_id,month,category_id' }
         )
+        if (error) throw error
       }
       toast.success('Limites sugeridos aplicados com sucesso!')
       setIsSuggestModalOpen(false)
@@ -181,7 +174,7 @@ export const BudgetPage: React.FC = () => {
     setSavingAdjust(true)
     try {
       // Salvar orçamento total
-      await supabase.from('budgets').upsert(
+      const { error: errTotal } = await supabase.from('budgets').upsert(
         {
           user_id: user.id,
           category_id: null,
@@ -190,10 +183,11 @@ export const BudgetPage: React.FC = () => {
         },
         { onConflict: 'user_id,month,category_id' }
       )
+      if (errTotal) throw errTotal
 
       // Salvar limites por categoria
       for (const [catId, limit] of Object.entries(editCategoryLimits)) {
-        await supabase.from('budgets').upsert(
+        const { error: errCat } = await supabase.from('budgets').upsert(
           {
             user_id: user.id,
             category_id: catId,
@@ -202,9 +196,10 @@ export const BudgetPage: React.FC = () => {
           },
           { onConflict: 'user_id,month,category_id' }
         )
+        if (errCat) throw errCat
       }
 
-      toast.success('Orçamento atualizado')
+      toast.success('Orçamento atualizado com sucesso!')
       setIsAdjustModalOpen(false)
       loadBudgetData()
     } catch (err) {
@@ -217,44 +212,31 @@ export const BudgetPage: React.FC = () => {
   const overallAlert = getBudgetAlertStatus(totalSpent, totalBudgetLimit)
   const remainingTotal = Math.max(0, totalBudgetLimit - totalSpent)
 
-  const getCategoryIcon = (iconName?: string) => {
-    switch (iconName) {
-      case 'Home':
-        return <Home className="w-4 h-4" />
-      case 'ShoppingCart':
-        return <ShoppingCart className="w-4 h-4" />
-      case 'Bus':
-        return <Bus className="w-4 h-4" />
-      case 'HeartPulse':
-        return <HeartPulse className="w-4 h-4" />
-      case 'Users':
-        return <Users className="w-4 h-4" />
-      case 'GraduationCap':
-        return <GraduationCap className="w-4 h-4" />
-      case 'Sparkles':
-        return <Sparkles className="w-4 h-4" />
-      case 'ShoppingBag':
-        return <ShoppingBag className="w-4 h-4" />
-      default:
-        return <CircleEllipsis className="w-4 h-4" />
-    }
-  }
-
   return (
-    <AppShell showNav={true} className="py-6 flex flex-col gap-4">
-      {/* Título */}
-      <div className="flex items-center justify-between">
-        <div>
-          <h1 className="text-xl font-extrabold text-deep font-sans mb-1">
-            Seu orçamento
-          </h1>
-          <p className="text-xs font-semibold text-textSec">
-            Planeje seus limites com tranquilidade.
-          </p>
+    <AppShell showNav={true} className="py-6 flex flex-col gap-4 pb-24">
+      {/* Título com botão voltar */}
+      <div className="flex items-center justify-between gap-2">
+        <div className="flex items-center gap-2.5 min-w-0">
+          <button
+            type="button"
+            onClick={() => (window.history.length > 2 ? navigate(-1) : navigate('/inicio'))}
+            aria-label="Voltar"
+            className="w-9 h-9 rounded-full bg-white shadow-card border border-lilac/20 flex items-center justify-center text-[#432171] hover:bg-[#F8F5FC] active:scale-95 transition-all shrink-0 cursor-pointer"
+          >
+            <ArrowLeft className="w-4.5 h-4.5 text-[#432171]" />
+          </button>
+          <div className="min-w-0">
+            <h1 className="text-xl font-extrabold text-deep font-sans leading-tight truncate">
+              Seu orçamento
+            </h1>
+            <p className="text-xs font-semibold text-textSec truncate">
+              Planeje seus limites com tranquilidade.
+            </p>
+          </div>
         </div>
         <button
           onClick={handleOpenSuggest}
-          className="text-xs font-bold text-primary bg-primary/10 hover:bg-primary/20 py-1.5 px-3 rounded-full flex items-center gap-1 transition-colors"
+          className="text-xs font-bold text-primary bg-primary/10 hover:bg-primary/20 py-1.5 px-3 rounded-full flex items-center gap-1 transition-colors shrink-0 cursor-pointer"
         >
           <Sparkles className="w-3.5 h-3.5 text-gold" />
           <span>Sugerir limites</span>
@@ -333,56 +315,56 @@ export const BudgetPage: React.FC = () => {
             </div>
           ) : (
             categories.map((cat) => {
-            const spent = spentByCategory[cat.id] || 0
-            const limit = budgets[cat.id] || 0
-            const alert = getBudgetAlertStatus(spent, limit)
+              const spent = spentByCategory[cat.id] || 0
+              const limit = budgets[cat.id] || 0
+              const alert = getBudgetAlertStatus(spent, limit)
 
-            return (
-              <div key={cat.id} className="flex flex-col gap-1.5">
-                <div className="flex items-center justify-between">
-                  <div className="flex items-center gap-2.5">
-                    <CategoryCircle name={cat.slug || cat.icon || cat.name} size="sm" />
-                    <div>
-                      <div className="text-xs font-bold text-deep leading-tight">
-                        {cat.name}
-                      </div>
-                      <div className="text-[10px] font-semibold text-textSec">
-                        {formatCurrency(spent)} / {limit > 0 ? formatCurrency(limit) : 'Sem limite'}
+              return (
+                <div key={cat.id} className="flex flex-col gap-1.5">
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center gap-2.5">
+                      <CategoryCircle name={cat.slug || cat.icon || cat.name} size="sm" />
+                      <div>
+                        <div className="text-xs font-bold text-deep leading-tight">
+                          {cat.name}
+                        </div>
+                        <div className="text-[10px] font-semibold text-textSec">
+                          {formatCurrency(spent)} / {limit > 0 ? formatCurrency(limit) : 'Sem limite'}
+                        </div>
                       </div>
                     </div>
+
+                    <span
+                      className={`text-xs font-extrabold ${
+                        alert.status === 'danger'
+                          ? 'text-danger'
+                          : alert.status === 'warning'
+                          ? 'text-amber-600'
+                          : 'text-primary'
+                      }`}
+                    >
+                      {limit > 0 ? `${alert.percent}%` : '-'}
+                    </span>
                   </div>
 
-                  <span
-                    className={`text-xs font-extrabold ${
-                      alert.status === 'danger'
-                        ? 'text-danger'
-                        : alert.status === 'warning'
-                        ? 'text-amber-600'
-                        : 'text-primary'
-                    }`}
-                  >
-                    {limit > 0 ? `${alert.percent}%` : '-'}
-                  </span>
+                  {/* Barra de progresso da categoria */}
+                  <div className="w-full h-2 bg-bg rounded-full overflow-hidden">
+                    <div
+                      className={`h-full rounded-full transition-all duration-500 ${
+                        alert.status === 'danger'
+                          ? 'bg-danger'
+                          : alert.status === 'warning'
+                          ? 'bg-gold'
+                          : 'bg-primary'
+                      }`}
+                      style={{
+                        width: limit > 0 ? `${Math.min(100, alert.percent)}%` : '0%',
+                      }}
+                    />
+                  </div>
                 </div>
-
-                {/* Barra de progresso da categoria */}
-                <div className="w-full h-2 bg-bg rounded-full overflow-hidden">
-                  <div
-                    className={`h-full rounded-full transition-all duration-500 ${
-                      alert.status === 'danger'
-                        ? 'bg-danger'
-                        : alert.status === 'warning'
-                        ? 'bg-gold'
-                        : 'bg-primary'
-                    }`}
-                    style={{
-                      width: limit > 0 ? `${Math.min(100, alert.percent)}%` : '0%',
-                    }}
-                  />
-                </div>
-              </div>
-            )
-          })
+              )
+            })
           )}
         </div>
       </div>
@@ -410,7 +392,7 @@ export const BudgetPage: React.FC = () => {
               </h2>
               <button
                 onClick={() => setIsAdjustModalOpen(false)}
-                className="p-1 rounded-full text-textSec hover:text-deep"
+                className="p-1 rounded-full text-textSec hover:text-deep cursor-pointer"
               >
                 <X className="w-5 h-5" />
               </button>

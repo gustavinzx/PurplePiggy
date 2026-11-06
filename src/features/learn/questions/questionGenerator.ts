@@ -7,6 +7,9 @@ import type {
   QuestionValidationResult,
   ConceptMatchingQuestion,
   OrderPrioritiesQuestion,
+  MultipleChoiceQuestion,
+  ScenarioChoiceQuestion,
+  FillInTheBlankQuestion,
 } from './types'
 import { LOTE_1_QUESTIONS } from './lote1'
 import { LOTE_2_QUESTIONS } from './lote2'
@@ -19,6 +22,80 @@ export const ALL_QUESTIONS: LearnQuestion[] = [
   ...LOTE_3_QUESTIONS,
   ...LOTE_4_QUESTIONS,
 ]
+
+/**
+ * Embaralha um array usando Fisher-Yates
+ */
+function fisherYatesShuffle<T>(arr: T[]): T[] {
+  const copy = [...arr]
+  for (let i = copy.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1))
+    const temp = copy[i]
+    copy[i] = copy[j]
+    copy[j] = temp
+  }
+  return copy
+}
+
+/**
+ * Embaralha dinamicamente as opções de uma questão mantendo a referência exata da resposta correta
+ */
+export function shuffleQuestionOptions(question: LearnQuestion, preferredIndex?: number): LearnQuestion {
+  if (question.typology === 'multiple_choice' || question.typology === 'scenario_choice') {
+    const q = question as MultipleChoiceQuestion | ScenarioChoiceQuestion
+    const correctOptionText = q.options[q.correctIndex]
+    let shuffled = fisherYatesShuffle(q.options)
+
+    // Se preferredIndex for fornecido, garante que a resposta correta fique em posição variada
+    if (typeof preferredIndex === 'number' && shuffled.length > 1) {
+      const targetPos = preferredIndex % shuffled.length
+      const currentPos = shuffled.indexOf(correctOptionText)
+      if (currentPos !== -1 && currentPos !== targetPos) {
+        const temp = shuffled[targetPos]
+        shuffled[targetPos] = shuffled[currentPos]
+        shuffled[currentPos] = temp
+      }
+    }
+
+    const newCorrectIndex = shuffled.indexOf(correctOptionText)
+    return {
+      ...q,
+      options: shuffled,
+      correctIndex: newCorrectIndex >= 0 ? newCorrectIndex : q.correctIndex,
+    } as LearnQuestion
+  }
+
+  if (question.typology === 'fill_in_the_blank') {
+    const q = question as FillInTheBlankQuestion
+    let shuffled = fisherYatesShuffle(q.options)
+    // Evita deixar a resposta certa sempre na posição 0
+    if (shuffled.length > 1 && shuffled[0] === q.correctAnswer && Math.random() < 0.75) {
+      const swapIdx = 1 + Math.floor(Math.random() * (shuffled.length - 1))
+      const temp = shuffled[0]
+      shuffled[0] = shuffled[swapIdx]
+      shuffled[swapIdx] = temp
+    }
+    return {
+      ...q,
+      options: shuffled,
+    }
+  }
+
+  if (question.typology === 'order_priorities') {
+    const q = question as OrderPrioritiesQuestion
+    let shuffled = fisherYatesShuffle(q.items)
+    // Garante que nunca comece já na ordem correta
+    if (shuffled.length > 1 && JSON.stringify(shuffled) === JSON.stringify(q.correctOrder)) {
+      shuffled = [...shuffled.slice(1), shuffled[0]]
+    }
+    return {
+      ...q,
+      items: shuffled,
+    }
+  }
+
+  return question
+}
 
 /**
  * Retorna todas as questões cadastradas nos 4 lotes
@@ -35,11 +112,13 @@ export function getQuestionsByLote(lote: LoteNumber): LearnQuestion[] {
 }
 
 /**
- * Retorna as questões de uma lição específica ordenadas por orderIndex
+ * Retorna as questões de uma lição específica ordenadas por orderIndex e com alternativas embaralhadas
  */
 export function getQuestionsByLesson(lessonSlug: string): LearnQuestion[] {
   const filtered = ALL_QUESTIONS.filter((q) => q.lessonSlug === lessonSlug)
-  return filtered.sort((a, b) => a.orderIndex - b.orderIndex)
+  const sorted = filtered.sort((a, b) => a.orderIndex - b.orderIndex)
+  const sessionOffset = Math.floor(Math.random() * 3) + 1
+  return sorted.map((q, idx) => shuffleQuestionOptions(q, idx + sessionOffset))
 }
 
 /**

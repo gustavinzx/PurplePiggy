@@ -83,6 +83,99 @@
       "id": "search",
       "file": "/assets/mascot/pig-search.png",
       "description": "Mascote com lupa no olho. Uso: Busca de transações, Auditoria e filtros"
+    },
+    {
+      "id": "wink",
+      "file": "/assets/mascot/pig-head.png",
+      "description": "Cabeça oficial com moeda no topo (PurplePiggy)."
+    }
+  ],
+  "goal_icons": [
+    {
+      "id": "icon-goal-trip",
+      "file": "/assets/icons/icon-goal-trip.png",
+      "file_webp": "/assets/icons/icon-goal-trip.webp",
+      "description": "Avião lilás com nuvem pequena"
+    },
+    {
+      "id": "icon-goal-laptop",
+      "file": "/assets/icons/icon-goal-laptop.png",
+      "file_webp": "/assets/icons/icon-goal-laptop.webp",
+      "description": "Notebook moderno lilás"
+    },
+    {
+      "id": "icon-goal-gym",
+      "file": "/assets/icons/icon-goal-gym.png",
+      "file_webp": "/assets/icons/icon-goal-gym.webp",
+      "description": "Halteres roxos brilhantes"
+    },
+    {
+      "id": "icon-goal-home",
+      "file": "/assets/icons/icon-goal-home.png",
+      "file_webp": "/assets/icons/icon-goal-home.webp",
+      "description": "Casinha aconchegante lilás"
+    },
+    {
+      "id": "icon-goal-car",
+      "file": "/assets/icons/icon-goal-car.png",
+      "file_webp": "/assets/icons/icon-goal-car.webp",
+      "description": "Carro compacto roxo brilhante"
+    },
+    {
+      "id": "icon-goal-study",
+      "file": "/assets/icons/icon-goal-study.png",
+      "file_webp": "/assets/icons/icon-goal-study.webp",
+      "description": "Livro lilás com capelo de formatura"
+    },
+    {
+      "id": "icon-goal-star",
+      "file": "/assets/icons/icon-goal-star.png",
+      "file_webp": "/assets/icons/icon-goal-star.webp",
+      "description": "Estrela dourada tridimensional"
+    }
+  ],
+  "learn_scenery": [
+    {
+      "id": "island-done",
+      "file": "/assets/learn/island-done.png",
+      "file_webp": "/assets/learn/island-done.webp",
+      "description": "Ilha flutuante de pedra lilás com grama lavanda no topo"
+    },
+    {
+      "id": "island-current",
+      "file": "/assets/learn/island-current.png",
+      "file_webp": "/assets/learn/island-current.webp",
+      "description": "Ilha flutuante ativa, maior e iluminada com grama lavanda"
+    },
+    {
+      "id": "island-rock",
+      "file": "/assets/learn/island-rock.png",
+      "file_webp": "/assets/learn/island-rock.webp",
+      "description": "Ilha de pedra escura e fosca, sem grama"
+    },
+    {
+      "id": "tree-pine",
+      "file": "/assets/learn/tree-pine.png",
+      "file_webp": "/assets/learn/tree-pine.webp",
+      "description": "Pinheirinho lilás fofo"
+    },
+    {
+      "id": "cloud-a",
+      "file": "/assets/learn/cloud-a.png",
+      "file_webp": "/assets/learn/cloud-a.webp",
+      "description": "Nuvem fofa branca com sombra lilás estilo A"
+    },
+    {
+      "id": "cloud-b",
+      "file": "/assets/learn/cloud-b.png",
+      "file_webp": "/assets/learn/cloud-b.webp",
+      "description": "Nuvem fofa branca com sombra lilás estilo B"
+    },
+    {
+      "id": "cloud-c",
+      "file": "/assets/learn/cloud-c.png",
+      "file_webp": "/assets/learn/cloud-c.webp",
+      "description": "Nuvem fofa branca com sombra lilás estilo C"
     }
   ]
 }

@@ -15,9 +15,27 @@ export interface LearnStats {
   last_activity_date: string | null
   piggy_coins: number
   xp_points: number
+  weekly_xp?: number
   hearts: number
   streak_shields: number
   active_track_slug: string
+  freeze_used_today?: boolean
+}
+
+export interface ReviewExercise {
+  exercise_id: string
+  concept_tag: string
+  mistake_count: number
+  last_mistake_at?: string
+}
+
+export interface LeaderboardEntry {
+  rank: number
+  user_id: string
+  display_name: string
+  avatar_url: string | null
+  weekly_xp: number
+  is_current_user: boolean
 }
 
 export interface LessonCompletionResult {
@@ -53,24 +71,42 @@ export interface DailyChallengeResult {
 const LOCAL_STORAGE_KEY = 'purplepiggy_learn_stats'
 
 function getLocalStats(): LearnStats {
-  try {
-    if (typeof localStorage !== 'undefined') {
-      const raw = localStorage.getItem(LOCAL_STORAGE_KEY)
-      if (raw) return JSON.parse(raw)
-    }
-  } catch {
-    // ignore
-  }
-  return {
+  const fallback: LearnStats = {
     streak_count: 0,
     longest_streak: 0,
     last_activity_date: null,
     piggy_coins: 0,
     xp_points: 0,
+    weekly_xp: 0,
     hearts: 3,
     streak_shields: 0,
     active_track_slug: 'organizacao-financeira',
   }
+  try {
+    if (typeof localStorage !== 'undefined') {
+      const raw = localStorage.getItem(LOCAL_STORAGE_KEY)
+      if (raw) {
+        const parsed = JSON.parse(raw) as LearnStats
+        const today = new Date().toISOString().slice(0, 10)
+        const yesterday = new Date(Date.now() - 86400000).toISOString().slice(0, 10)
+
+        // Se o usuário tinha ofensiva ativa e perdeu ontem
+        if (parsed.streak_count > 0 && parsed.last_activity_date && parsed.last_activity_date < yesterday) {
+          if (parsed.streak_shields > 0) {
+            parsed.streak_shields -= 1
+            parsed.last_activity_date = yesterday
+            parsed.freeze_used_today = true
+          } else {
+            parsed.streak_count = 0
+          }
+        }
+        return parsed
+      }
+    }
+  } catch {
+    // ignore
+  }
+  return fallback
 }
 
 function saveLocalStats(stats: LearnStats) {
@@ -231,6 +267,82 @@ export const learnService = {
   },
 
   /**
+   * Recarrega as vidas do usuário ao máximo (3 vidas por 30 moedas)
+   */
+  async rechargeHearts(): Promise<{ success: boolean; message?: string; hearts?: number; piggy_coins?: number }> {
+    try {
+      const current = await this.getStats()
+      if (current.piggy_coins < 30) {
+        return { success: false, message: 'Você precisa de 30 moedas para recarregar' }
+      }
+      if (current.hearts >= 3) {
+        return { success: false, message: 'Suas vidas já estão cheias!' }
+      }
+
+      const { data, error } = await supabase
+        .from('learn_user_stats')
+        .update({
+          hearts: 3,
+          piggy_coins: current.piggy_coins - 30,
+          updated_at: new Date().toISOString(),
+        })
+        .select('*')
+        .single()
+
+      if (!error && data) {
+        const stats = data as unknown as LearnStats
+        saveLocalStats(stats)
+        return { success: true, hearts: 3, piggy_coins: stats.piggy_coins }
+      }
+    } catch {
+      // fallback
+    }
+
+    const local = getLocalStats()
+    if (local.hearts >= 3) {
+      return { success: false, message: 'Suas vidas já estão cheias!' }
+    }
+    if (local.piggy_coins >= 30) {
+      local.piggy_coins -= 30
+      local.hearts = 3
+      saveLocalStats(local)
+      return { success: true, hearts: 3, piggy_coins: local.piggy_coins }
+    }
+    return { success: false, message: 'Moedas insuficientes' }
+  },
+
+  /**
+   * Subtrai 1 vida do usuário quando ele comete um erro
+   */
+  async deductHeart(): Promise<number> {
+    try {
+      const current = await this.getStats()
+      const nextHearts = Math.max(0, (current.hearts ?? 3) - 1)
+      const { data, error } = await supabase
+        .from('learn_user_stats')
+        .update({
+          hearts: nextHearts,
+          updated_at: new Date().toISOString(),
+        })
+        .select('hearts')
+        .single()
+
+      if (!error && data) {
+        current.hearts = data.hearts
+        saveLocalStats(current)
+        return data.hearts
+      }
+    } catch {
+      // fallback
+    }
+
+    const local = getLocalStats()
+    local.hearts = Math.max(0, (local.hearts ?? 3) - 1)
+    saveLocalStats(local)
+    return local.hearts
+  },
+
+  /**
    * Retorna as questões para uma lição
    */
   getQuestionsForLesson(lessonSlug: string): LearnQuestion[] {
@@ -242,5 +354,92 @@ export const learnService = {
    */
   getDailyChallenge(dateStr?: string): LearnQuestion {
     return getDailyChallengeQuestion(dateStr)
+  },
+
+  /**
+   * Passo 3: Registra um erro de questão no motor de prática personalizada
+   */
+  async recordMistake(exerciseId: string, conceptTag: string = 'geral'): Promise<{ success: boolean; mistake_count?: number }> {
+    try {
+      const { data, error } = await supabase.rpc('record_user_mistake', {
+        p_exercise_id: exerciseId,
+        p_concept_tag: conceptTag,
+      })
+      if (!error && data && (data as any).success) {
+        return data as { success: boolean; mistake_count?: number }
+      }
+    } catch {
+      // fallback
+    }
+
+    // Fallback local
+    try {
+      if (typeof localStorage !== 'undefined') {
+        const key = 'purplepiggy_mistakes'
+        const raw = localStorage.getItem(key)
+        const mistakes: Record<string, { count: number; tag: string }> = raw ? JSON.parse(raw) : {}
+        const current = mistakes[exerciseId] || { count: 0, tag: conceptTag }
+        mistakes[exerciseId] = { count: current.count + 1, tag: conceptTag }
+        localStorage.setItem(key, JSON.stringify(mistakes))
+        return { success: true, mistake_count: current.count + 1 }
+      }
+    } catch {
+      // ignore
+    }
+    return { success: true, mistake_count: 1 }
+  },
+
+  /**
+   * Passo 3: Busca os exercícios com maior índice de erros para as Ilhas de Revisão
+   */
+  async getReviewExercises(limit: number = 5): Promise<ReviewExercise[]> {
+    try {
+      const { data, error } = await supabase.rpc('get_user_review_exercises', {
+        p_limit: limit,
+      })
+      if (!error && Array.isArray(data) && data.length > 0) {
+        return data as unknown as ReviewExercise[]
+      }
+    } catch {
+      // fallback
+    }
+
+    // Fallback local
+    try {
+      if (typeof localStorage !== 'undefined') {
+        const raw = localStorage.getItem('purplepiggy_mistakes')
+        if (raw) {
+          const mistakes: Record<string, { count: number; tag: string }> = JSON.parse(raw)
+          return Object.entries(mistakes)
+            .map(([exercise_id, val]) => ({
+              exercise_id,
+              concept_tag: val.tag,
+              mistake_count: val.count,
+            }))
+            .sort((a, b) => b.mistake_count - a.mistake_count)
+            .slice(0, limit)
+        }
+      }
+    } catch {
+      // ignore
+    }
+    return []
+  },
+
+  /**
+   * Passo 4: Obtém a tabela de classificação semanal (Leaderboard) em chaves de 30 usuárias
+   */
+  async getWeeklyLeaderboard(limit: number = 30): Promise<LeaderboardEntry[]> {
+    try {
+      const { data, error } = await supabase.rpc('get_weekly_leaderboard', {
+        p_limit: limit,
+      })
+      if (!error && Array.isArray(data)) {
+        return data as unknown as LeaderboardEntry[]
+      }
+    } catch {
+      // fallback
+    }
+    return []
   },
 }

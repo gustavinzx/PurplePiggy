@@ -17,20 +17,20 @@ export interface OptionCardProps {
 }
 
 const STATE_CONTAINER_STYLES: Record<OptionCardState, string> = {
-  idle: 'bg-white border-[#E8DEFB] border-b-[4px] border-b-[#D8C2FF] text-[#432171] hover:bg-[#FBF8FE] active:border-b-[2px] active:translate-y-[2px]',
+  idle: 'bg-white border-[#E5DBF5] border-b-[5px] border-b-[#D4C3EE] text-[#33105D] hover:bg-[#FAF6FF] active:border-b-[2px] active:translate-y-[3px]',
   selected:
-    'bg-[#F6EEFF] border-[#7D2BD6] border-b-[4px] border-b-[#5B21B6] text-[#432171] shadow-sm active:border-b-[2px] active:translate-y-[2px]',
+    'bg-[#F6EEFF] border-[#7D2BD6] border-b-[5px] border-b-[#5B21B6] text-[#33105D] shadow-md ring-2 ring-[#7D2BD6]/25 active:border-b-[2px] active:translate-y-[3px]',
   correct:
-    'bg-[#DCFCE7] border-[#2FBF71] border-b-[4px] border-b-[#1E824C] text-[#15803D] cursor-default',
+    'bg-[#DCFCE7] border-[#22C55E] border-b-[5px] border-b-[#16A34A] text-[#15803D] cursor-default shadow-xs',
   incorrect:
-    'bg-[#FCE7F3] border-[#E5487A] border-b-[4px] border-b-[#BE185D] text-[#BE185D] cursor-default',
+    'bg-[#FEE2E2] border-[#EF4444] border-b-[5px] border-b-[#DC2626] text-[#991B1B] cursor-default shadow-xs animate-shake',
 }
 
 const STATE_BADGE_STYLES: Record<OptionCardState, string> = {
-  idle: 'bg-[#F0E7FA] text-[#7D6A9C] border border-[#E0D0F5]',
-  selected: 'bg-[#7D2BD6] text-white border border-[#7D2BD6]',
-  correct: 'bg-[#2FBF71] text-white border border-[#2FBF71]',
-  incorrect: 'bg-[#E5487A] text-white border border-[#E5487A]',
+  idle: 'bg-[#F3E8FF] text-[#7D2BD6] border border-[#E0D0F5]',
+  selected: 'bg-gradient-to-r from-[#7D2BD6] to-[#9333EA] text-white border border-[#7D2BD6] shadow-xs scale-105',
+  correct: 'bg-[#22C55E] text-white border border-[#16A34A]',
+  incorrect: 'bg-[#EF4444] text-white border border-[#DC2626]',
 }
 
 export const OptionCard: React.FC<OptionCardProps> = ({

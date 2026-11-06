@@ -55,6 +55,18 @@ export function useQuizEngine({
     }
   }, [state.status, state.lessonResult, autoSubmitOnCompletion, lessonSlug])
 
+  // Passo 3: Registrar erro no motor de prática personalizada quando a resposta estiver incorreta e debitar vida
+  useEffect(() => {
+    if (state.status === 'incorrect' || state.status === 'game_over') {
+      const q = state.questions[state.currentIndex]
+      if (q && q.id) {
+        const tag = (q as any).conceptTag || (q as any).typology || 'geral'
+        learnService.recordMistake(q.id, tag).catch(() => {})
+      }
+      learnService.deductHeart().catch(() => {})
+    }
+  }, [state.status, state.currentIndex, state.questions])
+
   const selectAnswer = useCallback((answer: unknown) => {
     dispatch({ type: 'SELECT_ANSWER', answer })
   }, [])

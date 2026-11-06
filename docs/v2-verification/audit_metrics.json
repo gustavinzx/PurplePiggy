@@ -1,0 +1,290 @@
+{
+  "360x780": {
+    "01_inicio": {
+      "docW": 354,
+      "bodyW": 354,
+      "winW": 360,
+      "hScroll": false,
+      "mascot": {
+        "width": 128,
+        "height": 128,
+        "top": 80,
+        "left": 209
+      },
+      "bell": {
+        "width": 40,
+        "height": 40
+      }
+    },
+    "02_gastos": {
+      "docW": 354,
+      "bodyW": 354,
+      "winW": 360,
+      "hScroll": false,
+      "ring": {
+        "width": 88,
+        "height": 88,
+        "count": 1
+      }
+    },
+    "03_metas": {
+      "docW": 354,
+      "bodyW": 354,
+      "winW": 360,
+      "hScroll": false,
+      "mascot": {
+        "width": 80,
+        "height": 80,
+        "top": 20,
+        "left": 249
+      },
+      "ring": {
+        "width": 50,
+        "height": 50,
+        "count": 3
+      }
+    },
+    "04_aprender": {
+      "docW": 354,
+      "bodyW": 354,
+      "winW": 360,
+      "hScroll": false,
+      "mascot": {
+        "width": 112,
+        "height": 128,
+        "top": -8,
+        "left": 217
+      }
+    },
+    "05_perfil": {
+      "docW": 354,
+      "bodyW": 354,
+      "winW": 360,
+      "hScroll": false,
+      "mascot": {
+        "width": 40,
+        "height": 40,
+        "top": 102,
+        "left": 30
+      },
+      "bell": {
+        "width": 286,
+        "height": 49
+      },
+      "ring": {
+        "width": 14,
+        "height": 14,
+        "count": 1
+      }
+    },
+    "06_parabens": {
+      "docW": 354,
+      "bodyW": 354,
+      "winW": 360,
+      "hScroll": false,
+      "mascot": {
+        "width": 282,
+        "height": 282,
+        "top": -5,
+        "left": 36
+      },
+      "ring": {
+        "width": 883,
+        "height": 883,
+        "count": 1
+      }
+    }
+  },
+  "390x844": {
+    "01_inicio": {
+      "docW": 384,
+      "bodyW": 384,
+      "winW": 390,
+      "hScroll": false,
+      "mascot": {
+        "width": 128,
+        "height": 128,
+        "top": 80,
+        "left": 239
+      },
+      "bell": {
+        "width": 40,
+        "height": 40
+      }
+    },
+    "02_gastos": {
+      "docW": 384,
+      "bodyW": 384,
+      "winW": 390,
+      "hScroll": false,
+      "ring": {
+        "width": 88,
+        "height": 88,
+        "count": 1
+      }
+    },
+    "03_metas": {
+      "docW": 384,
+      "bodyW": 384,
+      "winW": 390,
+      "hScroll": false,
+      "mascot": {
+        "width": 80,
+        "height": 80,
+        "top": 20,
+        "left": 279
+      },
+      "ring": {
+        "width": 50,
+        "height": 50,
+        "count": 3
+      }
+    },
+    "04_aprender": {
+      "docW": 384,
+      "bodyW": 384,
+      "winW": 390,
+      "hScroll": false,
+      "mascot": {
+        "width": 112,
+        "height": 128,
+        "top": -8,
+        "left": 247
+      }
+    },
+    "05_perfil": {
+      "docW": 384,
+      "bodyW": 384,
+      "winW": 390,
+      "hScroll": false,
+      "mascot": {
+        "width": 40,
+        "height": 40,
+        "top": 102,
+        "left": 30
+      },
+      "bell": {
+        "width": 316,
+        "height": 49
+      },
+      "ring": {
+        "width": 14,
+        "height": 14,
+        "count": 1
+      }
+    },
+    "06_parabens": {
+      "docW": 384,
+      "bodyW": 384,
+      "winW": 390,
+      "hScroll": false,
+      "mascot": {
+        "width": 282,
+        "height": 282,
+        "top": -5,
+        "left": 51
+      },
+      "ring": {
+        "width": 894,
+        "height": 894,
+        "count": 1
+      }
+    }
+  },
+  "412x915": {
+    "01_inicio": {
+      "docW": 406,
+      "bodyW": 406,
+      "winW": 412,
+      "hScroll": false,
+      "mascot": {
+        "width": 128,
+        "height": 128,
+        "top": 80,
+        "left": 261
+      },
+      "bell": {
+        "width": 40,
+        "height": 40
+      }
+    },
+    "02_gastos": {
+      "docW": 406,
+      "bodyW": 406,
+      "winW": 412,
+      "hScroll": false,
+      "ring": {
+        "width": 88,
+        "height": 88,
+        "count": 1
+      }
+    },
+    "03_metas": {
+      "docW": 406,
+      "bodyW": 406,
+      "winW": 412,
+      "hScroll": false,
+      "mascot": {
+        "width": 80,
+        "height": 80,
+        "top": 20,
+        "left": 301
+      },
+      "ring": {
+        "width": 50,
+        "height": 50,
+        "count": 3
+      }
+    },
+    "04_aprender": {
+      "docW": 406,
+      "bodyW": 406,
+      "winW": 412,
+      "hScroll": false,
+      "mascot": {
+        "width": 112,
+        "height": 128,
+        "top": -8,
+        "left": 269
+      }
+    },
+    "05_perfil": {
+      "docW": 406,
+      "bodyW": 406,
+      "winW": 412,
+      "hScroll": false,
+      "mascot": {
+        "width": 40,
+        "height": 40,
+        "top": 102,
+        "left": 30
+      },
+      "bell": {
+        "width": 338,
+        "height": 49
+      },
+      "ring": {
+        "width": 14,
+        "height": 14,
+        "count": 1
+      }
+    },
+    "06_parabens": {
+      "docW": 406,
+      "bodyW": 406,
+      "winW": 412,
+      "hScroll": false,
+      "mascot": {
+        "width": 282,
+        "height": 282,
+        "top": -5,
+        "left": 62
+      },
+      "ring": {
+        "width": 892,
+        "height": 892,
+        "count": 1
+      }
+    }
+  }
+}

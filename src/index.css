@@ -164,6 +164,22 @@
   animation: pulseGlow 2.8s ease-in-out infinite;
 }
 
+@keyframes shake {
+  0%, 100% {
+    transform: translateX(0);
+  }
+  20%, 60% {
+    transform: translateX(-6px);
+  }
+  40%, 80% {
+    transform: translateX(6px);
+  }
+}
+
+.animate-shake {
+  animation: shake 0.4s ease-in-out;
+}
+
 /* Custom scrollbars */
 ::-webkit-scrollbar {
   width: 6px;
@@ -178,4 +194,121 @@
 }
 ::-webkit-scrollbar-thumb:hover {
   background: rgba(176, 55, 248, 0.3);
+}
+
+
+/* Animações Aprender V2 com respeito estrito a prefers-reduced-motion */
+@keyframes island-float-0 {
+  0%, 100% {
+    transform: translateY(-4px);
+  }
+  50% {
+    transform: translateY(4px);
+  }
+}
+
+@keyframes island-float-1 {
+  0%, 100% {
+    transform: translateY(3px);
+  }
+  50% {
+    transform: translateY(-4px);
+  }
+}
+
+@keyframes island-float-2 {
+  0%, 100% {
+    transform: translateY(-3px);
+  }
+  50% {
+    transform: translateY(3px);
+  }
+}
+
+@keyframes cloud-drift {
+  0% {
+    transform: translateX(0px);
+  }
+  50% {
+    transform: translateX(40px);
+  }
+  100% {
+    transform: translateX(0px);
+  }
+}
+
+@keyframes pulse-btn {
+  0%, 100% {
+    transform: scale(1);
+    box-shadow: 0 4px 12px rgba(125, 43, 214, 0.25);
+  }
+  50% {
+    transform: scale(1.03);
+    box-shadow: 0 6px 18px rgba(176, 55, 248, 0.4);
+  }
+}
+
+@keyframes unlock-glow {
+  0% {
+    filter: brightness(1) drop-shadow(0 0 0px rgba(245, 184, 61, 0));
+  }
+  50% {
+    filter: brightness(1.35) drop-shadow(0 0 18px rgba(245, 184, 61, 0.85));
+  }
+  100% {
+    filter: brightness(1) drop-shadow(0 4px 12px rgba(67, 33, 113, 0.12));
+  }
+}
+
+@keyframes sparkle-blink {
+  0%, 100% {
+    opacity: 0.35;
+    transform: scale(0.9);
+  }
+  50% {
+    opacity: 1;
+    transform: scale(1.1);
+  }
+}
+
+@keyframes ray-rotate {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .animate-island-0 {
+    animation: island-float-0 4.8s ease-in-out infinite;
+    will-change: transform;
+  }
+  .animate-island-1 {
+    animation: island-float-1 5.4s ease-in-out infinite;
+    will-change: transform;
+  }
+  .animate-island-2 {
+    animation: island-float-2 4.2s ease-in-out infinite;
+    will-change: transform;
+  }
+  .animate-cloud-drift {
+    animation: cloud-drift 60s ease-in-out infinite;
+    will-change: transform;
+  }
+  .animate-pulse-btn {
+    animation: pulse-btn 2.2s ease-in-out infinite;
+    will-change: transform;
+  }
+  .animate-sparkle-blink {
+    animation: sparkle-blink 2s ease-in-out infinite;
+  }
+  .animate-ray-rotate {
+    animation: ray-rotate 30s linear infinite;
+  }
+}
+
+.animate-unlock-glow {
+  animation: unlock-glow 0.6s ease-out forwards;
 }

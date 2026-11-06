@@ -1,6 +1,7 @@
 // src/features/learn/components/TrackSelectorSheet.tsx
 // Gaveta inferior de troca de trilhas (Mockup 10b-trocar-trilha.png)
 import React from 'react'
+import { createPortal } from 'react-dom'
 import { X, BookOpen, ChevronRight, CheckCircle2 } from 'lucide-react'
 import { Mascot } from '../../../components/Mascot'
 import { ChunkyButton } from './ChunkyButton'
@@ -34,13 +35,18 @@ export const TrackSelectorSheet: React.FC<TrackSelectorSheetProps> = ({
 }) => {
   if (!isOpen) return null
 
-  return (
-    <div className="fixed inset-0 z-50 flex items-end justify-center bg-black/50 backdrop-blur-sm animate-fadeIn">
+  const sheetContent = (
+    <div className="fixed inset-0 z-[100] flex items-end justify-center bg-black/50 backdrop-blur-sm animate-fadeIn select-none">
       {/* Backdrop click */}
       <div className="absolute inset-0" onClick={onClose} />
 
       {/* Drawer Container */}
-      <div className="relative z-10 w-full max-w-lg bg-[#FAF5FF] rounded-t-[32px] p-5 sm:p-6 shadow-2xl border-t border-purple-200 max-h-[88vh] flex flex-col animate-slideUp">
+      <div
+        className="relative z-10 w-full max-w-[430px] bg-[#FAF5FF] rounded-t-[32px] p-5 sm:p-6 shadow-2xl border-t border-purple-200 max-h-[88dvh] flex flex-col animate-slideUp"
+        style={{
+          paddingBottom: 'calc(env(safe-area-inset-bottom, 0px) + 24px)',
+        }}
+      >
         {/* Top handle */}
         <div className="w-12 h-1.5 bg-gray-300 rounded-full mx-auto mb-4 flex-shrink-0" />
 
@@ -49,7 +55,7 @@ export const TrackSelectorSheet: React.FC<TrackSelectorSheetProps> = ({
           type="button"
           onClick={onClose}
           aria-label="Fechar"
-          className="absolute top-5 right-5 w-8 h-8 rounded-full bg-white flex items-center justify-center text-purple-700 shadow-sm hover:bg-purple-50 transition-colors"
+          className="absolute top-5 right-5 w-8 h-8 rounded-full bg-white flex items-center justify-center text-purple-700 shadow-sm hover:bg-purple-50 transition-colors cursor-pointer"
         >
           <X className="w-4 h-4" />
         </button>
@@ -92,7 +98,7 @@ export const TrackSelectorSheet: React.FC<TrackSelectorSheetProps> = ({
                         TRILHA {orderStr}
                       </span>
                       {isFinished && (
-                        <span className="inline-flex items-center gap-0.5 text-[10px] font-extrabold text-[#2FBF71] bg-green-50 px-1.5 py-0.2 rounded-full">
+                        <span className="inline-flex items-center gap-0.5 text-[10px] font-extrabold text-[#2FBF71] bg-green-50 px-1.5 py-0.5 rounded-full">
                           <CheckCircle2 className="w-3 h-3" />
                           Concluída
                         </span>
@@ -166,4 +172,9 @@ export const TrackSelectorSheet: React.FC<TrackSelectorSheetProps> = ({
       </div>
     </div>
   )
+
+  if (typeof document !== 'undefined') {
+    return createPortal(sheetContent, document.body)
+  }
+  return sheetContent
 }
