@@ -51,7 +51,7 @@ export const WelcomePage: React.FC = () => {
     const { error } = await signInDemo()
     setIsDemoLoading(false)
     if (error) {
-      toast.error('Não foi possível iniciar o modo demonstração. Tente novamente.')
+      toast.error(error.message || 'Modo demonstração indisponível no momento')
     } else {
       toast.success('Bem-vinda ao modo demonstração!')
       navigate('/inicio')

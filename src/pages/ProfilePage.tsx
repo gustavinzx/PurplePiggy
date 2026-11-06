@@ -6,6 +6,7 @@ import { AppShell } from '../components/AppShell'
 import { Button } from '../components/Button'
 import { Mascot, MascotPose } from '../components/Mascot'
 import { AvatarCropperModal } from '../components/AvatarCropperModal'
+import { getAvatarSignedUrl } from '../lib/avatarStorage'
 import { learnService } from '../features/learn/services/learnService'
 import { APP_VERSION_CODE, APP_VERSION_NAME, APP_RELEASE_YEAR } from '../lib/appVersion'
 import { Camera as CapCamera, CameraResultType, CameraSource } from '@capacitor/camera'
@@ -144,6 +145,21 @@ export const ProfilePage: React.FC = () => {
   const [editBirthDate, setEditBirthDate] = useState(profile?.birth_date || '')
   const [editInitialBalance, setEditInitialBalance] = useState(profile?.initial_balance?.toString() || '0')
   const [editAvatarPreset, setEditAvatarPreset] = useState(profile?.avatar_url || 'preset:head')
+  const [displayAvatarUrl, setDisplayAvatarUrl] = useState<string | null>(null)
+
+  useEffect(() => {
+    let active = true
+    if (profile?.avatar_url) {
+      getAvatarSignedUrl(profile.avatar_url).then((signed) => {
+        if (active) setDisplayAvatarUrl(signed)
+      })
+    } else {
+      setDisplayAvatarUrl(null)
+    }
+    return () => {
+      active = false
+    }
+  }, [profile?.avatar_url])
 
   // Alteração de senha dentro do perfil / privacidade
   const [newPassword, setNewPassword] = useState('')
@@ -488,11 +504,10 @@ export const ProfilePage: React.FC = () => {
           .upload(filePath, blob, { upsert: true, contentType: 'image/jpeg' })
 
         if (!uploadError) {
-          const { data: publicUrlData } = supabase.storage
-            .from('avatars')
-            .getPublicUrl(filePath)
-          if (publicUrlData?.publicUrl) {
-            finalAvatarUrl = publicUrlData.publicUrl
+          finalAvatarUrl = filePath
+          const signedUrl = await getAvatarSignedUrl(filePath)
+          if (signedUrl) {
+            setDisplayAvatarUrl(signedUrl)
           }
         }
       } catch (storageErr) {
@@ -567,14 +582,15 @@ export const ProfilePage: React.FC = () => {
   }
 
   const renderAvatarContent = (avatarUrl?: string | null) => {
-    if (avatarUrl && avatarUrl.startsWith('preset:')) {
-      const presetPose = (avatarUrl.replace('preset:', '') as MascotPose) || 'head'
+    const effectiveUrl = displayAvatarUrl || avatarUrl
+    if (effectiveUrl && effectiveUrl.startsWith('preset:')) {
+      const presetPose = (effectiveUrl.replace('preset:', '') as MascotPose) || 'head'
       return <Mascot pose={presetPose} size="xs" alt="Avatar" />
     }
-    if (avatarUrl && (avatarUrl.startsWith('http') || avatarUrl.startsWith('/'))) {
+    if (effectiveUrl && (effectiveUrl.startsWith('http') || effectiveUrl.startsWith('/') || effectiveUrl.startsWith('data:'))) {
       return (
         <img
-          src={avatarUrl}
+          src={effectiveUrl}
           alt={profile?.full_name || 'Avatar'}
           className="w-full h-full object-cover"
         />

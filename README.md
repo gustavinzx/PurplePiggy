@@ -62,10 +62,12 @@ supabase db push
 *Ou execute os arquivos SQL da pasta `supabase/migrations/` em ordem cronológica no SQL Editor do painel do Supabase.*
 
 ### 3. Habilitar Login Anônimo (Essencial para o Modo Demonstração)
-No painel do Supabase:
-1. Acesse **Authentication** → **Providers**.
-2. Localize **Anonymous Sign-ins** e marque como **Enabled**.
-3. Salve as alterações.
+> **Atenção:** O modo de demonstração do PurplePiggy utiliza autenticação anônima isolada por visitante (`signInAnonymously()`). Se este recurso estiver desabilitado no painel do Supabase, o app exibirá a mensagem *"Modo demonstração indisponível no momento"*.
+>
+> **Como habilitar no painel do Supabase:**
+> 1. Acesse **Authentication** → **Configuration** → **Sign In / Providers** (ou **Providers**).
+> 2. Localize a opção **Anonymous sign-ins** e marque-a como **Enabled** (Ativada).
+> 3. Clique em **Save** para salvar as alterações.
 
 ### 4. Configurar Confirmação de E-mail
 1. Acesse **Authentication** → **Email**.

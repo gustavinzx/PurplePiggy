@@ -164,45 +164,25 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     try {
       setIsLoading(true)
       // Login anônimo do Supabase para garantir ambiente isolado por visitante
-      let authUser = null
       const { data: anonData, error: anonError } = await supabase.auth.signInAnonymously()
 
-      if (!anonError && anonData?.user) {
-        authUser = anonData.user
-      } else {
-        // Fallback resiliente: cria conta demonstrativa isolada e autenticada por visitante
-        console.warn('Login anônimo desativado no Supabase, usando conta demonstrativa isolada:', anonError?.message)
-        const demoEmail = 'demo.' + Date.now() + '.' + Math.random().toString(36).slice(2, 8) + '@demo.purplepiggy.app'
-        const demoPassword = 'DemoPiggy!' + Math.random().toString(36).slice(2, 10)
-        const { data: signUpData, error: signUpError } = await supabase.auth.signUp({
-          email: demoEmail,
-          password: demoPassword,
-          options: {
-            data: {
-              full_name: 'Ana Oliveira',
-              is_demo: true,
-            },
-          },
-        })
-        if (signUpError) {
-          console.error('Falha no fallback de conta demo:', signUpError)
-          return { error: signUpError }
-        }
-        authUser = signUpData.user
+      if (anonError || !anonData?.user) {
+        console.warn('Login anônimo indisponível no Supabase:', anonError?.message)
+        return { error: new Error('Modo demonstração indisponível no momento') }
       }
 
-      if (authUser) {
-        try {
-          await supabase.rpc('seed_demo_data')
-        } catch (seedErr) {
-          console.warn('Aviso ao inicializar seed demo:', seedErr)
-        }
-        await fetchProfile(authUser.id)
+      const authUser = anonData.user
+      try {
+        await supabase.rpc('seed_demo_data')
+      } catch (seedErr) {
+        console.warn('Aviso ao inicializar seed demo:', seedErr)
       }
+      await fetchProfile(authUser.id)
+
       return { error: null }
     } catch (err) {
       console.error('Falha no login demo:', err)
-      return { error: err as Error }
+      return { error: new Error('Modo demonstração indisponível no momento') }
     } finally {
       setIsLoading(false)
     }

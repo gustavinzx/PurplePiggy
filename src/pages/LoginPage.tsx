@@ -50,7 +50,7 @@ export const LoginPage: React.FC = () => {
     const { error } = await signInDemo()
     setIsDemoLoading(false)
     if (error) {
-      toast.error('Não foi possível iniciar o modo demonstração. Tente de novo.')
+      toast.error(error.message || 'Modo demonstração indisponível no momento')
     } else {
       toast.success('Entrando no modo demonstração!')
       navigate('/inicio')

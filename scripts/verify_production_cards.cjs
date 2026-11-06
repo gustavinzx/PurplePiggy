@@ -88,8 +88,9 @@ async function run() {
     await pageEmpty.goto('http://localhost:4173/cadastrar', { waitUntil: 'networkidle' });
     await pageEmpty.fill('input[placeholder="Nome completo"]', 'Usuária Nova');
     await pageEmpty.fill('input[placeholder="E-mail"]', randomEmail);
-    await pageEmpty.fill('input[placeholder="Senha"]', 'PurplePiggy2026!');
-    await pageEmpty.fill('input[placeholder="Confirmar senha"]', 'PurplePiggy2026!');
+    const testPassword = process.env.TEST_USER_PASSWORD || ('PP_' + Date.now() + '_Aa1!');
+    await pageEmpty.fill('input[placeholder="Senha"]', testPassword);
+    await pageEmpty.fill('input[placeholder="Confirmar senha"]', testPassword);
     await pageEmpty.click('button:has-text("Criar minha conta")');
 
     // Wait for redirect to diagnostico or skip to inicio
