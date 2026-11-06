@@ -1,5 +1,5 @@
 // supabase/functions/sync-pluggy-transactions/index.ts
-// Supabase Edge Function para sincronização real e idempotente de transações e contas bancárias via Pluggy Open Finance (API v2)
+// Supabase Edge Function para sincronização real, contínua e idempotente de transações e contas bancárias via Pluggy Open Finance (API v2)
 import { serve } from 'https://deno.land/std@0.168.0/http/server.ts'
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2.39.0'
 
@@ -203,7 +203,7 @@ serve(async (req) => {
       Accept: 'application/json',
     }
 
-    // 2.5 Criação direta de item Open Finance (Sem depender do iframe de terceiros)
+    // 2.5 Criação direta de item Open Finance
     if (reqBody.action === 'create_oauth_item') {
       const cleanCpf = String(reqBody.cpf || '').replace(/\D/g, '')
       const connectorId = Number(reqBody.connectorId || 612)
@@ -239,7 +239,7 @@ serve(async (req) => {
       let institutionName = createdItem.connector?.name || 'Banco Open Finance'
       let oauthUrl: string | null = null
 
-      // Aguardar até a Pluggy gerar a URL oficial de autorização OAuth do banco (~1.5 a 3s)
+      // Aguardar até a Pluggy gerar a URL oficial de autorização OAuth do banco
       for (let i = 0; i < 12; i++) {
         await sleep(600)
         const checkRes = await fetch(`${pluggyApiUrl}/items/${newItemId}`, {
@@ -272,7 +272,7 @@ serve(async (req) => {
         }
       }
 
-      // Salvar imediatamente a conexão no banco para nunca perder o vínculo quando o usuário alternar para o app do banco
+      // Salvar imediatamente a conexão no banco
       const { data: savedConn } = await supabase
         .from('bank_connections')
         .upsert(
@@ -316,11 +316,10 @@ serve(async (req) => {
       )
     }
 
-    // 3. Se for solicitação de conexão direta ao Pluggy Bank (Sandbox Oficial da API Pluggy)
+    // 3. Determinar os itemIds a sincronizar
     let itemIds: string[] = []
     if (reqBody.action === 'connect_sandbox') {
       let sandboxItemId = ''
-      // Verificar se o item Sandbox pré-aquecido na conta Pluggy do projeto está ativo e UPDATED
       const checkPrewarmed = await fetch(`${pluggyApiUrl}/items/${PREWARMED_SANDBOX_ITEM_ID}`, {
         headers: pluggyHeaders,
       })
@@ -332,7 +331,6 @@ serve(async (req) => {
       }
 
       if (!sandboxItemId) {
-        // Criar novo item no Pluggy Bank (connectorId: 2, user-ok / password-ok)
         const createRes = await fetch(`${pluggyApiUrl}/items`, {
           method: 'POST',
           headers: pluggyHeaders,
@@ -351,8 +349,10 @@ serve(async (req) => {
         itemIds = [sandboxItemId]
       }
     } else if (reqBody.itemId) {
+      // Sincronização individual solicitada pelo usuário para uma conta específica
       itemIds = [reqBody.itemId]
     } else {
+      // Sincronização de todas as contas ativas
       const { data: userConns } = await supabase
         .from('bank_connections')
         .select('provider_ref')
@@ -383,12 +383,48 @@ serve(async (req) => {
     let pendingOAuthUrl: string | null = null
     let lastInstitutionName = 'Banco Open Finance'
 
-    // 4. Processar cada itemId aguardando até que a Pluggy finalize a extração (status === UPDATED)
+    // Carregar todas as transações Open Finance já salvas do usuário para deduplicação precisa por conteúdo
+    const { data: existingUserTxs } = await supabase
+      .from('transactions')
+      .select('id, external_id, description, amount, occurred_on')
+      .eq('user_id', targetUserId)
+      .eq('source', 'open_finance')
+
+    const existingByExternalId = new Map<string, string>()
+    const existingByContent = new Map<string, string>()
+
+    for (const et of existingUserTxs || []) {
+      if (et.external_id) {
+        existingByExternalId.set(String(et.external_id), et.id)
+      }
+      const key = `${et.description.trim()}|${Number(et.amount).toFixed(2)}|${et.occurred_on}`
+      if (!existingByContent.has(key)) {
+        existingByContent.set(key, et.id)
+      }
+    }
+
+    // 4. Processar cada itemId
     for (const itemId of itemIds) {
       let accounts: any[] = []
       let institutionName = 'Pluggy Bank'
 
-      for (let attempt = 0; attempt < 8; attempt++) {
+      // Tentar acionar atualização no item (PATCH /items/{id})
+      // Se a Pluggy responder 409 (CLIENT_IS_UPDATING_BEFORE_ALLOWED_FREQUENCY),
+      // significa que atualizou recentemente (< 1h) e podemos ler os dados existentes normalmente.
+      try {
+        const patchRes = await fetch(`${pluggyApiUrl}/items/${itemId}`, {
+          method: 'PATCH',
+          headers: pluggyHeaders,
+          body: JSON.stringify({}),
+        })
+        if (!patchRes.ok && patchRes.status !== 409) {
+          console.warn(`[SyncPluggy] PATCH item ${itemId} retornou status ${patchRes.status}`)
+        }
+      } catch (pErr) {
+        console.warn(`[SyncPluggy] Falha no PATCH item ${itemId}:`, pErr)
+      }
+
+      for (let attempt = 0; attempt < 6; attempt++) {
         let itemStatus = 'UPDATING'
         try {
           const itemRes = await fetch(`${pluggyApiUrl}/items/${itemId}`, { headers: pluggyHeaders })
@@ -422,7 +458,7 @@ serve(async (req) => {
         if (accountsRes.ok) {
           const accountsData = await accountsRes.json()
           accounts = accountsData.results || []
-          if (accounts.length > 0 && (itemStatus === 'UPDATED' || itemStatus === 'OUTDATED' || attempt >= 2)) {
+          if (accounts.length > 0 && (itemStatus === 'UPDATED' || itemStatus === 'OUTDATED' || attempt >= 1)) {
             break
           }
         }
@@ -442,7 +478,7 @@ serve(async (req) => {
           itemTotalBalance += account.balance
         }
 
-        // IMPORTANTE: Usar o endpoint oficial /v2/transactions da Pluggy (o /transactions v1 retorna 410 Gone)
+        // Endpoint oficial /v2/transactions da Pluggy
         const txnsRes = await fetch(
           `${pluggyApiUrl}/v2/transactions?accountId=${account.id}`,
           { headers: pluggyHeaders }
@@ -456,7 +492,7 @@ serve(async (req) => {
         const txnsData = await txnsRes.json()
         const isSandboxBank = institutionName.toLowerCase().includes('pluggy bank')
 
-        // Filtrar pagamentos internos de fatura em contas de cartão de crédito para não duplicar como despesa
+        // Filtrar pagamentos internos de fatura em contas de cartão de crédito
         const filteredResults = (txnsData.results || []).filter((t: any) => {
           if (account.type === 'CREDIT') {
             const descLower = String(t.description || '').toLowerCase()
@@ -474,15 +510,15 @@ serve(async (req) => {
           return true
         })
 
-        // Importar até 20 transações recentes por conta
-        const rawTxns = filteredResults.slice(0, 20)
+        const rawTxns = filteredResults.slice(0, 30)
 
         if (rawTxns.length > 0) {
           const hasCurrentMonth = rawTxns.some((t: any) =>
             (t.date || '').startsWith(currentMonthPrefix)
           )
 
-          const transactionsToUpsert = rawTxns.map((txn: any, idx: number) => {
+          for (let idx = 0; idx < rawTxns.length; idx++) {
+            const txn = rawTxns[idx]
             const isDebit =
               txn.type === 'DEBIT' ||
               account.type === 'CREDIT' ||
@@ -500,56 +536,60 @@ serve(async (req) => {
 
             const categoryId = resolveCategoryId(cleanDesc, txn.category)
             const paymentMethod = resolvePaymentMethod(cleanDesc, account.type)
+            const externalIdStr = String(txn.id)
+            const contentKey = `${cleanDesc}|${amount.toFixed(2)}|${occurredOn}`
 
-            return {
-              user_id: targetUserId,
-              amount: amount > 0 ? amount : 0.01,
-              type,
-              description: cleanDesc,
-              occurred_on: occurredOn,
-              category_id: categoryId,
-              payment_method: paymentMethod,
-              source: 'open_finance',
-              external_id: String(txn.id),
-              account_id: String(account.id),
-              notes: txn.category
-                ? `Open Finance (${institutionName}) · ${txn.category}`
-                : `Open Finance (${institutionName})`,
-              updated_at: new Date().toISOString(),
+            // Deduplicação inteligente
+            const existingId =
+              existingByExternalId.get(externalIdStr) || existingByContent.get(contentKey)
+
+            if (existingId) {
+              // Já existe: atualizar apenas metadados se necessário, nunca duplicar
+              await supabase
+                .from('transactions')
+                .update({
+                  external_id: externalIdStr,
+                  account_id: String(account.id),
+                  category_id: categoryId,
+                  updated_at: new Date().toISOString(),
+                })
+                .eq('id', existingId)
+
+              existingByExternalId.set(externalIdStr, existingId)
+              existingByContent.set(contentKey, existingId)
+            } else {
+              // Nova transação
+              const { data: inserted, error: insErr } = await supabase
+                .from('transactions')
+                .insert({
+                  user_id: targetUserId,
+                  amount: amount > 0 ? amount : 0.01,
+                  type,
+                  description: cleanDesc,
+                  occurred_on: occurredOn,
+                  category_id: categoryId,
+                  payment_method: paymentMethod,
+                  source: 'open_finance',
+                  external_id: externalIdStr,
+                  account_id: String(account.id),
+                  notes: txn.category
+                    ? `Open Finance (${institutionName}) · ${txn.category}`
+                    : `Open Finance (${institutionName})`,
+                })
+                .select('id')
+                .maybeSingle()
+
+              if (!insErr && inserted?.id) {
+                existingByExternalId.set(externalIdStr, inserted.id)
+                existingByContent.set(contentKey, inserted.id)
+                totalSyncedTransactions++
+              }
             }
-          })
-
-          const { error: upsertErr } = await supabase
-            .from('transactions')
-            .upsert(transactionsToUpsert, { onConflict: 'user_id,external_id' })
-
-          if (upsertErr) {
-            console.error('[SyncPluggy] Erro ao gravar transações no banco:', upsertErr)
-          } else {
-            totalSyncedTransactions += transactionsToUpsert.length
           }
         }
       }
 
-      // Alinhar initial_balance do perfil para que o "Saldo disponível" no painel reflita exatamente o saldo real da conta bancária
-      const { data: monthTxs } = await supabase
-        .from('transactions')
-        .select('type, amount')
-        .eq('user_id', targetUserId)
-        .gte('occurred_on', `${currentMonthPrefix}-01`)
-
-      let monthNet = 0
-      for (const mt of monthTxs || []) {
-        if (mt.type === 'income') monthNet += Number(mt.amount || 0)
-        if (mt.type === 'expense') monthNet -= Number(mt.amount || 0)
-      }
-      const adjustedInitialBalance = Number((itemTotalBalance - monthNet).toFixed(2))
-      await supabase
-        .from('profiles')
-        .update({ initial_balance: adjustedInitialBalance })
-        .eq('id', targetUserId)
-
-      // Salvar ou atualizar conexão em bank_connections
+      // 5. Atualizar bank_connections para este itemId específico
       const { data: savedConn } = await supabase
         .from('bank_connections')
         .upsert(
@@ -582,6 +622,37 @@ serve(async (req) => {
       }
     }
 
+    // 6. Alinhar initial_balance consolidando TODAS as contas bancárias ativas do usuário
+    // Isso garante que se o usuário sincronizar uma conta por uma, as outras contas NUNCA se perdem!
+    const { data: allActiveConns } = await supabase
+      .from('bank_connections')
+      .select('balance')
+      .eq('user_id', targetUserId)
+      .eq('status', 'active')
+
+    const totalActiveBanksBalance = (allActiveConns || []).reduce(
+      (acc: number, c: any) => acc + (typeof c.balance === 'number' ? c.balance : 0),
+      0
+    )
+
+    const { data: monthTxs } = await supabase
+      .from('transactions')
+      .select('type, amount')
+      .eq('user_id', targetUserId)
+      .gte('occurred_on', `${currentMonthPrefix}-01`)
+
+    let monthNet = 0
+    for (const mt of monthTxs || []) {
+      if (mt.type === 'income') monthNet += Number(mt.amount || 0)
+      if (mt.type === 'expense') monthNet -= Number(mt.amount || 0)
+    }
+
+    const adjustedInitialBalance = Number((totalActiveBanksBalance - monthNet).toFixed(2))
+    await supabase
+      .from('profiles')
+      .update({ initial_balance: adjustedInitialBalance })
+      .eq('id', targetUserId)
+
     if (totalSyncedAccounts === 0) {
       return new Response(
         JSON.stringify({
@@ -602,12 +673,14 @@ serve(async (req) => {
         success: true,
         pendingAuth: false,
         itemId: itemIds[0],
+        institutionName: lastInstitutionName,
+        totalBalance: totalActiveBanksBalance,
         syncedAccounts: totalSyncedAccounts,
         syncedTransactions: totalSyncedTransactions,
         message:
           totalSyncedTransactions > 0
-            ? `${totalSyncedTransactions} lançamentos e saldo sincronizados com sucesso!`
-            : `Conta e saldo sincronizados (${totalSyncedAccounts} conta(s) verificada(s)).`,
+            ? `${totalSyncedTransactions} novos lançamentos e saldo sincronizados com sucesso!`
+            : `${lastInstitutionName} e saldo em dia (${totalSyncedAccounts} conta(s) verificada(s)).`,
       }),
       { status: 200, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
     )
