@@ -193,35 +193,48 @@ serve(async (req) => {
   }
 
   try {
-    const supabaseUrl = Deno.env.get('SUPABASE_URL') ?? ''
-    const supabaseAnonKey = Deno.env.get('SUPABASE_ANON_KEY') ?? ''
-    const supabaseServiceKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') || supabaseAnonKey
+    const supabaseUrl = Deno.env.get('SUPABASE_URL')
+    const supabaseServiceKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')
+
+    if (!supabaseUrl || !supabaseServiceKey) {
+      if (!supabaseUrl) console.error('[create-connect-token] Variável ausente: SUPABASE_URL')
+      if (!supabaseServiceKey) console.error('[create-connect-token] Variável ausente: SUPABASE_SERVICE_ROLE_KEY')
+      return new Response(
+        JSON.stringify({ error: 'Erro de configuração interna do servidor.' }),
+        { status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+      )
+    }
 
     const supabase = createClient(supabaseUrl, supabaseServiceKey)
 
-    let clientUserId = 'purplepiggy-user'
     const authHeader = req.headers.get('Authorization')
-    if (authHeader) {
-      const jwtToken = authHeader.replace(/^Bearer\s+/i, '').trim()
-      if (jwtToken && jwtToken !== supabaseAnonKey) {
-        const { data: userData } = await supabase.auth.getUser(jwtToken)
-        if (userData?.user?.id) {
-          clientUserId = userData.user.id
-        }
-      }
+    if (!authHeader) {
+      return new Response(
+        JSON.stringify({ error: 'Acesso não autorizado. Token ausente.' }),
+        { status: 401, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+      )
     }
 
-    const pluggyClientId =
-      Deno.env.get('PLUGGY_CLIENT_ID') || '379a488b-3ed2-4e90-b703-abf8462a29a2'
-    const pluggyClientSecret =
-      Deno.env.get('PLUGGY_CLIENT_SECRET') || '8DVlYurRUncgycxEGSCR_09wadY3eJnx9uliuPhffg4'
+    const jwtToken = authHeader.replace(/^Bearer\s+/i, '').trim()
+    const { data: userData, error: userError } = await supabase.auth.getUser(jwtToken)
+    if (userError || !userData?.user?.id) {
+      return new Response(
+        JSON.stringify({ error: 'Sessão inválida ou expirada.' }),
+        { status: 401, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+      )
+    }
+
+    const clientUserId = userData.user.id
+
+    const pluggyClientId = Deno.env.get('PLUGGY_CLIENT_ID')
+    const pluggyClientSecret = Deno.env.get('PLUGGY_CLIENT_SECRET')
     const pluggyApiUrl = Deno.env.get('PLUGGY_API_URL') || 'https://api.pluggy.ai'
 
     if (!pluggyClientId || !pluggyClientSecret) {
+      if (!pluggyClientId) console.error('[create-connect-token] Variável ausente: PLUGGY_CLIENT_ID')
+      if (!pluggyClientSecret) console.error('[create-connect-token] Variável ausente: PLUGGY_CLIENT_SECRET')
       return new Response(
-        JSON.stringify({
-          error: 'Credenciais da Pluggy não configuradas.',
-        }),
+        JSON.stringify({ error: 'Serviço de Open Finance indisponível no momento.' }),
         { status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
       )
     }

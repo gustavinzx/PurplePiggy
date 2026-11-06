@@ -4,6 +4,8 @@ import { Toaster } from 'sonner'
 import { AuthProvider } from './context/AuthContext'
 import { AuthGate } from './components/AuthGate'
 import { initNotificationsChannel } from './lib/nativeNotifications'
+import { isSupabaseConfigured } from './lib/supabase'
+import { AlertTriangle } from 'lucide-react'
 import { useAndroidBackButton } from './lib/capacitor'
 
 import { SplashPage } from './pages/SplashPage'
@@ -39,6 +41,28 @@ export const App: React.FC = () => {
   useEffect(() => {
     initNotificationsChannel()
   }, [])
+
+  if (!isSupabaseConfigured) {
+    return (
+      <div className="min-h-screen bg-[#FAF5FF] flex flex-col items-center justify-center p-6 text-center select-none">
+        <div className="w-full max-w-sm bg-white rounded-3xl p-6 shadow-xl border border-purple-100 flex flex-col items-center gap-4">
+          <div className="w-14 h-14 rounded-2xl bg-amber-50 border border-amber-200 text-amber-600 flex items-center justify-center">
+            <AlertTriangle className="w-7 h-7" />
+          </div>
+          <h1 className="font-nunito font-extrabold text-lg text-[#33105D]">
+            Configuração do Supabase Ausente
+          </h1>
+          <p className="font-nunito text-xs text-[#7D6A9C] leading-relaxed">
+            As chaves de conexão não foram detectadas no ambiente. Para conectar o aplicativo, configure as variáveis no seu arquivo <code className="bg-purple-50 text-purple-700 font-mono px-1 py-0.5 rounded font-bold">.env</code>:
+          </p>
+          <div className="w-full bg-[#FAF5FF] rounded-xl p-3 text-left font-mono text-[11px] text-purple-900 border border-purple-100 flex flex-col gap-1">
+            <span>VITE_SUPABASE_URL=...</span>
+            <span>VITE_SUPABASE_ANON_KEY=...</span>
+          </div>
+        </div>
+      </div>
+    )
+  }
 
   return (
     <BrowserRouter>
