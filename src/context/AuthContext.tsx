@@ -163,18 +163,20 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const signInDemo = async () => {
     try {
       setIsLoading(true)
-      // Login direto com a conta demonstrativa oficial de Ana Oliveira
-      const { data, error } = await supabase.auth.signInWithPassword({
-        email: 'ana@email.com',
-        password: 'PurplePiggy2026!',
-      })
+      // Login anônimo do Supabase para garantir ambiente isolado por visitante
+      const { data, error } = await supabase.auth.signInAnonymously()
 
       if (error) {
-        console.error('Falha no login demo:', error)
+        console.error('Falha no login demo anônimo:', error)
         return { error }
       }
 
       if (data.user) {
+        try {
+          await supabase.rpc('seed_demo_data')
+        } catch (seedErr) {
+          console.warn('Aviso ao inicializar seed demo:', seedErr)
+        }
         await fetchProfile(data.user.id)
       }
       return { error: null }

@@ -52,7 +52,7 @@ export const LoginPage: React.FC = () => {
     if (error) {
       toast.error('Não foi possível iniciar o modo demonstração. Tente de novo.')
     } else {
-      toast.success('Entrando como Ana Oliveira (modo demonstração)!')
+      toast.success('Entrando no modo demonstração!')
       navigate('/inicio')
     }
   }

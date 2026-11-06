@@ -56,14 +56,6 @@ Deno.serve(async (req: Request) => {
       }
 
       const uid = userData.user.id
-      const userEmail = (userData.user.email || "").toLowerCase()
-
-      if (userEmail === "ana@email.com") {
-        return new Response(
-          JSON.stringify({ error: "A conta demonstrativa oficial não pode ser excluída." }),
-          { status: 400, headers: { ...corsHeaders, "Content-Type": "application/json" } }
-        )
-      }
 
       // Remover todos os registros vinculados ao usuário antes de excluir o usuário no Auth
       await supabaseAdmin.from("goal_contributions").delete().eq("user_id", uid)
@@ -93,15 +85,6 @@ Deno.serve(async (req: Request) => {
     if (!rawEmail || !rawEmail.includes("@")) {
       return new Response(
         JSON.stringify({ error: "Informe um endereço de e-mail válido." }),
-        { status: 400, headers: { ...corsHeaders, "Content-Type": "application/json" } }
-      )
-    }
-
-    if (rawEmail === "ana@email.com") {
-      return new Response(
-        JSON.stringify({
-          error: "A conta demonstrativa (Ana Oliveira) possui acesso automático na tela de login.",
-        }),
         { status: 400, headers: { ...corsHeaders, "Content-Type": "application/json" } }
       )
     }

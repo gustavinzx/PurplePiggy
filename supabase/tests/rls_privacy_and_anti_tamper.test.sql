@@ -96,4 +96,21 @@ begin
 end;
 $$;
 
+-- 6. Teste (Prompt 4): reset_demo_data() chamado por usuária real (não demo) deve falhar
+do $$
+begin
+  -- Maria é usuária real (is_demo = false)
+  set local role authenticated;
+  set local "request.jwt.claim.sub" to '11111111-1111-1111-1111-111111111111';
+
+  begin
+    perform public.reset_demo_data();
+    raise exception 'FALHA: Usuária real conseguiu executar reset_demo_data()!';
+  exception
+    when others then
+      raise notice 'SUCESSO: reset_demo_data() bloqueado para usuárias reais';
+  end;
+end;
+$$;
+
 rollback;

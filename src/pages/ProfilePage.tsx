@@ -625,7 +625,7 @@ export const ProfilePage: React.FC = () => {
               {profile?.full_name || 'Ana Oliveira'}
             </h2>
             <p className="text-xs font-semibold text-[#7D6A9C] mt-0.5 truncate">
-              {profile?.email || user?.email || 'ana@email.com'}
+              {profile?.email || user?.email || (isDemo ? 'Modo Demonstração' : '')}
             </p>
             {profile?.phone && (
               <p className="text-[11px] font-bold text-[#7D2BD6]/80 mt-0.5 truncate">

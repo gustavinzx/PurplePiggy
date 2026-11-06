@@ -53,7 +53,7 @@ export const WelcomePage: React.FC = () => {
     if (error) {
       toast.error('Não foi possível iniciar o modo demonstração. Tente novamente.')
     } else {
-      toast.success('Bem-vinda ao modo demonstração de Ana Oliveira!')
+      toast.success('Bem-vinda ao modo demonstração!')
       navigate('/inicio')
     }
   }
