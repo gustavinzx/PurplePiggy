@@ -37,6 +37,10 @@ keystore.properties
 *.keystore
 *.jks
 android/app/build/
+android/app/src/main/assets/public/
+
+# Test artifacts
+test-results/
 
 # Temporary Supabase files
 supabase/.temp/

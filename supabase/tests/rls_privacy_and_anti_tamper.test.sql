@@ -1,4 +1,4 @@
--- Testes de RLS, Privacidade LGPD e Anti-fraude (Prompt 3)
+-- Testes de RLS, Privacidade LGPD e Anti-fraude (Prompt 3 & Correções)
 -- Pode ser executado no Supabase SQL Editor ou via psql
 
 begin;
@@ -110,6 +110,38 @@ begin
     when others then
       raise notice 'SUCESSO: reset_demo_data() bloqueado para usuárias reais';
   end;
+end;
+$$;
+
+-- 7. Teste: seed_demo_data() chamado por usuária real (não demo e não anônima) deve falhar
+do $$
+declare
+  v_err_msg text;
+  v_caught boolean := false;
+begin
+  -- Maria é usuária real (is_demo = false)
+  set local role authenticated;
+  perform set_config('request.jwt.claims', json_build_object('sub', '11111111-1111-1111-1111-111111111111', 'is_anonymous', false)::text, true);
+  perform set_config('request.jwt.claim.sub', '11111111-1111-1111-1111-111111111111', true);
+  perform set_config('request.jwt.claim.is_anonymous', 'false', true);
+
+  begin
+    perform public.seed_demo_data();
+  exception
+    when others then
+      v_caught := true;
+      get stacked diagnostics v_err_msg = message_text;
+  end;
+
+  if not v_caught then
+    raise exception 'FALHA: Usuária real conseguiu executar seed_demo_data()!';
+  end if;
+
+  if v_err_msg not like '%Operação não permitida: seed_demo_data é restrito a sessões anônimas ou contas de demonstração.%' then
+    raise exception 'FALHA: Mensagem inesperada no seed_demo_data(): %', v_err_msg;
+  end if;
+
+  raise notice 'SUCESSO: seed_demo_data() bloqueado para usuárias reais';
 end;
 $$;
 

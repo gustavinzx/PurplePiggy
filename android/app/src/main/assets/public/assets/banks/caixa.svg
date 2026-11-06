@@ -1,7 +1,0 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 48 48" width="48" height="48">
-  <rect width="48" height="48" rx="12" fill="#005CA9"/>
-  <!-- Caixa "X" -->
-  <path d="M14 15l6 9-6 9h5l3.5-5.5L25 33h5l-6-9 6-9h-5l-3.5 5.5L19 15h-5z" fill="#FFFFFF"/>
-  <path d="M26 15l3.5 5.5L33 15h-7z" fill="#F37021"/>
-  <path d="M26 33l3.5-5.5L33 33h-7z" fill="#F37021"/>
-</svg>
