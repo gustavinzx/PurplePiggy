@@ -114,7 +114,7 @@ describe('Motor do Quiz (Prompt N8 - Funções Puras e Reducer)', () => {
     expect(state.mistakesCount).toBe(1)
   })
 
-  it('deve acionar game_over quando os corações chegam a zero', () => {
+  it('deve manter a lição ativa (status incorrect) e mover a questão para o fim da fila quando o foco chega a zero (Prompt 5)', () => {
     let state = quizEngineReducer(INITIAL_QUIZ_STATE, {
       type: 'START_QUIZ',
       questions: mockQuestions,
@@ -124,8 +124,10 @@ describe('Motor do Quiz (Prompt N8 - Funções Puras e Reducer)', () => {
     state = quizEngineReducer(state, { type: 'SELECT_ANSWER', answer: 2 })
     state = quizEngineReducer(state, { type: 'VERIFY_ANSWER' })
 
-    expect(state.status).toBe('game_over')
+    // Prompt 5: Zero bloqueios e sem tela de game_over punitiva
+    expect(state.status).toBe('incorrect')
     expect(state.hearts).toBe(0)
+    expect(state.questions.length).toBe(mockQuestions.length + 1)
   })
 
   it('deve concluir o quiz com completed na última questão', () => {

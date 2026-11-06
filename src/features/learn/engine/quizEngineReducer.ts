@@ -70,12 +70,12 @@ export function quizEngineReducer(state: QuizState, action: QuizAction): QuizSta
         }
         const updatedQuestions = [...state.questions, retryQuestion]
 
-        const isDead = nextHearts === 0
-
+        // Prompt 5: Sem bloquear em game_over. Os corações são indicadores de foco.
+        // A questão volta ao final da fila para ser revisada sem frustração ou paywall.
         return {
           ...state,
           questions: updatedQuestions,
-          status: isDead ? 'game_over' : 'incorrect',
+          status: 'incorrect',
           validation,
           hearts: nextHearts,
           mistakesCount: state.mistakesCount + 1,
@@ -105,8 +105,7 @@ export function quizEngineReducer(state: QuizState, action: QuizAction): QuizSta
     }
 
     case 'RETRY_QUESTION': {
-      // Permite tentar novamente a mesma questão (se tiver corações)
-      if (state.hearts <= 0) return state
+      // Permite tentar novamente a mesma questão com acolhimento
       return {
         ...state,
         status: 'answering',

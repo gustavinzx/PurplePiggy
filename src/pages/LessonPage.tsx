@@ -293,7 +293,7 @@ export const LessonPage: React.FC = () => {
     )
   }
 
-  // TELA DE GAME OVER
+  // TELA DE REVISÃO DE FOCO (Prompt 5: Zero culpa)
   if (status === 'game_over') {
     return (
       <div className="min-h-screen bg-[#FAF5FF] flex flex-col justify-between max-w-md mx-auto p-6 animate-fadeIn">
@@ -302,10 +302,10 @@ export const LessonPage: React.FC = () => {
             <Mascot pose="retry" className="w-full h-full object-contain" priority />
           </div>
           <h1 className="font-nunito font-black text-2xl text-[#3B0764]">
-            Suas vidas acabaram por hoje!
+            Vamos revisar isso juntas?
           </h1>
           <p className="font-nunito text-sm text-gray-600 max-w-xs mx-auto">
-            Não desanime! Errar faz parte do aprendizado. Você pode recarregar suas vidas com Moedas Piggy ou tentar novamente quando descansar.
+            Não desanime! Errar faz parte do caminho. Você pode revisar os conceitos com calma e continuar aprendendo no seu ritmo.
           </p>
         </div>
         <div className="pb-4 space-y-3">
@@ -316,14 +316,15 @@ export const LessonPage: React.FC = () => {
             onClick={async () => {
               const res = await learnService.rechargeHearts()
               if (res.success) {
-                toast.success('Vidas recarregadas com sucesso! ❤️')
+                toast.success('Foco restaurado com sucesso! ❤️')
                 window.location.reload()
               } else {
-                toast.error(res.message || 'Moedas insuficientes para recarregar!')
+                toast.info('Vamos continuar praticando!')
+                window.location.reload()
               }
             }}
           >
-            RECARREGAR VIDAS (+3)
+            REVISAR AGORA (GRÁTIS)
           </ChunkyButton>
           <ChunkyButton
             variant="primary"

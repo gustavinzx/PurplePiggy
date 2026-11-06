@@ -27,25 +27,20 @@ export const HeartsModal: React.FC<HeartsModalProps> = ({
   const currentCoins = stats?.piggy_coins ?? 0
   const maxHearts = 3
 
-  const handleRecharge = async () => {
-    if (currentCoins < 30) {
-      toast.error('Você precisa de 30 moedas para recarregar suas vidas.')
-      return
-    }
-
+  const handleReviewAndRestore = async () => {
     setLoading(true)
     try {
-      const res = await learnService.rechargeHearts()
-      if (res.success) {
-        toast.success('Vidas recarregadas com sucesso! ❤️')
-        const updated = await learnService.getStats()
-        onHeartsUpdated(updated)
-        onClose()
-      } else {
-        toast.error(res.message || 'Não foi possível recarregar vidas agora.')
+      // Prompt 5: Restauração gratuita de foco sem paywall
+      const current = await learnService.getStats()
+      current.hearts = 3
+      if (typeof localStorage !== 'undefined') {
+        localStorage.setItem('purplepiggy_learn_stats', JSON.stringify(current))
       }
+      onHeartsUpdated(current)
+      toast.success('Foco restaurado com sucesso! Vamos aprender juntas! ❤️')
+      onClose()
     } catch {
-      toast.error('Erro ao recarregar vidas.')
+      toast.error('Erro ao restaurar foco.')
     } finally {
       setLoading(false)
     }
@@ -82,7 +77,7 @@ export const HeartsModal: React.FC<HeartsModalProps> = ({
         </div>
 
         <h3 className="font-nunito font-black text-xl text-[#33105D] leading-tight">
-          Suas Vidas
+          Seu Foco de Estudo
         </h3>
 
         {/* Corações Visuais Grandes */}
@@ -112,18 +107,18 @@ export const HeartsModal: React.FC<HeartsModalProps> = ({
 
         <p className="font-nunito text-xs text-[#6B5A8E] font-bold leading-relaxed max-w-xs mb-5">
           {currentHearts === 3
-            ? 'Você está com todas as vidas cheias! Pratique lições à vontade para ganhar Moedas e XP.'
+            ? 'Você está com o foco em dia! Pratique lições à vontade com zero culpa e no seu ritmo.'
             : currentHearts > 0
-            ? `Você ainda tem ${currentHearts} de ${maxHearts} vidas. Se errar uma questão, perde 1 vida.`
-            : 'Suas vidas acabaram! Recarregue agora com suas moedas para continuar praticando.'}
+            ? `Você está com ${currentHearts} de ${maxHearts} pontos de foco. Errar faz parte e as questões voltam no final para você revisar!`
+            : 'Seu foco zerou nesta rodada! Mas aqui não tem bloqueio: revise os conceitos e continue aprendendo de graça.'}
         </p>
 
         {/* Botão de Ação */}
         {currentHearts < 3 ? (
           <button
             type="button"
-            onClick={handleRecharge}
-            disabled={loading || currentCoins < 30}
+            onClick={handleReviewAndRestore}
+            disabled={loading}
             className="w-full h-12 rounded-full bg-gradient-to-r from-[#E5487A] to-[#B037F8] text-white font-black text-sm shadow-[0_6px_20px_rgba(229,72,122,0.3)] hover:opacity-95 active:scale-95 transition-all flex items-center justify-center gap-2 cursor-pointer disabled:opacity-50"
           >
             {loading ? (
@@ -131,11 +126,7 @@ export const HeartsModal: React.FC<HeartsModalProps> = ({
             ) : (
               <>
                 <Sparkles className="w-4 h-4" />
-                <span>Recarregar Vidas</span>
-                <span className="inline-flex items-center gap-1 bg-white/20 px-2 py-0.5 rounded-full text-xs font-black ml-1">
-                  <img src="/assets/coins/coin-1.png" alt="" className="w-3.5 h-3.5 object-contain" />
-                  30
-                </span>
+                <span>Revisar agora (grátis)</span>
               </>
             )}
           </button>
@@ -145,7 +136,7 @@ export const HeartsModal: React.FC<HeartsModalProps> = ({
             onClick={onClose}
             className="w-full h-12 rounded-full bg-[#FAF5FF] border border-[#E9D5FF] text-[#7D2BD6] font-black text-sm active:scale-95 transition-transform cursor-pointer"
           >
-            Vidas Cheias · Praticar Agora
+            Foco Máximo · Continuar Aprendendo
           </button>
         )}
       </div>

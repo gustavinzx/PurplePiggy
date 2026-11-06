@@ -33,7 +33,7 @@ export const FeedbackPanel: React.FC<FeedbackPanelProps> = ({
   const defaultTitle = isCorrect
     ? 'Excelente! Mandou muito bem!'
     : isGameOver
-    ? 'Corações esgotados!'
+    ? 'Vamos revisar isso juntas?'
     : 'Quase lá! Veja a explicação:'
 
   const resolvedTitle = title || defaultTitle
@@ -41,7 +41,7 @@ export const FeedbackPanel: React.FC<FeedbackPanelProps> = ({
   const defaultActionText = isCorrect
     ? 'CONTINUAR'
     : isGameOver
-    ? 'RECOMEÇAR LIÇÃO'
+    ? 'REVISAR AGORA'
     : 'ENTENDI'
 
   const resolvedActionText = actionText || defaultActionText
