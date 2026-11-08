@@ -90,6 +90,14 @@ describe('runSync', () => {
     expect(r.state).toBe('partial'); expect(r.missing).toEqual(['transactions', 'creditCards']); expect(r.message).toContain('extrato')
     expect(m.conns.get('conn1')).toMatchObject({ balance: 2.29 }); expect(m.conns.get('conn1').transactions_last_ok_at).toBeUndefined()
     expect(m.runs[0].status).toBe('partial')
+    expect(m.runs[0].stats).toMatchObject({
+      state: 'partial',
+      itemStatus: 'UPDATED',
+      executionStatus: 'PARTIAL_SUCCESS',
+      itemError: null,
+      dataGaps: ['transactions', 'creditCards'],
+      missing: ['transactions', 'creditCards'],
+    })
   })
 
   it('respeita o intervalo: PATCH só com force e depois do prazo; 409 não vira erro', async () => {

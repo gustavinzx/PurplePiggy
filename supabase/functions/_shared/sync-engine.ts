@@ -75,15 +75,39 @@ export async function runSync(d: SyncDeps, p: SyncParams): Promise<SyncResult> {
   const errors: string[] = []
   const accountsOut: AccountResult[] = []
   let incomplete = false
+  let item: any = null
+  let summary: ReturnType<typeof summarizeItemState> | null = null
+
+  const sanitizeItemError = (err: any) => {
+    if (!err || typeof err !== 'object') return null
+    return {
+      code: err.code ?? null,
+      message: err.message ?? null,
+      providerMessage: err.providerMessage ?? null,
+    }
+  }
+
   const finish = async (res: SyncResult, status: string) => {
     res.runId = runId
-    await d.repo.finishRun(runId, { status, stats: { state: res.state, accounts: res.accounts, missing: res.missing, incomplete: res.incomplete }, errors: res.errors })
+    const stats = {
+      state: res.state,
+      itemStatus: item?.status ?? null,
+      executionStatus: item?.executionStatus ?? null,
+      itemError: sanitizeItemError(item?.error),
+      statusDetail: item?.statusDetail ?? null,
+      products: summary?.products ?? res.products ?? null,
+      dataGaps: res.missing,
+      missing: res.missing,
+      accounts: res.accounts,
+      incomplete: res.incomplete,
+    }
+    await d.repo.finishRun(runId, { status, stats, errors: res.errors })
     return res
   }
 
   try {
-    let item = await d.pluggy.getItem(p.itemId)
-    let summary = summarizeItemState(item)
+    item = await d.pluggy.getItem(p.itemId)
+    summary = summarizeItemState(item)
     let nextAllowedAt = computeNextAllowedAt(item, d.minIntervalMs)
 
     if (summary.state === 'needs_user_action' || summary.state === 'error') {

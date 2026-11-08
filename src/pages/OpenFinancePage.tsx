@@ -736,7 +736,7 @@ export const OpenFinancePage: React.FC = () => {
                         <div className="flex items-start gap-2">
                           <AlertCircle className="w-4 h-4 text-amber-600 shrink-0 mt-0.5" />
                           <p className="text-[11px] font-bold text-amber-950 leading-snug">
-                            O saldo foi sincronizado! O extrato ainda está sendo gerado pelo banco e será baixado automaticamente assim que liberado.
+                            {conn.pluggy_status === 'UPDATING' ? 'O saldo foi sincronizado! O extrato ainda está sendo gerado pelo banco e aparecerá em instantes.' : 'O banco não liberou extrato e cartão. Reconecte e marque todas as permissões.'}
                           </p>
                         </div>
                         <div className="grid grid-cols-2 gap-2">

@@ -236,8 +236,8 @@ export function stateMessage(state: ItemState, missing: string[]): string {
   switch (state) {
     case 'ok': return 'Tudo atualizado.'
     case 'partial': return m
-      ? `O saldo foi atualizado, mas o banco ainda não liberou: ${m}. Vamos tentar de novo automaticamente.`
-      : 'Atualizamos parte dos dados. Vamos tentar de novo automaticamente.'
+      ? `O banco não liberou ${m}. Reconecte e marque todas as permissões.`
+      : 'O banco não liberou extrato e cartão. Reconecte e marque todas as permissões.'
     case 'updating': return 'O banco ainda está enviando os dados. Em instantes eles aparecem aqui.'
     case 'needs_user_action': return 'O banco pediu uma confirmação sua. Reconecte para continuar atualizando.'
     default: return 'Não conseguimos atualizar agora. Tente de novo em alguns minutos.'
