@@ -235,9 +235,9 @@ export function stateMessage(state: ItemState, missing: string[]): string {
   const m = missing.map((k) => MISSING_LABEL[k] || k).join(' e ')
   switch (state) {
     case 'ok': return 'Tudo atualizado.'
-    case 'partial': return m
+    case 'partial': return missing.length > 0
       ? `O banco não liberou ${m}. Reconecte e marque todas as permissões.`
-      : 'O banco não liberou extrato e cartão. Reconecte e marque todas as permissões.'
+      : 'Dados atualizados. Alguns detalhes ainda estão sendo consolidados pelo banco.'
     case 'updating': return 'O banco ainda está enviando os dados. Em instantes eles aparecem aqui.'
     case 'needs_user_action': return 'O banco pediu uma confirmação sua. Reconecte para continuar atualizando.'
     default: return 'Não conseguimos atualizar agora. Tente de novo em alguns minutos.'

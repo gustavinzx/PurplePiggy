@@ -631,6 +631,8 @@ export const OpenFinancePage: React.FC = () => {
                 const hasCards = Boolean(sDetail.creditCards)
                 const isCardsOk = sDetail.creditCards?.isUpdated === true
                 const isPartial = conn.execution_status === 'PARTIAL_SUCCESS' || (!isTxOk && conn.execution_status !== 'SUCCESS')
+                const rawGaps = Array.isArray(conn.data_gaps) ? conn.data_gaps : []
+                const hasGaps = rawGaps.length > 0 || !isTxOk || (hasCards && !isCardsOk)
                 const needsUserAction = conn.needs_user_action || conn.pluggy_status === 'LOGIN_ERROR' || conn.pluggy_status === 'WAITING_USER_INPUT'
 
                 const connAccounts = accountsByConnection[conn.id] || []
@@ -731,7 +733,7 @@ export const OpenFinancePage: React.FC = () => {
                     </div>
 
                     {/* Aviso Suave quando Parcial (Nubank) */}
-                    {isPartial && !needsUserAction && (
+                    {isPartial && hasGaps && !needsUserAction && (
                       <div className="bg-[#FFFBEB] border border-amber-200/80 rounded-2xl p-3 flex flex-col gap-2.5">
                         <div className="flex items-start gap-2">
                           <AlertCircle className="w-4 h-4 text-amber-600 shrink-0 mt-0.5" />
