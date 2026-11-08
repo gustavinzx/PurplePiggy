@@ -245,6 +245,7 @@ export async function runSync(d: SyncDeps, p: SyncParams): Promise<SyncResult> {
     await d.repo.updateConnection(p.connectionId, {
       balance: Number(bankTotal.toFixed(2)), last_synced_at: now().toISOString(), status: 'active',
       pluggy_status: item?.status ?? null, execution_status: item?.executionStatus ?? null, status_detail: item?.statusDetail ?? null,
+      data_gaps: missing,
       needs_user_action: false, error_message: errors.length ? errors[0].slice(0, 300) : null, next_allowed_sync_at: nextAllowedAt,
       ...(txOk ? { transactions_last_ok_at: now().toISOString() } : {}),
     })

@@ -88,7 +88,7 @@ describe('runSync', () => {
     const accs = [{ id: 'nuB', type: 'BANK', subtype: 'CHECKING_ACCOUNT', name: 'Conta', number: '***36-8', balance: 2.29 }, { id: 'nuC', type: 'CREDIT', subtype: 'CREDIT_CARD', name: 'Cartão', number: '***9177', balance: 3.64 }]
     const m = memRepo(); const r = await runSync({ pluggy: fakePluggy({ item: nu, accounts: accs, txns: {} }), repo: m.repo, now }, params({ institutionName: 'Nubank', connectorId: 'nu' }))
     expect(r.state).toBe('partial'); expect(r.missing).toEqual(['transactions', 'creditCards']); expect(r.message).toContain('extrato')
-    expect(m.conns.get('conn1')).toMatchObject({ balance: 2.29 }); expect(m.conns.get('conn1').transactions_last_ok_at).toBeUndefined()
+    expect(m.conns.get('conn1')).toMatchObject({ balance: 2.29, data_gaps: ['transactions', 'creditCards'] }); expect(m.conns.get('conn1').transactions_last_ok_at).toBeUndefined()
     expect(m.runs[0].status).toBe('partial')
     expect(m.runs[0].stats).toMatchObject({
       state: 'partial',

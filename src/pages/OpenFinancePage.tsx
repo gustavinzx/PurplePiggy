@@ -48,7 +48,9 @@ import { toast } from 'sonner'
 import type { Database } from '../types/database.types'
 import { formatCurrency } from '../lib/format'
 
-type BankConnection = Database['public']['Tables']['bank_connections']['Row']
+type BankConnection = Database['public']['Tables']['bank_connections']['Row'] & {
+  data_gaps?: string[] | null
+}
 type OpenFinanceConsent = Database['public']['Tables']['open_finance_consents']['Row']
 
 interface SupportedBank {
@@ -631,8 +633,8 @@ export const OpenFinancePage: React.FC = () => {
                 const hasCards = Boolean(sDetail.creditCards)
                 const isCardsOk = sDetail.creditCards?.isUpdated === true
                 const isPartial = conn.execution_status === 'PARTIAL_SUCCESS' || (!isTxOk && conn.execution_status !== 'SUCCESS')
-                const rawGaps = Array.isArray(conn.data_gaps) ? conn.data_gaps : []
-                const hasGaps = rawGaps.length > 0 || !isTxOk || (hasCards && !isCardsOk)
+                const dataGaps = Array.isArray(conn.data_gaps) ? (conn.data_gaps as string[]) : []
+                const hasDataGaps = dataGaps.length > 0
                 const needsUserAction = conn.needs_user_action || conn.pluggy_status === 'LOGIN_ERROR' || conn.pluggy_status === 'WAITING_USER_INPUT'
 
                 const connAccounts = accountsByConnection[conn.id] || []
@@ -732,30 +734,22 @@ export const OpenFinancePage: React.FC = () => {
                       )}
                     </div>
 
-                    {/* Aviso Suave quando Parcial (Nubank) */}
-                    {isPartial && hasGaps && !needsUserAction && (
+                    {/* Aviso quando há data_gaps pendentes no banco */}
+                    {hasDataGaps && !needsUserAction && (
                       <div className="bg-[#FFFBEB] border border-amber-200/80 rounded-2xl p-3 flex flex-col gap-2.5">
                         <div className="flex items-start gap-2">
                           <AlertCircle className="w-4 h-4 text-amber-600 shrink-0 mt-0.5" />
                           <p className="text-[11px] font-bold text-amber-950 leading-snug">
-                            {conn.pluggy_status === 'UPDATING' ? 'O saldo foi sincronizado! O extrato ainda está sendo gerado pelo banco e aparecerá em instantes.' : 'O banco não liberou extrato e cartão. Reconecte e marque todas as permissões.'}
+                            O banco não liberou extrato e cartão. Reconecte e marque todas as permissões.
                           </p>
                         </div>
-                        <div className="grid grid-cols-2 gap-2">
-                          <button
-                            type="button"
-                            onClick={() => handleSyncConnection(conn)}
-                            disabled={syncingConnId === conn.id}
-                            className="h-8 px-2.5 rounded-xl bg-white hover:bg-amber-50 border border-amber-300/80 text-[11px] font-extrabold text-[#7D2BD6] flex items-center justify-center cursor-pointer disabled:opacity-50 transition-colors"
-                          >
-                            {syncingConnId === conn.id ? 'Checando...' : 'Checar extrato'}
-                          </button>
+                        <div className="flex items-center justify-end">
                           <button
                             type="button"
                             onClick={() => handleReconnectBank(conn)}
-                            className="h-8 px-2.5 rounded-xl bg-white hover:bg-amber-50 border border-amber-300/80 text-[11px] font-extrabold text-[#7D2BD6] flex items-center justify-center cursor-pointer transition-colors"
+                            className="h-8 px-4 rounded-xl bg-white hover:bg-amber-50 border border-amber-300/80 text-[11px] font-extrabold text-[#7D2BD6] flex items-center justify-center cursor-pointer transition-colors shadow-sm"
                           >
-                            Revisar no banco
+                            Reconectar
                           </button>
                         </div>
                       </div>
