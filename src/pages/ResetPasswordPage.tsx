@@ -277,7 +277,7 @@ export const ResetPasswordPage: React.FC = () => {
                     value={code}
                     onChange={(e) => setCode(e.target.value.replace(/\D/g, ''))}
                     placeholder="000000"
-                    className="w-full h-13 pl-13 pr-4 bg-white border border-[#E9D5FF]/80 rounded-2xl text-deep font-black tracking-[0.25em] text-[16px] focus:outline-none focus:border-[#8E32D8]"
+                    className="w-full h-14 pl-14 pr-4 bg-white border border-[#E9D5FF]/80 rounded-2xl text-deep font-black tracking-[0.25em] text-[16px] focus:outline-none focus:border-[#8E32D8]"
                     required
                   />
                 </div>
@@ -297,7 +297,7 @@ export const ResetPasswordPage: React.FC = () => {
                     value={newPassword}
                     onChange={(e) => setNewPassword(e.target.value)}
                     placeholder="Digite sua nova senha"
-                    className="w-full h-13 pl-13 pr-12 bg-white border border-[#E9D5FF]/80 rounded-2xl text-deep font-bold text-[14px] focus:outline-none focus:border-[#8E32D8]"
+                    className="w-full h-14 pl-14 pr-12 bg-white border border-[#E9D5FF]/80 rounded-2xl text-deep font-bold text-[14px] focus:outline-none focus:border-[#8E32D8]"
                     required
                   />
                   <button
@@ -324,7 +324,7 @@ export const ResetPasswordPage: React.FC = () => {
                     value={confirmPassword}
                     onChange={(e) => setConfirmPassword(e.target.value)}
                     placeholder="Repita a nova senha"
-                    className="w-full h-13 pl-13 pr-12 bg-white border border-[#E9D5FF]/80 rounded-2xl text-deep font-bold text-[14px] focus:outline-none focus:border-[#8E32D8]"
+                    className="w-full h-14 pl-14 pr-12 bg-white border border-[#E9D5FF]/80 rounded-2xl text-deep font-bold text-[14px] focus:outline-none focus:border-[#8E32D8]"
                     required
                   />
                 </div>
@@ -379,7 +379,7 @@ export const ResetPasswordPage: React.FC = () => {
                 value={newPassword}
                 onChange={(e) => setNewPassword(e.target.value)}
                 placeholder="Mínimo de 6 caracteres"
-                className="w-full h-13 px-4 bg-white border border-[#E9D5FF] rounded-2xl text-deep font-bold text-sm focus:outline-none focus:border-[#8E32D8]"
+                className="w-full h-14 px-4 bg-white border border-[#E9D5FF] rounded-2xl text-deep font-bold text-sm focus:outline-none focus:border-[#8E32D8]"
                 required
               />
             </div>
@@ -393,7 +393,7 @@ export const ResetPasswordPage: React.FC = () => {
                 value={confirmPassword}
                 onChange={(e) => setConfirmPassword(e.target.value)}
                 placeholder="Repita a nova senha"
-                className="w-full h-13 px-4 bg-white border border-[#E9D5FF] rounded-2xl text-deep font-bold text-sm focus:outline-none focus:border-[#8E32D8]"
+                className="w-full h-14 px-4 bg-white border border-[#E9D5FF] rounded-2xl text-deep font-bold text-sm focus:outline-none focus:border-[#8E32D8]"
                 required
               />
             </div>

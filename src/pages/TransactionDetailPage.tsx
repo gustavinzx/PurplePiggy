@@ -51,6 +51,7 @@ export const TransactionDetailPage: React.FC = () => {
   const [occurredOn, setOccurredOn] = useState('')
   const [paymentMethod, setPaymentMethod] = useState<string>('credit_card')
   const [notes, setNotes] = useState('')
+  const [ignoreInReports, setIgnoreInReports] = useState(false)
 
   useEffect(() => {
     if (user && id) {
@@ -85,6 +86,7 @@ export const TransactionDetailPage: React.FC = () => {
       setOccurredOn(tx.occurred_on)
       setPaymentMethod(tx.payment_method)
       setNotes(tx.notes || '')
+      setIgnoreInReports(Boolean(tx.ignore_in_reports))
     } catch (err) {
       console.error(err)
     } finally {
@@ -122,6 +124,9 @@ export const TransactionDetailPage: React.FC = () => {
           occurred_on: occurredOn,
           payment_method: paymentMethod as any,
           notes: notes.trim() || null,
+          ignore_in_reports: ignoreInReports,
+          ignore_locked: true,
+          ignore_reason: ignoreInReports ? (transaction.ignore_reason || 'manual') : 'manual',
         })
         .eq('id', transaction.id)
         .eq('user_id', user.id)
@@ -337,6 +342,33 @@ export const TransactionDetailPage: React.FC = () => {
                 <option value="other">Outros</option>
               </select>
             </div>
+          </div>
+
+          {/* Alternância: Contar nos relatórios */}
+          <div className="p-3 bg-[#FAF8FD] rounded-2xl border border-lilac/20 flex items-center justify-between gap-3">
+            <div className="flex flex-col min-w-0 flex-1">
+              <span className="text-xs font-bold text-[#432171]">Contar nos relatórios</span>
+              <span className="text-[10px] font-semibold text-[#7D6A9C] leading-snug">
+                {ignoreInReports
+                  ? 'Ignorado: este valor não afeta suas métricas nem orçamentos.'
+                  : 'Ativo: este valor entra normalmente nos gráficos e totais.'}
+              </span>
+            </div>
+            <button
+              type="button"
+              role="switch"
+              aria-checked={!ignoreInReports}
+              onClick={() => setIgnoreInReports(!ignoreInReports)}
+              className={`relative inline-flex h-6 w-11 shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-hidden ${
+                !ignoreInReports ? 'bg-[#7D2BD6]' : 'bg-gray-300'
+              }`}
+            >
+              <span
+                className={`pointer-events-none inline-block h-5 w-5 transform rounded-full bg-white shadow-sm ring-0 transition duration-200 ease-in-out ${
+                  !ignoreInReports ? 'translate-x-5' : 'translate-x-0'
+                }`}
+              />
+            </button>
           </div>
 
           {/* Ações inferiores */}
