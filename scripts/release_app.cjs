@@ -40,6 +40,7 @@ async function main() {
   const args = process.argv.slice(2)
   let customVersion = null
   let customNotes = null
+  let isMandatory = true
 
   for (let i = 0; i < args.length; i++) {
     if (args[i] === '--version' && args[i + 1]) {
@@ -48,6 +49,8 @@ async function main() {
     } else if (args[i] === '--notes' && args[i + 1]) {
       customNotes = args[i + 1]
       i++
+    } else if (args[i] === '--optional') {
+      isMandatory = false
     }
   }
 
@@ -58,26 +61,19 @@ async function main() {
   const codeMatch = appVersionContent.match(/APP_VERSION_CODE\s*=\s*(\d+)/)
   const nameMatch = appVersionContent.match(/APP_VERSION_NAME\s*=\s*'([^']+)'/)
 
-  const currentCode = codeMatch ? parseInt(codeMatch[1], 10) : 210
-  const currentName = nameMatch ? nameMatch[1] : '2.1.0'
+  const currentCode = codeMatch ? parseInt(codeMatch[1], 10) : 241
+  const currentName = nameMatch ? nameMatch[1] : '2.4.1'
 
   // Calcular nova versão
-  const newCode = currentCode + 10
+  const newCode = currentCode < 250 ? 250 : currentCode + 1
   let newName = customVersion
   if (!newName) {
-    const parts = currentName.split('.').map((p) => parseInt(p, 10))
-    if (parts.length === 3) {
-      parts[1] += 1
-      parts[2] = 0
-      newName = parts.join('.')
-    } else {
-      newName = `2.${Math.floor(newCode / 100)}.${newCode % 10}`
-    }
+    newName = '2.5.0'
   }
 
   const releaseNotes =
     customNotes ||
-    `Atualização do PurplePiggy (v${newName}): Melhorias de desempenho, navegação fluida, novas correções e estabilidade geral.`
+    `PurplePiggy v${newName}: Novo design do Open Finance com catálogo visual de bancos, tela de introdução com toque/swipe nos 3 porquinhos, e melhorias de performance.`
 
   console.log(`📌 Versão Atual:   v${currentName} (código ${currentCode})`)
   console.log(`✨ Nova Versão:    v${newName} (código ${newCode})`)
@@ -167,7 +163,7 @@ export const APP_RELEASE_YEAR = '2026'
       version_name: newName,
       download_url: downloadUrl,
       release_notes: releaseNotes,
-      is_mandatory: false,
+      is_mandatory: isMandatory,
       created_at: new Date().toISOString(),
     },
     { onConflict: 'version_code' }

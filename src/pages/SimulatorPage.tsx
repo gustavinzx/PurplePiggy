@@ -55,6 +55,7 @@ export const SimulatorPage: React.FC = () => {
       .from('transactions')
       .select('*')
       .eq('user_id', user.id)
+      .is('archived_at', null)
 
     if (txs) {
       const balance = calculateAvailableBalance(Number(profile?.initial_balance ?? 0), txs)

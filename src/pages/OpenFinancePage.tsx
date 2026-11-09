@@ -1,6 +1,6 @@
 // src/pages/OpenFinancePage.tsx
 // Página de Gestão Completa de Conexões Open Finance (Pluggy API v2)
-import React, { useState, useEffect, useMemo } from 'react'
+import React, { useState, useEffect, useMemo, useRef } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { supabase } from '../lib/supabase'
 import { useAuth } from '../context/AuthContext'
@@ -25,6 +25,7 @@ import {
   SyncRunRecord,
   ConnectorInfo,
   ImportedRow,
+  SyncResult,
 } from '../lib/openFinance'
 import {
   ArrowLeft,
@@ -222,9 +223,10 @@ export const OpenFinancePage: React.FC = () => {
       })
   }, [])
 
-  const loadOpenFinanceData = async () => {
+  // quiet = recarrega sem trocar a lista por skeleton (evita "piscar" depois de sincronizar)
+  const loadOpenFinanceData = async (quiet = false) => {
     if (!user) return
-    setLoading(true)
+    if (!quiet) setLoading(true)
     try {
       const { data: conns } = await supabase
         .from('bank_connections')
@@ -245,72 +247,68 @@ export const OpenFinancePage: React.FC = () => {
 
       setConsents(consentData || [])
     } finally {
-      setLoading(false)
+      if (!quiet) setLoading(false)
+    }
+  }
+
+  // Trava síncrona contra toque duplo (o state do React só atualiza no próximo render)
+  const syncLockRef = useRef(false)
+
+  const notifySyncResult = (conn: BankConnection, res: SyncResult) => {
+    const bank = conn.institution_name
+    if (res.state === 'ok') {
+      const totalInserted = res.accounts?.reduce((sum: number, a: any) => sum + (a.inserted || 0), 0) || 0
+      toast.success(
+        totalInserted > 0
+          ? `${bank}: ${totalInserted} ${totalInserted === 1 ? 'novo lançamento sincronizado' : 'novos lançamentos sincronizados'}.`
+          : `${bank}: saldo e lançamentos em dia.`
+      )
+    } else if (res.state === 'partial') {
+      toast.info(res.message || `${bank}: saldo atualizado. O extrato ainda não foi liberado pelo banco.`)
+    } else if (res.state === 'needs_user_action') {
+      toast.error(res.message || `${bank} pediu nova autorização. Toque em Reconectar.`)
+    } else if (res.state === 'updating' || res.state === 'already_running') {
+      toast.info(`${bank} ainda está enviando os dados. Eles aparecem aqui assim que chegarem.`)
+    } else {
+      toast.error(res.message || res.error || `Não foi possível sincronizar o ${bank} agora.`)
     }
   }
 
   // Sincronização individual por connectionId
   const handleSyncConnection = async (conn: BankConnection, silent = false) => {
-    if (!user || !conn.id) return
+    if (!user || !conn.id || syncLockRef.current) return
+    syncLockRef.current = true
     setSyncingConnId(conn.id)
 
     try {
-      const res = await syncPluggyConnection(conn.id)
+      // force: pede à Pluggy dados novos do banco (o servidor respeita o intervalo mínimo entre atualizações).
+      let res = await syncPluggyConnection(conn.id, { force: true })
 
-      if (res.state === 'updating') {
-        if (!silent) {
-          toast.info(res.message || `${conn.institution_name} está atualizando. Concluindo em segundo plano...`)
-        }
-        // Polling suave em background
-        pollSyncUntilDone(conn.id, async (update) => {
-          if (update.state === 'ok') {
-            await refreshProfile()
-            await loadOpenFinanceData()
-          }
-        })
-      } else if (res.state === 'needs_user_action') {
-        if (!silent) {
-          toast.error(res.message || `${conn.institution_name} requer autorização. Toque em Reconectar.`)
-        }
-      } else if (res.state === 'partial') {
-        if (!silent) {
-          toast.info(res.message || `Saldo atualizado. Extrato ainda aguarda liberação do ${conn.institution_name}.`)
-        }
-      } else if (res.state === 'ok') {
-        const totalInserted = res.accounts?.reduce((sum, a) => sum + (a.inserted || 0), 0) || 0
-        if (!silent) {
-          if (totalInserted > 0) {
-            toast.success(`${conn.institution_name}: ${totalInserted} novos lançamentos sincronizados!`)
-          } else {
-            toast.success(`${conn.institution_name}: saldo e lançamentos em dia!`)
-          }
-        }
-      } else if (res.state === 'already_running') {
-        if (!silent) {
-          toast.info(`Uma sincronização já está em andamento para o ${conn.institution_name}.`)
-        }
-      } else {
-        if (!silent) {
-          toast.error(res.message || res.error || 'Erro ao sincronizar dados da instituição.')
-        }
+      // Banco ainda enviando: mantém o botão em "Atualizando..." e espera concluir, sem chamada duplicada.
+      if (res.state === 'updating' || res.state === 'already_running') {
+        res = await pollSyncUntilDone(conn.id, undefined, 90_000, res)
       }
+
+      if (!silent) notifySyncResult(conn, res)
 
       await refreshProfile()
-      await loadOpenFinanceData()
+      await loadOpenFinanceData(true)
     } catch (err: any) {
       if (!silent) {
-        toast.error(err.message || 'Erro ao sincronizar conexão bancária.')
+        toast.error(err?.message || 'Erro ao sincronizar conexão bancária.')
       }
     } finally {
+      syncLockRef.current = false
       setSyncingConnId(null)
     }
   }
 
   // Sincronizar todas as contas ativas usando fila serializada no front com progresso
   const handleSyncAllQueue = async () => {
-    if (!user) return
+    if (!user || syncLockRef.current) return
     const activeConns = connections.filter((c) => c.status === 'active')
     if (activeConns.length === 0) return
+    syncLockRef.current = true
 
     setSyncQueueStatus({
       current: 1,
@@ -332,7 +330,11 @@ export const OpenFinancePage: React.FC = () => {
       })
 
       try {
-        const res = await syncPluggyConnection(conn.id)
+        let res = await syncPluggyConnection(conn.id, { force: true })
+        // Banco ainda atualizando na Pluggy: espera concluir antes de passar para o próximo
+        if (res.state === 'updating' || res.state === 'already_running') {
+          res = await pollSyncUntilDone(conn.id, undefined, 60_000, res)
+        }
         if (res.state === 'partial') anyPartial = true
         if (res.accounts) {
           syncedCountTotal += res.accounts.reduce((sum, a) => sum + (a.inserted || 0), 0)
@@ -343,8 +345,9 @@ export const OpenFinancePage: React.FC = () => {
     }
 
     setSyncQueueStatus(null)
+    syncLockRef.current = false
     await refreshProfile()
-    await loadOpenFinanceData()
+    await loadOpenFinanceData(true)
 
     if (anyPartial) {
       toast.info('Saldos atualizados. O extrato de alguns bancos ainda está sendo processado.')

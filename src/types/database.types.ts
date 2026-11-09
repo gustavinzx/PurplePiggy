@@ -39,46 +39,147 @@ export type Database = {
         }
         Relationships: []
       }
+      bank_accounts: {
+        Row: {
+          id: string
+          user_id: string
+          connection_id: string
+          pluggy_account_id: string
+          stable_key: string
+          type: 'BANK' | 'CREDIT'
+          subtype: string | null
+          name: string
+          number_masked: string | null
+          balance: number
+          credit_limit: number | null
+          available_credit_limit: number | null
+          is_active: boolean
+          include_in_balance: boolean
+          is_hidden: boolean
+          last_synced_at: string | null
+          created_at: string
+          updated_at: string
+        }
+        Insert: {
+          id?: string
+          user_id: string
+          connection_id: string
+          pluggy_account_id: string
+          stable_key: string
+          type: 'BANK' | 'CREDIT'
+          subtype?: string | null
+          name: string
+          number_masked?: string | null
+          balance?: number
+          credit_limit?: number | null
+          available_credit_limit?: number | null
+          is_active?: boolean
+          include_in_balance?: boolean
+          is_hidden?: boolean
+          last_synced_at?: string | null
+          created_at?: string
+          updated_at?: string
+        }
+        Update: {
+          id?: string
+          user_id?: string
+          connection_id?: string
+          pluggy_account_id?: string
+          stable_key?: string
+          type?: 'BANK' | 'CREDIT'
+          subtype?: string | null
+          name?: string
+          number_masked?: string | null
+          balance?: number
+          credit_limit?: number | null
+          available_credit_limit?: number | null
+          is_active?: boolean
+          include_in_balance?: boolean
+          last_synced_at?: string | null
+          created_at?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "bank_accounts_connection_id_fkey"
+            columns: ["connection_id"]
+            isOneToOne: false
+            referencedRelation: "bank_connections"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "bank_accounts_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "users"
+            referencedColumns: ["id"]
+          }
+        ]
+      }
       bank_connections: {
         Row: {
           account_label: string | null
+          connector_id: string | null
           created_at: string
+          error_message: string | null
+          execution_status: string | null
           id: string
           institution_name: string
           is_demo: boolean
+          needs_user_action: boolean
+          pluggy_status: string | null
           provider: string
           provider_ref: string | null
           balance: number | null
           last_synced_at: string | null
+          next_allowed_sync_at: string | null
           status: 'pending' | 'active' | 'revoked' | 'expired' | 'error'
+          status_detail: Json | null
+          transactions_last_ok_at: string | null
           updated_at: string
           user_id: string
         }
         Insert: {
           account_label?: string | null
+          connector_id?: string | null
           created_at?: string
+          error_message?: string | null
+          execution_status?: string | null
           id?: string
           institution_name: string
           is_demo?: boolean
+          needs_user_action?: boolean
+          pluggy_status?: string | null
           provider?: string
           provider_ref?: string | null
           balance?: number | null
           last_synced_at?: string | null
+          next_allowed_sync_at?: string | null
           status: 'pending' | 'active' | 'revoked' | 'expired' | 'error'
+          status_detail?: Json | null
+          transactions_last_ok_at?: string | null
           updated_at?: string
           user_id: string
         }
         Update: {
           account_label?: string | null
+          connector_id?: string | null
           created_at?: string
+          error_message?: string | null
+          execution_status?: string | null
           id?: string
           institution_name?: string
           is_demo?: boolean
+          needs_user_action?: boolean
+          pluggy_status?: string | null
           provider?: string
           provider_ref?: string | null
           balance?: number | null
           last_synced_at?: string | null
+          next_allowed_sync_at?: string | null
           status?: 'pending' | 'active' | 'revoked' | 'expired' | 'error'
+          status_detail?: Json | null
+          transactions_last_ok_at?: string | null
           updated_at?: string
           user_id?: string
         }
@@ -357,6 +458,27 @@ export type Database = {
           },
         ]
       }
+      open_finance_institutions: {
+        Row: {
+          connector_id: number
+          name: string
+          notes: string | null
+          tier: 'verified' | 'beta'
+        }
+        Insert: {
+          connector_id: number
+          name: string
+          notes?: string | null
+          tier?: 'verified' | 'beta'
+        }
+        Update: {
+          connector_id?: number
+          name?: string
+          notes?: string | null
+          tier?: 'verified' | 'beta'
+        }
+        Relationships: []
+      }
       open_finance_consents: {
         Row: {
           authorized_at: string
@@ -472,11 +594,19 @@ export type Database = {
           description: string
           external_id: string | null
           account_id: string | null
+          bank_account_id: string | null
+          fingerprint: string | null
+          pluggy_category_id: string | null
+          ignore_in_reports: boolean
+          ignore_reason: string | null
+          ignore_locked: boolean
+          pending: boolean
+          archived_at: string | null
           id: string
           notes: string | null
           occurred_on: string
           payment_method: 'pix' | 'credit_card' | 'debit_card' | 'cash' | 'boleto' | 'transfer' | 'other'
-          source: 'manual' | 'open_finance' | 'demo'
+          source: 'manual' | 'open_finance' | 'demo' | 'import'
           type: 'income' | 'expense'
           updated_at: string
           user_id: string
@@ -488,11 +618,19 @@ export type Database = {
           description: string
           external_id?: string | null
           account_id?: string | null
+          bank_account_id?: string | null
+          fingerprint?: string | null
+          pluggy_category_id?: string | null
+          ignore_in_reports?: boolean
+          ignore_reason?: string | null
+          ignore_locked?: boolean
+          pending?: boolean
+          archived_at?: string | null
           id?: string
           notes?: string | null
           occurred_on: string
           payment_method: 'pix' | 'credit_card' | 'debit_card' | 'cash' | 'boleto' | 'transfer' | 'other'
-          source?: 'manual' | 'open_finance' | 'demo'
+          source?: 'manual' | 'open_finance' | 'demo' | 'import'
           type: 'income' | 'expense'
           updated_at?: string
           user_id: string
@@ -504,11 +642,19 @@ export type Database = {
           description?: string
           external_id?: string | null
           account_id?: string | null
+          bank_account_id?: string | null
+          fingerprint?: string | null
+          pluggy_category_id?: string | null
+          ignore_in_reports?: boolean
+          ignore_reason?: string | null
+          ignore_locked?: boolean
+          pending?: boolean
+          archived_at?: string | null
           id?: string
           notes?: string | null
           occurred_on?: string
           payment_method?: 'pix' | 'credit_card' | 'debit_card' | 'cash' | 'boleto' | 'transfer' | 'other'
-          source?: 'manual' | 'open_finance' | 'demo'
+          source?: 'manual' | 'open_finance' | 'demo' | 'import'
           type?: 'income' | 'expense'
           updated_at?: string
           user_id?: string
@@ -521,6 +667,71 @@ export type Database = {
             referencedRelation: "categories"
             referencedColumns: ["id"]
           },
+          {
+            foreignKeyName: "transactions_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "users"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "transactions_bank_account_id_fkey"
+            columns: ["bank_account_id"]
+            isOneToOne: false
+            referencedRelation: "bank_accounts"
+            referencedColumns: ["id"]
+          }
+        ]
+      }
+      sync_runs: {
+        Row: {
+          connection_id: string
+          errors: Json | null
+          finished_at: string | null
+          id: string
+          started_at: string
+          stats: Json | null
+          status: 'running' | 'success' | 'partial' | 'error'
+          trigger: string
+          user_id: string
+        }
+        Insert: {
+          connection_id: string
+          errors?: Json | null
+          finished_at?: string | null
+          id?: string
+          started_at?: string
+          stats?: Json | null
+          status?: 'running' | 'success' | 'partial' | 'error'
+          trigger?: string
+          user_id: string
+        }
+        Update: {
+          connection_id?: string
+          errors?: Json | null
+          finished_at?: string | null
+          id?: string
+          started_at?: string
+          stats?: Json | null
+          status?: 'running' | 'success' | 'partial' | 'error'
+          trigger?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "sync_runs_connection_id_fkey"
+            columns: ["connection_id"]
+            isOneToOne: false
+            referencedRelation: "bank_connections"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "sync_runs_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "users"
+            referencedColumns: ["id"]
+          }
         ]
       }
       learn_user_stats: {

@@ -91,12 +91,14 @@ export const BudgetPage: React.FC = () => {
         .select('*')
         .eq('user_id', user.id)
         .eq('type', 'expense')
+        .is('archived_at', null)
         .gte('occurred_on', curMonth)
 
       const spentMap: Record<string, number> = {}
       let sumSpent = 0
 
       txs?.forEach((t) => {
+        if (t.ignore_in_reports || t.archived_at) return
         const amt = Number(t.amount)
         spentMap[t.category_id] = (spentMap[t.category_id] || 0) + amt
         sumSpent += amt
@@ -119,17 +121,20 @@ export const BudgetPage: React.FC = () => {
 
     const { data: historyTxs } = await supabase
       .from('transactions')
-      .select('category_id, amount, occurred_on')
+      .select('category_id, amount, occurred_on, ignore_in_reports, archived_at')
       .eq('user_id', user.id)
       .eq('type', 'expense')
+      .is('archived_at', null)
       .gte('occurred_on', startDate)
 
-    if (!historyTxs || historyTxs.length === 0) {
+    const cleanHistoryTxs = (historyTxs || []).filter((t) => !t.ignore_in_reports && !t.archived_at)
+
+    if (cleanHistoryTxs.length === 0) {
       toast.info('Registre mais alguns gastos para sugerirmos limites baseados na sua realidade!')
       return
     }
 
-    const formattedHistory = historyTxs.map((t) => ({
+    const formattedHistory = cleanHistoryTxs.map((t) => ({
       categoryId: t.category_id,
       amount: Number(t.amount),
       month: t.occurred_on.slice(0, 7),

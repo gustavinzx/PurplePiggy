@@ -130,6 +130,10 @@ export default {
       },
       fontFamily: {
         sans: ['Nunito', 'sans-serif'],
+        nunito: ['Nunito', 'sans-serif'],
+      },
+      spacing: {
+        '4.5': '1.125rem',
       },
       borderRadius: {
         'card': '24px',

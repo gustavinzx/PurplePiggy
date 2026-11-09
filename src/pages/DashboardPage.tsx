@@ -84,14 +84,21 @@ export const DashboardPage: React.FC = () => {
       })
       setCategories(catMap)
 
-      // 2. Transações
-      const { data: txs, error: errTxs } = await supabase
-        .from('transactions')
-        .select('*')
-        .eq('user_id', user.id)
-        .order('occurred_on', { ascending: false }).order('created_at', { ascending: false })
-      if (errTxs) throw errTxs
-      const txList = txs || []
+      // 2. Transações (paginadas para suportar >1000 lançamentos anuais)
+      const txList: Transaction[] = []
+      for (let from = 0; from < 5000; from += 1000) {
+        const { data: page, error: errTxs } = await supabase
+          .from('transactions')
+          .select('*')
+          .eq('user_id', user.id)
+          .is('archived_at', null)
+          .order('occurred_on', { ascending: false })
+          .order('created_at', { ascending: false })
+          .range(from, from + 999)
+        if (errTxs) throw errTxs
+        if (page) txList.push(...page)
+        if (!page || page.length < 1000) break
+      }
       setTransactions(txList)
 
       // 3. Metas
@@ -126,12 +133,26 @@ export const DashboardPage: React.FC = () => {
       })
       setBankMap(bMap)
 
-      const activeConns = (bankConns || []).filter((bc) => bc.status === 'active' && bc.balance != null)
-      if (activeConns.length > 0) {
-        const sumBank = activeConns.reduce((acc, bc) => acc + Number(bc.balance || 0), 0)
-        setTotalBankBalance(Number(sumBank.toFixed(2)))
+      // Buscar contas granulares ativas para somar apenas as contas BANK com include_in_balance
+      const { data: bankAccs } = await supabase
+        .from('bank_accounts')
+        .select('balance, include_in_balance, is_active, type')
+        .eq('user_id', user.id)
+        .eq('is_active', true)
+
+      if (bankAccs && bankAccs.length > 0) {
+        const bankOnlyBalance = bankAccs
+          .filter((ba) => ba.type === 'BANK' && ba.include_in_balance)
+          .reduce((acc, ba) => acc + Number(ba.balance || 0), 0)
+        setTotalBankBalance(Number(bankOnlyBalance.toFixed(2)))
       } else {
-        setTotalBankBalance(null)
+        const activeConns = (bankConns || []).filter((bc) => bc.status === 'active' && bc.balance != null)
+        if (activeConns.length > 0) {
+          const sumBank = activeConns.reduce((acc, bc) => acc + Number(bc.balance || 0), 0)
+          setTotalBankBalance(Number(sumBank.toFixed(2)))
+        } else {
+          setTotalBankBalance(null)
+        }
       }
 
       // 5. Aportes em metas
@@ -147,7 +168,7 @@ export const DashboardPage: React.FC = () => {
       const expensesByCat: Record<string, number> = {}
       let totalCardSpent = 0
       txList
-        .filter((t) => t.type === 'expense' && t.occurred_on.startsWith(currentMonth))
+        .filter((t) => t.type === 'expense' && !t.ignore_in_reports && !t.archived_at && t.occurred_on.startsWith(currentMonth))
         .forEach((t) => {
           expensesByCat[t.category_id] = (expensesByCat[t.category_id] || 0) + Number(t.amount)
           if (t.payment_method === 'credit_card') {
@@ -202,10 +223,10 @@ export const DashboardPage: React.FC = () => {
   const emergencyTarget = emergencyGoal ? Number(emergencyGoal.target_amount) : 0
   const emergencyPct = emergencyTarget > 0 ? Math.min(100, Math.round((emergencySaved / emergencyTarget) * 100)) : 0
 
-  // Painel de gastos: consolidado por categorias do mês atual
+  // Painel de gastos: consolidado por categorias do mês atual (excluindo movimentos internos e arquivados)
   const currentMonth = new Date().toISOString().slice(0, 7)
   const currentMonthExpenses = transactions.filter(
-    (t) => t.type === 'expense' && t.occurred_on.startsWith(currentMonth)
+    (t) => t.type === 'expense' && t.occurred_on.startsWith(currentMonth) && !t.ignore_in_reports && !t.archived_at
   )
 
   const expensesByCategory: Record<string, number> = {}
@@ -264,7 +285,7 @@ export const DashboardPage: React.FC = () => {
   const featuredGoal = getFeaturedGoal(goals)
 
   // Transações recentes (as 3 últimas conforme referência v2)
-  const recentTransactions = transactions.slice(0, 3)
+  const recentTransactions = transactions.filter((t) => !t.archived_at).slice(0, 3)
 
   const toggleHideBalance = async () => {
     const nextVal = !hideBalance

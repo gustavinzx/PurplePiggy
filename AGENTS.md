@@ -6,6 +6,7 @@
 - Se os dois divergirem em aparência, vale a imagem.
 - Cores, fontes, raios, sombras e espaçamentos: design/tokens.md. Não invente valores.
 - Mascote e ilustrações: PNGs aprovados em public/assets/mascot/ (lista em mascotes/manifest.json). Ícones em public/assets/icons/, moedas em public/assets/coins/.
+- Gênero da mascote: A Piggy é estritamente FEMININA (a Piggy, ela, dela). Em qualquer texto, balão de fala, mensagem ou interface, refira-se a ela SEMPRE no feminino (ex.: 'Olá! Sou a Piggy', 'A Piggy está comemorando').
 
 ## Proibido
 - Emojis na interface (única exceção: a mãozinha de aceno do "Olá, {nome}!" da tela Início).

@@ -10,6 +10,8 @@ export interface TransactionItem {
   occurred_on: string
   category_id?: string
   payment_method?: string
+  ignore_in_reports?: boolean
+  archived_at?: string | null
 }
 
 export interface CategoryItem {
@@ -43,12 +45,18 @@ export interface GoalContributionItem {
 /**
  * 8.1 Saldo disponível
  * Saldo inicial + total de receitas históricas - total de despesas históricas
+ * Se houver saldo consolidado de contas BANK conectadas, utiliza-o prioritariamente.
  */
 export function calculateAvailableBalance(
   initialBalance: number,
-  transactions: TransactionItem[]
+  transactions: TransactionItem[],
+  bankBalanceSum?: number
 ): number {
-  const net = transactions.reduce((acc, t) => {
+  if (typeof bankBalanceSum === 'number' && !isNaN(bankBalanceSum)) {
+    return Number(bankBalanceSum.toFixed(2))
+  }
+  const activeTxs = transactions.filter((t) => !t.ignore_in_reports && !t.archived_at)
+  const net = activeTxs.reduce((acc, t) => {
     return t.type === 'income' ? acc + Number(t.amount) : acc - Number(t.amount)
   }, 0)
   return Number((initialBalance + net).toFixed(2))
@@ -74,6 +82,8 @@ export function calculateMonthlySummary(
   let prevExpense = 0
 
   for (const t of transactions) {
+    if (t.ignore_in_reports || t.archived_at) continue
+
     const tDate = new Date(t.occurred_on + 'T00:00:00')
     const tYear = tDate.getFullYear()
     const tM = tDate.getMonth()

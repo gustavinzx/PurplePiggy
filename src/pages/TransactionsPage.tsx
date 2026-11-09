@@ -52,7 +52,6 @@ export const TransactionsPage: React.FC = () => {
 
   // Mês selecionado no gráfico (ou null para usar o mês atual)
   const [selectedMonth, setSelectedMonth] = useState<string | undefined>(undefined)
-
   // Modais
   const [isAddModalOpen, setIsAddModalOpen] = useState(false)
   const [isMonthPickerOpen, setIsMonthPickerOpen] = useState(false)
@@ -86,13 +85,21 @@ export const TransactionsPage: React.FC = () => {
       })
       setCategories(catMap)
 
-      const { data: txs, error: errTxs } = await supabase
-        .from('transactions')
-        .select('*')
-        .eq('user_id', user.id)
-        .order('occurred_on', { ascending: false }).order('created_at', { ascending: false })
-      if (errTxs) throw errTxs
-      setTransactions(txs || [])
+      const allTxs: Transaction[] = []
+      for (let from = 0; from < 5000; from += 1000) {
+        const { data: page, error: errTxs } = await supabase
+          .from('transactions')
+          .select('*')
+          .eq('user_id', user.id)
+          .is('archived_at', null)
+          .order('occurred_on', { ascending: false })
+          .order('created_at', { ascending: false })
+          .range(from, from + 999)
+        if (errTxs) throw errTxs
+        if (page) allTxs.push(...page)
+        if (!page || page.length < 1000) break
+      }
+      setTransactions(allTxs)
 
       // Carregar nomes dos bancos conectados para diferenciar no extrato
       const { data: bankConns } = await supabase
@@ -120,9 +127,11 @@ export const TransactionsPage: React.FC = () => {
     setSearchParams({ periodo: newPeriod })
   }
 
-  // Despesas puras
+  // Despesas puras (excluindo faturas, movimentos internos e arquivadas)
   const expenseTransactions: ExpenseItem[] = useMemo(() => {
-    return transactions.filter((t) => t.type === 'expense') as ExpenseItem[]
+    return transactions.filter(
+      (t) => t.type === 'expense' && !t.ignore_in_reports && !t.archived_at
+    ) as ExpenseItem[]
   }, [transactions])
 
   // Séries mensais para o gráfico de barras
@@ -155,12 +164,46 @@ export const TransactionsPage: React.FC = () => {
       })
   }, [expenseTransactions, activeMonthKey])
 
-  // As 3 despesas mais recentes para exibição imediata
-  const recentExpenses = periodExpenses.slice(0, 3)
+  // Totais do período ativo sem movimentos internos
+  const periodTotalExpenses = useMemo(() => {
+    if (!activeMonthKey) return 0
+    return transactions
+      .filter((t) => t.type === 'expense' && t.occurred_on.startsWith(activeMonthKey) && !t.ignore_in_reports && !t.archived_at)
+      .reduce((acc, t) => acc + Number(t.amount || 0), 0)
+  }, [transactions, activeMonthKey])
+
+  const periodTotalIncome = useMemo(() => {
+    if (!activeMonthKey) return 0
+    return transactions
+      .filter((t) => t.type === 'income' && t.occurred_on.startsWith(activeMonthKey) && !t.ignore_in_reports && !t.archived_at)
+      .reduce((acc, t) => acc + Number(t.amount || 0), 0)
+  }, [transactions, activeMonthKey])
+
+  // Transações do período ativo respeitando o filtro de tipo (Todas | Despesas | Receitas)
+  const periodTransactions = useMemo(() => {
+    if (!activeMonthKey) return []
+    return transactions
+      .filter((t) => {
+        if (!t.occurred_on.startsWith(activeMonthKey)) return false
+        if (t.archived_at) return false
+        if (typeFilter === 'expense') return t.type === 'expense'
+        if (typeFilter === 'income') return t.type === 'income'
+        return true
+      })
+      .sort((a, b) => {
+        const dDiff = new Date(b.occurred_on).getTime() - new Date(a.occurred_on).getTime()
+        if (dDiff !== 0) return dDiff
+        return new Date(b.created_at || 0).getTime() - new Date(a.created_at || 0).getTime()
+      })
+  }, [transactions, activeMonthKey, typeFilter])
+
+  // As 5 transações mais recentes do período ativo
+  const recentDisplayTransactions = periodTransactions.slice(0, 5)
+
 
   // Despesas filtradas para a modal "Ver todas"
   const allFilteredExpenses = useMemo(() => {
-    return periodExpenses.filter((tx) => {
+    return periodTransactions.filter((tx) => {
       if (allCategoryFilter !== 'all' && tx.category_id !== allCategoryFilter) {
         return false
       }
@@ -176,7 +219,7 @@ export const TransactionsPage: React.FC = () => {
       if (allSortOrder === 'amount_asc') return Number(a.amount) - Number(b.amount)
       return new Date(b.occurred_on).getTime() - new Date(a.occurred_on).getTime()
     })
-  }, [periodExpenses, allCategoryFilter, allSearchTerm, allSortOrder, categories])
+  }, [periodTransactions, allCategoryFilter, allSearchTerm, allSortOrder, categories])
 
   // Formatação de data contextual
   const formatTransactionDate = (dateStr: string, catName: string) => {
@@ -291,7 +334,7 @@ export const TransactionsPage: React.FC = () => {
       </div>
 
       {/* 2. Seletor Segmentado: "Este mês", "Últimos 3 meses", "1 ano" */}
-      <div className="w-full flex items-center gap-2 py-0.5 min-w-0">
+      <div className="w-full grid grid-cols-[auto_1fr_auto] items-center gap-2 py-0.5 min-w-0">
         <button
           type="button"
           onClick={() => {
@@ -301,7 +344,7 @@ export const TransactionsPage: React.FC = () => {
               setPeriod('mes')
             }
           }}
-          className={`flex items-center gap-1.5 px-4 py-2 rounded-full text-[13px] font-extrabold transition-all cursor-pointer ${
+          className={`flex items-center justify-center gap-1 min-h-[44px] px-3.5 rounded-full text-[13px] font-extrabold whitespace-nowrap transition-all cursor-pointer ${
             validPeriod === 'mes'
               ? 'bg-[#7D2BD6] text-white shadow-sm'
               : 'bg-white/90 text-[#7D6A9C] hover:bg-white border border-lilac/25'
@@ -314,7 +357,7 @@ export const TransactionsPage: React.FC = () => {
         <button
           type="button"
           onClick={() => setPeriod('3m')}
-          className={`px-3.5 py-2 rounded-full text-[13px] font-extrabold transition-all cursor-pointer ${
+          className={`min-h-[44px] px-3.5 rounded-full text-[13px] font-extrabold whitespace-nowrap transition-all cursor-pointer ${
             validPeriod === '3m'
               ? 'bg-[#7D2BD6] text-white shadow-sm'
               : 'bg-white/90 text-[#7D6A9C] hover:bg-white border border-lilac/25'
@@ -326,7 +369,7 @@ export const TransactionsPage: React.FC = () => {
         <button
           type="button"
           onClick={() => setPeriod('1a')}
-          className={`px-3.5 py-2 rounded-full text-[13px] font-extrabold transition-all cursor-pointer ${
+          className={`min-h-[44px] px-3.5 rounded-full text-[13px] font-extrabold whitespace-nowrap transition-all cursor-pointer ${
             validPeriod === '1a'
               ? 'bg-[#7D2BD6] text-white shadow-sm'
               : 'bg-white/90 text-[#7D6A9C] hover:bg-white border border-lilac/25'
@@ -335,6 +378,46 @@ export const TransactionsPage: React.FC = () => {
           1 ano
         </button>
       </div>
+
+      {/* Seletor de Tipo: Todas | Despesas | Receitas */}
+      <div className="w-full flex items-center justify-center -mt-1 mb-1">
+        <div className="inline-flex items-center gap-1 p-1 bg-white/90 border border-lilac/20 rounded-full shadow-xs">
+          <button
+            type="button"
+            onClick={() => setTypeFilter('all')}
+            className={`px-3.5 py-1.5 rounded-full text-[12px] font-extrabold transition-all cursor-pointer ${
+              typeFilter === 'all'
+                ? 'bg-[#7D2BD6] text-white shadow-xs'
+                : 'text-[#7D6A9C] hover:text-[#432171]'
+            }`}
+          >
+            Todas
+          </button>
+          <button
+            type="button"
+            onClick={() => setTypeFilter('expense')}
+            className={`px-3.5 py-1.5 rounded-full text-[12px] font-extrabold transition-all cursor-pointer ${
+              typeFilter === 'expense'
+                ? 'bg-[#7D2BD6] text-white shadow-xs'
+                : 'text-[#7D6A9C] hover:text-[#432171]'
+            }`}
+          >
+            Despesas
+          </button>
+          <button
+            type="button"
+            onClick={() => setTypeFilter('income')}
+            className={`px-3.5 py-1.5 rounded-full text-[12px] font-extrabold transition-all cursor-pointer ${
+              typeFilter === 'income'
+                ? 'bg-[#7D2BD6] text-white shadow-xs'
+                : 'text-[#7D6A9C] hover:text-[#432171]'
+            }`}
+          >
+            Receitas
+          </button>
+        </div>
+      </div>
+
 
       {/* ESTADO DE ERRO */}
       {error && !loading && (
@@ -372,14 +455,14 @@ export const TransactionsPage: React.FC = () => {
         {/* Cabeçalho do Card: Total e Chip de Variação */}
         <div className="flex flex-col min-w-0 mb-4">
           <span className="text-[13px] font-bold text-[#7D6A9C] font-nunito leading-tight">
-            Total de despesas
+            {typeFilter === 'income' ? 'Total de receitas' : 'Total de despesas'}
           </span>
           <div className="flex items-center gap-3 mt-1 min-w-0">
             <span className="text-[28px] font-extrabold text-[#432171] tracking-tight leading-tight truncate">
               {loading ? (
                 <span className="inline-block w-36 h-8 bg-gray-200 rounded animate-pulse" />
               ) : (
-                formatCurrency(summary.totalExpenses)
+                formatCurrency(typeFilter === 'income' ? periodTotalIncome : summary.totalExpenses)
               )}
             </span>
 
@@ -591,11 +674,12 @@ export const TransactionsPage: React.FC = () => {
                 </div>
               ))}
             </div>
-          ) : recentExpenses.length > 0 ? (
+          ) : recentDisplayTransactions.length > 0 ? (
             <div className="w-full flex flex-col divide-y divide-[#F3EBF9] min-w-0">
-              {recentExpenses.map((tx) => {
+              {recentDisplayTransactions.map((tx) => {
                 const cat = categories[tx.category_id]
-                const catName = cat?.name || 'Geral'
+                const catName = cat?.name || (tx.type === 'income' ? 'Receita' : 'Geral')
+                const isIncome = tx.type === 'income'
 
                 return (
                   <Link
@@ -605,14 +689,14 @@ export const TransactionsPage: React.FC = () => {
                   >
                     <div className="flex items-center gap-3 min-w-0 flex-1">
                       <CategoryCircle
-                        name={cat?.slug || cat?.icon || cat?.name || 'outros'}
+                        name={cat?.slug || cat?.icon || cat?.name || (isIncome ? 'renda' : 'outros')}
                         size="md"
                       />
                       <div className="min-w-0 flex-1">
                         <div className="text-[14px] font-bold text-[#432171] leading-tight truncate">
                           {tx.description}
                         </div>
-                        <div className="flex items-center gap-1.5 truncate mt-0.5">
+                        <div className="flex items-center gap-1.5 flex-wrap mt-0.5">
                           <span className="text-[11px] font-semibold text-[#7D6A9C]">
                             {formatTransactionDate(tx.occurred_on, catName)}
                           </span>
@@ -627,12 +711,22 @@ export const TransactionsPage: React.FC = () => {
                               </span>
                             )
                           })()}
+                          {tx.ignore_in_reports && (
+                            <span className="inline-flex items-center gap-1 text-[9px] font-black px-1.5 py-0.5 rounded-full bg-amber-50 text-amber-700 border border-amber-200 shrink-0">
+                              {tx.ignore_reason === 'card_payment' ? 'Pagamento de fatura' : 'Movimento interno'}
+                            </span>
+                          )}
                         </div>
                       </div>
                     </div>
 
-                    <div className="text-[14px] font-extrabold text-[#432171] shrink-0 ml-2">
-                      - {formatCurrency(tx.amount)}
+                    <div
+                      className={`text-[14px] font-extrabold shrink-0 ml-2 ${
+                        isIncome ? 'text-[#15803D]' : 'text-[#432171]'
+                      }`}
+                    >
+                      {isIncome ? '+ ' : '- '}
+                      {formatCurrency(tx.amount)}
                     </div>
                   </Link>
                 )
@@ -641,7 +735,7 @@ export const TransactionsPage: React.FC = () => {
           ) : (
             <div className="py-4 text-center min-w-0">
               <p className="text-xs font-semibold text-[#7D6A9C]">
-                Nenhum gasto recente registrado neste período.
+                Nenhuma transação recente encontrada para o filtro selecionado.
               </p>
             </div>
           )}
@@ -672,10 +766,14 @@ export const TransactionsPage: React.FC = () => {
           >
             <div className="w-12 h-1.5 bg-[#E2D4F0] rounded-full mx-auto mb-3 shrink-0" />
 
-            <div className="flex items-center justify-between pb-3 border-b border-[#F0EBF8] mb-3">
+            <div className="flex items-center justify-between pb-3 border-b border-[#F0EBF8] mb-3 shrink-0">
               <div className="flex items-center gap-2">
                 <h2 className="text-[18px] font-extrabold text-[#432171] font-nunito">
-                  Todas as despesas
+                  {typeFilter === 'income'
+                    ? 'Todas as receitas'
+                    : typeFilter === 'expense'
+                    ? 'Todas as despesas'
+                    : 'Todas as transações'}
                 </h2>
                 <span className="bg-[#7D2BD6] text-white text-[11px] font-black px-2 py-0.5 rounded-full">
                   {allFilteredExpenses.length}
@@ -690,19 +788,25 @@ export const TransactionsPage: React.FC = () => {
             </div>
 
             {/* Campo de Busca */}
-            <div className="relative mb-3">
-              <Search className="w-4 h-4 text-[#7D6A9C] absolute left-3 top-3 pointer-events-none" />
+            <div className="flex items-center gap-2.5 mb-2.5 bg-[#F8F5FC] px-3.5 py-2.5 rounded-xl border border-[#E9D5FF] focus-within:border-[#7D2BD6] shrink-0">
+              <Search className="w-4 h-4 text-[#7D6A9C] shrink-0 pointer-events-none" />
               <input
                 type="text"
                 value={allSearchTerm}
                 onChange={(e) => setAllSearchTerm(e.target.value)}
-                placeholder="Buscar despesa ou categoria..."
-                className="w-full bg-[#F8F5FC] text-[#432171] text-xs font-semibold pl-9 pr-8 py-2.5 rounded-xl border border-[#E9D5FF] focus:outline-none focus:border-[#7D2BD6]"
+                placeholder={
+                  typeFilter === 'income'
+                    ? 'Buscar receita ou categoria...'
+                    : typeFilter === 'expense'
+                    ? 'Buscar despesa ou categoria...'
+                    : 'Buscar transação ou categoria...'
+                }
+                className="w-full bg-transparent text-[#432171] text-xs font-semibold focus:outline-none"
               />
               {allSearchTerm && (
                 <button
                   onClick={() => setAllSearchTerm('')}
-                  className="absolute right-2.5 top-2.5 text-[#7D6A9C] hover:text-[#432171]"
+                  className="text-[#7D6A9C] hover:text-[#432171] shrink-0"
                 >
                   <X className="w-4 h-4" />
                 </button>
@@ -710,37 +814,59 @@ export const TransactionsPage: React.FC = () => {
             </div>
 
             {/* Filtro por Categoria e Ordenação */}
-            <div className="flex items-center gap-2 mb-3 overflow-x-auto pb-1 text-xs">
+            <div className="flex flex-col gap-2 mb-3 shrink-0">
               <button
                 type="button"
                 onClick={() => setIsCategoryModalOpen(true)}
-                className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg border border-[#E9D5FF] bg-[#F8F5FC] text-[#432171] font-bold text-xs hover:bg-[#F3E8FF] transition-colors shrink-0"
+                className="w-full min-h-[40px] px-3.5 py-2 rounded-xl border border-[#E9D5FF] bg-[#F8F5FC] hover:bg-[#F3E8FF] transition-colors flex items-center justify-between gap-2 cursor-pointer"
               >
-                <Filter className="w-3.5 h-3.5 text-primary" />
-                <span>{selectedCategory === 'all' ? 'Categorias' : (categories[selectedCategory]?.name || 'Categoria')}</span>
+                <div className="flex items-center gap-2 min-w-0">
+                  <Filter className="w-3.5 h-3.5 text-[#7D2BD6] shrink-0" />
+                  <span className="text-xs font-bold text-[#7D6A9C] shrink-0">Categoria:</span>
+                  <span className="text-xs font-extrabold text-[#432171] truncate">
+                    {allCategoryFilter === 'all'
+                      ? 'Todas as categorias'
+                      : categories[allCategoryFilter]?.name || 'Categoria'}
+                  </span>
+                </div>
+                <ChevronDown className="w-4 h-4 text-[#7D2BD6] shrink-0" />
               </button>
-              <select
-                value={allCategoryFilter}
-                onChange={(e) => setAllCategoryFilter(e.target.value)}
-                className="bg-[#F8F5FC] text-[#432171] font-bold text-xs px-2.5 py-1.5 rounded-lg border border-[#E9D5FF] focus:outline-none"
-              >
-                <option value="all">Todas as categorias</option>
-                {Object.values(categories).map((c) => (
-                  <option key={c.id} value={c.id}>
-                    {c.name}
-                  </option>
-                ))}
-              </select>
 
-              <select
-                value={allSortOrder}
-                onChange={(e) => setAllSortOrder(e.target.value as any)}
-                className="bg-[#F8F5FC] text-[#432171] font-bold text-xs px-2.5 py-1.5 rounded-lg border border-[#E9D5FF] focus:outline-none"
-              >
-                <option value="recent">Mais recentes</option>
-                <option value="amount_desc">Maior valor</option>
-                <option value="amount_asc">Menor valor</option>
-              </select>
+              <div className="grid grid-cols-3 gap-1 p-1 rounded-xl bg-[#F8F5FC] border border-[#E9D5FF]">
+                <button
+                  type="button"
+                  onClick={() => setAllSortOrder('recent')}
+                  className={`py-1.5 px-2 rounded-lg text-[11px] font-extrabold text-center transition-all cursor-pointer whitespace-nowrap ${
+                    allSortOrder === 'recent'
+                      ? 'bg-[#7D2BD6] text-white shadow-xs'
+                      : 'text-[#7D6A9C] hover:text-[#432171]'
+                  }`}
+                >
+                  Mais recentes
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setAllSortOrder('amount_desc')}
+                  className={`py-1.5 px-2 rounded-lg text-[11px] font-extrabold text-center transition-all cursor-pointer whitespace-nowrap ${
+                    allSortOrder === 'amount_desc'
+                      ? 'bg-[#7D2BD6] text-white shadow-xs'
+                      : 'text-[#7D6A9C] hover:text-[#432171]'
+                  }`}
+                >
+                  Maior valor
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setAllSortOrder('amount_asc')}
+                  className={`py-1.5 px-2 rounded-lg text-[11px] font-extrabold text-center transition-all cursor-pointer whitespace-nowrap ${
+                    allSortOrder === 'amount_asc'
+                      ? 'bg-[#7D2BD6] text-white shadow-xs'
+                      : 'text-[#7D6A9C] hover:text-[#432171]'
+                  }`}
+                >
+                  Menor valor
+                </button>
+              </div>
             </div>
 
             {/* Lista completa de despesas */}
@@ -750,6 +876,7 @@ export const TransactionsPage: React.FC = () => {
                   const cat = categories[tx.category_id]
                   const catName = cat?.name || 'Geral'
 
+                  const isIncome = tx.type === 'income'
                   return (
                     <Link
                       key={tx.id}
@@ -759,14 +886,14 @@ export const TransactionsPage: React.FC = () => {
                     >
                       <div className="flex items-center gap-3 min-w-0 flex-1">
                         <CategoryCircle
-                          name={cat?.slug || cat?.icon || cat?.name || 'outros'}
+                          name={cat?.slug || cat?.icon || cat?.name || (isIncome ? 'renda' : 'outros')}
                           size="md"
                         />
                         <div className="min-w-0 flex-1">
                           <div className="text-[14px] font-bold text-[#432171] truncate">
                             {tx.description}
                           </div>
-                          <div className="flex items-center gap-1.5 truncate mt-0.5">
+                          <div className="flex items-center gap-1.5 flex-wrap mt-0.5">
                             <span className="text-[11px] font-semibold text-[#7D6A9C]">
                               {formatTransactionDate(tx.occurred_on, catName)}
                             </span>
@@ -781,11 +908,21 @@ export const TransactionsPage: React.FC = () => {
                                 </span>
                               )
                             })()}
+                            {tx.ignore_in_reports && (
+                              <span className="inline-flex items-center gap-1 text-[9px] font-black px-1.5 py-0.5 rounded-full bg-amber-50 text-amber-700 border border-amber-200 shrink-0">
+                                {tx.ignore_reason === 'card_payment' ? 'Pagamento de fatura' : 'Movimento interno'}
+                              </span>
+                            )}
                           </div>
                         </div>
                       </div>
-                      <div className="text-[14px] font-extrabold text-[#432171] shrink-0 ml-2">
-                        - {formatCurrency(tx.amount)}
+                      <div
+                        className={`text-[14px] font-extrabold shrink-0 ml-2 ${
+                          isIncome ? 'text-[#15803D]' : 'text-[#432171]'
+                        }`}
+                      >
+                        {isIncome ? '+ ' : '- '}
+                        {formatCurrency(tx.amount)}
                       </div>
                     </Link>
                   )
@@ -794,7 +931,11 @@ export const TransactionsPage: React.FC = () => {
                 <div className="py-8 flex flex-col items-center justify-center text-center gap-2">
                   <Mascot pose="search" size="md" alt="Busca sem resultado" />
                   <p className="text-[14px] font-extrabold text-[#432171]">
-                    Nenhuma despesa encontrada
+                    {typeFilter === 'income'
+                      ? 'Nenhuma receita encontrada'
+                      : typeFilter === 'expense'
+                      ? 'Nenhuma despesa encontrada'
+                      : 'Nenhuma transação encontrada'}
                   </p>
                   <p className="text-xs text-[#7D6A9C]">
                     Tente ajustar os termos de busca ou filtros de categoria.
@@ -816,29 +957,35 @@ export const TransactionsPage: React.FC = () => {
 
       {/* Modal / Sheet: Categorias e Ver Todas as Transações */}
       {isCategoryModalOpen && (
-        <div className="fixed inset-0 z-50 bg-deep/60 backdrop-blur-xs flex items-end sm:items-center justify-center p-3 sm:p-4 animate-fadeIn">
-          <div className="bg-white rounded-t-[28px] sm:rounded-[26px] p-6 w-full max-w-sm shadow-2xl flex flex-col max-h-[85vh] border border-lilac/15">
-            <div className="flex items-center justify-between pb-3 border-b border-lilac/15 mb-3">
+        <div
+          className="fixed inset-0 z-[60] bg-deep/60 backdrop-blur-xs flex items-end sm:items-center justify-center p-3 sm:p-4 animate-fadeIn"
+          onClick={() => setIsCategoryModalOpen(false)}
+        >
+          <div
+            className="bg-white rounded-t-[28px] sm:rounded-[26px] p-6 w-full max-w-sm shadow-2xl flex flex-col max-h-[85vh] border border-lilac/15"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <div className="flex items-center justify-between pb-3 border-b border-lilac/15 mb-3 shrink-0">
               <h3 className="text-base font-extrabold text-deep font-sans">
                 Filtrar por categoria
               </h3>
               <button
                 onClick={() => setIsCategoryModalOpen(false)}
-                className="p-1 rounded-full text-textSec hover:text-deep"
+                className="p-1 rounded-full text-textSec hover:text-deep cursor-pointer"
               >
                 <X className="w-5 h-5" />
               </button>
             </div>
 
-            <div className="overflow-y-auto flex flex-col gap-1.5 py-1">
+            <div className="overflow-y-auto flex flex-col gap-1.5 py-1 flex-1">
               <button
                 onClick={() => {
                   setSelectedCategory('all')
                   setAllCategoryFilter('all')
                   setIsCategoryModalOpen(false)
                 }}
-                className={`w-full text-left px-3.5 py-2.5 rounded-xl text-xs font-bold flex items-center justify-between transition-colors ${
-                  selectedCategory === 'all'
+                className={`w-full text-left px-3.5 py-2.5 rounded-xl text-xs font-bold flex items-center justify-between transition-colors cursor-pointer ${
+                  allCategoryFilter === 'all'
                     ? 'text-primary bg-primary/10'
                     : 'text-deep hover:bg-lilac/10'
                 }`}
@@ -849,7 +996,7 @@ export const TransactionsPage: React.FC = () => {
                   </div>
                   <span>Todas as categorias</span>
                 </div>
-                {selectedCategory === 'all' && <span className="text-primary font-bold">✓</span>}
+                {allCategoryFilter === 'all' && <span className="text-primary font-bold">✓</span>}
               </button>
 
               {Object.values(categories).map((c) => (
@@ -860,8 +1007,8 @@ export const TransactionsPage: React.FC = () => {
                     setAllCategoryFilter(c.id)
                     setIsCategoryModalOpen(false)
                   }}
-                  className={`w-full text-left px-3.5 py-2.5 rounded-xl text-xs font-bold flex items-center justify-between transition-colors ${
-                    selectedCategory === c.id
+                  className={`w-full text-left px-3.5 py-2.5 rounded-xl text-xs font-bold flex items-center justify-between transition-colors cursor-pointer ${
+                    allCategoryFilter === c.id
                       ? 'text-primary bg-primary/10'
                       : 'text-deep hover:bg-lilac/10'
                   }`}
@@ -872,12 +1019,12 @@ export const TransactionsPage: React.FC = () => {
                     </div>
                     <span>{c.name}</span>
                   </div>
-                  {selectedCategory === c.id && <span className="text-primary font-bold">✓</span>}
+                  {allCategoryFilter === c.id && <span className="text-primary font-bold">✓</span>}
                 </button>
               ))}
             </div>
 
-            <div className="pt-3 border-t border-lilac/10 mt-2">
+            <div className="pt-3 border-t border-lilac/10 mt-2 shrink-0">
               <button
                 onClick={() => {
                   setSearchParams({ periodo: 'mes' })

@@ -1,10 +1,11 @@
 {
   "name": "purplepiggy",
   "private": true,
-  "version": "2.4.0",
+  "version": "2.5.9",
   "type": "module",
   "scripts": {
     "dev": "vite",
+    "prebuild": "node scripts/sync-shared.cjs",
     "build": "node scripts/verify_mascots.cjs && tsc && vite build",
     "preview": "vite preview",
     "test": "vitest run",

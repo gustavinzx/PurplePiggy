@@ -9,6 +9,9 @@ export interface ExpenseItem {
   description: string
   created_at?: string
   connection_id?: string | null
+  ignore_in_reports?: boolean | null
+  ignore_reason?: string | null
+  archived_at?: string | null
 }
 
 export interface CategoryInfo {
@@ -105,7 +108,7 @@ export function getMonthlySeries(
 
     // Soma despesas do mês correspondente
     const monthExpenses = transactions
-      .filter((t) => t.type === 'expense' && t.occurred_on.startsWith(key))
+      .filter((t) => t.type === 'expense' && !t.ignore_in_reports && !t.archived_at && t.occurred_on.startsWith(key))
       .reduce((sum, t) => sum + Number(t.amount || 0), 0)
 
     series.push({
@@ -193,6 +196,8 @@ export function getPeriodSummary(
     .filter(
       (t) =>
         t.type === 'expense' &&
+        !t.ignore_in_reports &&
+        !t.archived_at &&
         currentKeys.some((k) => t.occurred_on.startsWith(k))
     )
     .reduce((sum, t) => sum + Number(t.amount || 0), 0)
@@ -202,6 +207,8 @@ export function getPeriodSummary(
     .filter(
       (t) =>
         t.type === 'expense' &&
+        !t.ignore_in_reports &&
+        !t.archived_at &&
         prevKeys.some((k) => t.occurred_on.startsWith(k))
     )
     .reduce((sum, t) => sum + Number(t.amount || 0), 0)
@@ -236,6 +243,8 @@ export function getTopCategories(
   const periodExpenses = transactions.filter(
     (t) =>
       t.type === 'expense' &&
+      !t.ignore_in_reports &&
+      !t.archived_at &&
       currentKeys.some((k) => t.occurred_on.startsWith(k))
   )
 

@@ -290,10 +290,12 @@ export const syncPluggyConnection = async (
 export const pollSyncUntilDone = async (
   connectionId: string,
   onUpdate?: (res: SyncResult) => void,
-  maxDurationMs = 90_000
+  maxDurationMs = 90_000,
+  initial?: SyncResult
 ): Promise<SyncResult> => {
-  let res = await syncPluggyConnection(connectionId)
-  onUpdate?.(res)
+  // Se o chamador já tem o resultado da primeira chamada, não dispara outra sync duplicada.
+  let res = initial ?? (await syncPluggyConnection(connectionId))
+  if (!initial) onUpdate?.(res)
 
   const startTime = Date.now()
   let delayMs = 3000
