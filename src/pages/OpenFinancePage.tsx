@@ -635,6 +635,7 @@ export const OpenFinancePage: React.FC = () => {
                 const isPartial = conn.execution_status === 'PARTIAL_SUCCESS' || (!isTxOk && conn.execution_status !== 'SUCCESS')
                 const dataGaps = Array.isArray(conn.data_gaps) ? (conn.data_gaps as string[]) : []
                 const hasDataGaps = dataGaps.length > 0
+                const isRecentConnection = Date.now() - new Date(conn.created_at).getTime() < 30 * 60 * 1000
                 const needsUserAction = conn.needs_user_action || conn.pluggy_status === 'LOGIN_ERROR' || conn.pluggy_status === 'WAITING_USER_INPUT'
 
                 const connAccounts = accountsByConnection[conn.id] || []
@@ -718,7 +719,7 @@ export const OpenFinancePage: React.FC = () => {
                       ) : (
                         <span className="h-7 px-2 rounded-xl text-[10px] font-extrabold text-violet-800 bg-violet-50 border border-violet-200/70 inline-flex items-center justify-center gap-1.5 truncate">
                           <span className="w-1.5 h-1.5 rounded-full bg-violet-500 shrink-0" />
-                          <span className="truncate">{hasCards ? 'Processando' : 'Extrato em proc.'}</span>
+                          <span className="truncate">Extrato pendente</span>
                         </span>
                       )}
 
@@ -740,17 +741,30 @@ export const OpenFinancePage: React.FC = () => {
                         <div className="flex items-start gap-2">
                           <AlertCircle className="w-4 h-4 text-amber-600 shrink-0 mt-0.5" />
                           <p className="text-[11px] font-bold text-amber-950 leading-snug">
-                            O banco não liberou extrato e cartão. Reconecte e marque todas as permissões.
+                            {isRecentConnection
+                              ? 'Coletando extrato e cartão. Pode levar alguns minutos.'
+                              : 'O banco não liberou extrato e cartão. Reconecte e marque todas as permissões.'}
                           </p>
                         </div>
                         <div className="flex items-center justify-end">
-                          <button
-                            type="button"
-                            onClick={() => handleReconnectBank(conn)}
-                            className="h-8 px-4 rounded-xl bg-white hover:bg-amber-50 border border-amber-300/80 text-[11px] font-extrabold text-[#7D2BD6] flex items-center justify-center cursor-pointer transition-colors shadow-sm"
-                          >
-                            Reconectar
-                          </button>
+                          {isRecentConnection ? (
+                            <button
+                              type="button"
+                              onClick={() => handleSyncConnection(conn)}
+                              disabled={syncingConnId === conn.id}
+                              className="h-8 px-4 rounded-xl bg-white hover:bg-amber-50 border border-amber-300/80 text-[11px] font-extrabold text-[#7D2BD6] flex items-center justify-center cursor-pointer transition-colors shadow-sm disabled:opacity-50"
+                            >
+                              {syncingConnId === conn.id ? 'Sincronizando...' : 'Sincronizar'}
+                            </button>
+                          ) : (
+                            <button
+                              type="button"
+                              onClick={() => handleReconnectBank(conn)}
+                              className="h-8 px-4 rounded-xl bg-white hover:bg-amber-50 border border-amber-300/80 text-[11px] font-extrabold text-[#7D2BD6] flex items-center justify-center cursor-pointer transition-colors shadow-sm"
+                            >
+                              Reconectar
+                            </button>
+                          )}
                         </div>
                       </div>
                     )}
